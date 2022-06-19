@@ -1,0 +1,26 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+  
+  	function isLoggedIn() {
+    	return request.auth != null && request.auth.token.email_verified == true && request.auth.token.authorized == true;
+    }
+    
+    function isWebmaster() {
+    	return isLoggedIn() && request.auth.token.webmaster == true;
+    }
+    
+  	function isAdmin() {
+    	return isLoggedIn() && request.auth.token.admin == true;
+    }
+    
+    match /profile-photos/{userId} {
+      allow read, write: if isLoggedIn() && request.auth.uid == userId;
+      allow read, write: if isAdmin();
+    }
+    match /pages/{image=**} {
+    	allow read, write: if isWebmaster();
+      allow read, write: if isLoggedIn() && request.auth.uid == resource.metadata.uid || request.auth.uid == request.resource.metadata.uid;
+    }
+  }
+}

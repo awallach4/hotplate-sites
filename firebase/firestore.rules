@@ -1,0 +1,217 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+  	function isLoggedIn() {
+    	return request.auth.uid != null && request.auth.token.email_verified == true && request.auth.token.authorized == true;
+    }
+  	
+    function isWebmaster() {
+    	return isLoggedIn() && request.auth.token.webmaster == true;
+		}
+    
+    function isAdmin() {
+    	return isLoggedIn() && request.auth.token.admin == true;
+    }
+    
+    match /pages/{page} {
+    	allow read;
+      allow create: if
+        isWebmaster() &&
+        request.resource.data.keys().hasAll(['dbPath', 'id', 'index', 'name', 'permissions']) &&
+        request.resource.data.keys().hasOnly(['dbPath', 'id', 'index', 'name', 'permissions']) &&
+        request.resource.data.dbPath is string &&
+        request.resource.data.id is string &&
+        request.resource.data.index is int &&
+        request.resource.data.name is string &&
+        request.resource.data.permissions is string;
+      allow update: if
+        isWebmaster() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['dbPath', 'id', 'index', 'name', 'permissions']);
+      allow delete: if isWebmaster();
+    }
+    
+    match /pages/{page}/components/{component} {
+    	allow read, delete: if isWebmaster();
+      allow create, update: if
+        isWebmaster() &&
+        request.resource.data.keys().hasAll(['data', 'props', 'vueComp', 'index']) &&
+        request.resource.data.keys().hasOnly(['data', 'props', 'vueComp', 'index']) &&
+        request.resource.data.vueComp is string &&
+        request.resource.data.index is int;
+      allow read: if
+        get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'public' &&
+        resource.data.data.hidden == false;
+      allow read: if
+        isLoggedIn() &&
+        get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' &&
+        resource.data.data.hidden == false;
+    }
+    
+    match /pages/{page}/components/{component}/{componentData}/{data} {
+    	allow read, write: if isWebmaster();
+      allow read: if
+        get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'public' &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false &&
+        (!("data" in resource.data) ||
+        resource.data.data.hidden == false);
+      allow read: if 
+        isLoggedIn() &&
+        get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false &&
+        (!("data" in resource.data) ||
+        resource.data.data.hidden == false);
+      allow update: if
+        isLoggedIn() && (
+          get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' ||
+          get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'public'
+        ) && (
+          request.resource.data.diff(resource.data).affectedKeys().hasAll(['comments']) &&
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['comments']) &&
+          request.resource.data.comments is list &&
+          resource.data.comments is list
+        );
+      allow write: if
+        isLoggedIn() && (
+          get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' ||
+          get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'public'
+        ) && (
+          request.resource.data.uid == request.auth.uid ||
+          resource.data.uid == request.auth.uid
+        );
+    }
+    
+    match /configuration/theme {
+    	allow read;
+      allow create, update: if
+        isWebmaster() &&
+        request.resource.data.keys().hasAll(['light', 'dark']) &&
+        request.resource.data.keys().hasOnly(['light', 'dark']) &&
+        request.resource.data.light is map &&
+        request.resource.data.dark is map;
+      allow delete: if isAdmin();
+    }
+
+    match /configuration/documentation {
+    	allow read: if isWebmaster();
+      allow write: if false;
+    }
+    
+    match /configuration/apps-script-cal-edit {
+    	allow read: if 
+      	get(/databases/$(database)/documents/configuration/settings).data.calEdit == 'public' ||
+        (get(/databases/$(database)/documents/configuration/settings).data.calEdit == 'users' && isLoggedIn()) ||
+      	(get(/databases/$(database)/documents/configuration/settings).data.calEdit == 'webmasters' && isWebmaster())
+      ;
+      allow update: if 
+      	request.resource.data.keys().hasAll(['password']) &&
+        request.resource.data.keys().hasOnly(['password']) &&
+        request.resource.data.password is string &&
+        get(/databases/$(database)/documents/configuration/settings).data.calEdit == 'public' ||
+        (get(/databases/$(database)/documents/configuration/settings).data.calEdit == 'users' && isLoggedIn()) ||
+      	(get(/databases/$(database)/documents/configuration/settings).data.calEdit == 'webmasters' && isWebmaster())
+      ;
+      allow read, delete: if isWebmaster();
+      allow create, update: if
+        isWebmaster() &&
+        request.resource.data.keys().hasAll(['password']) &&
+        request.resource.data.keys().hasOnly(['password']) &&
+        request.resource.data.password is string;
+    }
+    
+    match /configuration/apps-script-cal-view {
+    	allow read: if
+      	get(/databases/$(database)/documents/configuration/settings).data.calView == 'public' ||
+        (get(/databases/$(database)/documents/configuration/settings).data.calView == 'users' && isLoggedIn()) ||
+      	(get(/databases/$(database)/documents/configuration/settings).data.calView == 'webmasters' && isWebmaster())
+      ;
+      allow update: if
+      	request.resource.data.keys().hasAll(['password']) &&
+        request.resource.data.keys().hasOnly(['password']) &&
+        request.resource.data.password is string &&
+        get(/databases/$(database)/documents/configuration/settings).data.calView == 'public' ||
+        (get(/databases/$(database)/documents/configuration/settings).data.calView == 'users' && isLoggedIn()) ||
+      	(get(/databases/$(database)/documents/configuration/settings).data.calView == 'webmasters' && isWebmaster())
+      ;
+      allow read, delete: if isWebmaster();
+      allow create, update: if
+        isWebmaster() &&
+        request.resource.data.keys().hasAll(['password']) &&
+        request.resource.data.keys().hasOnly(['password']) &&
+        request.resource.data.password is string;
+    }
+    
+    match /configuration/apps-script-mail {
+    	allow read: if
+      	get(/databases/$(database)/documents/configuration/settings).data.email == 'public' ||
+        (get(/databases/$(database)/documents/configuration/settings).data.email == 'users' && isLoggedIn()) ||
+      	(get(/databases/$(database)/documents/configuration/settings).data.email == 'webmasters' && isWebmaster())
+      ;
+      allow update: if
+      	request.resource.data.keys().hasAll(['password']) &&
+        request.resource.data.keys().hasOnly(['password']) &&
+        request.resource.data.password is string &&
+        get(/databases/$(database)/documents/configuration/settings).data.email == 'public' ||
+        (get(/databases/$(database)/documents/configuration/settings).data.email == 'users' && isLoggedIn()) ||
+      	(get(/databases/$(database)/documents/configuration/settings).data.email == 'webmasters' && isWebmaster())
+      ;
+      allow read, delete: if isWebmaster();
+      allow create, update: if
+        isWebmaster() &&
+        request.resource.data.keys().hasAll(['password']) &&
+        request.resource.data.keys().hasOnly(['password']) &&
+        request.resource.data.password is string;
+    }
+    
+    match /configuration/settings {
+    	allow read;
+      allow delete: if isAdmin();
+      allow create: if 
+        isAdmin() &&
+        request.resource.data.keys().hasAll(['calEdit', 'calURL', 'calView', 'defaultPage', 'email', 'footerTxt', 'mailURL']) &&
+        request.resource.data.keys().hasOnly(['calEdit', 'calURL', 'calView', 'defaultPage', 'email', 'footerTxt', 'mailURL']) &&
+        request.resource.data.calEdit is string &&
+        request.resource.data.calURL is string &&
+        request.resource.data.calView is string &&
+        request.resource.data.defaultPage is string &&
+        request.resource.data.email is string &&
+        request.resource.data.footerTxt is string &&
+        request.resource.data.mailURL is string;
+      allow update: if
+        isWebmaster() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['calEdit', 'calURL', 'calView', 'defaultPage', 'email', 'footerTxt', 'mailURL']);
+    }
+    
+    match /configuration/priv-settings {
+    	allow read: if isLoggedIn();
+      allow delete: if isAdmin();
+      allow create: if
+        isAdmin() &&
+        request.resource.data.keys().hasAll(['addresses', 'consoleURL', 'meetLink', 'linkHidden']) &&
+        request.resource.data.keys().hasOnly(['addresses', 'consoleURL', 'meetLink', 'linkHidden']) &&
+        request.resource.data.addresses is list &&
+        request.resource.data.consoleURL is string &&
+        request.resource.data.meetLink is string &&
+        request.resource.data.linkHidden is bool;
+      allow update: if
+        isWebmaster() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['addresses', 'consoleURL', 'meetLink', 'linkHidden']);
+    }
+    
+    match /webmasters/{user} {
+    	allow read, write: if isAdmin();
+    }
+    match /admin/{user} {
+    	allow read, write: if isAdmin();
+    }
+    match /users/{userID} {
+      allow read, write: if isAdmin();
+    	allow read: if request.auth.uid == userID;
+      allow update: if
+        isLoggedIn() &&
+        request.auth.uid == userID &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'email', 'photoURL']);
+      allow delete: if isLoggedIn() && request.auth.uid == userID;
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "hotplate-demo"
+  },
+  "targets": {
+    "hotplate-demo": {
+      "hosting": {
+        "client": [
+          "hotplate-demo"
+        ],
+        "console": [
+          "hotplate-demo-console"
+        ]
+      }
+    }
+  }
+}
