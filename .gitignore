@@ -7,19 +7,13 @@ yarn-error.log*
 firebase-debug.log*
 firestore-coverage.html*
 
-# Static Assets
-/Sample Images
-/Tutorials
 # Firebase cache
 .firebase/
 
-# Firebase config
-KEY.json
-appcheck-tokens.txt
 # Uncomment this if you'd like others to create their own Firebase project.
 # For a team working on the same Firebase project(s), it is recommended to leave
 # it commented so all members can deploy to the same project(s) in .firebaserc.
-# .firebaserc
+.firebaserc
 
 # Runtime data
 pids
@@ -71,6 +65,3 @@ node_modules/
 
 # editor files
 .vscode/
-
-# old files
-/Old Files
