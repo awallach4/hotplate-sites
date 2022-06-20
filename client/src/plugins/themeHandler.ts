@@ -8,7 +8,7 @@ import { useVuetify } from "./contextInject";
  */
 export const initializeLocalTheme = () => {
   const vuetify = useVuetify();
-  const darkMode = localStorage.getItem("darkmode");
+  const darkMode = localStorage.getItem("darkMode");
   if (darkMode) {
     vuetify.theme.dark = darkMode === "true";
   } else {
