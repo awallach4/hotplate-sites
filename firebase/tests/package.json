@@ -1,13 +1,12 @@
 {
   "name": "firebase-tests",
   "private": true,
-  "version": "2.1.0",
-  "dependencies": {},
+  "version": "1.0.0",
   "devDependencies": {
-    "@firebase/rules-unit-testing": "^1.2.5",
-    "firebase-admin": "^9.5.0",
-    "mocha": "^8.3.2",
-    "prettier": "^2.2.1"
+    "@firebase/rules-unit-testing": "^2.0.2",
+    "firebase": "^9.8.3",
+    "mocha": "^10.0.0",
+    "prettier": "^2.7.1"
   },
   "scripts": {
     "test": "firebase emulators:exec --only firestore \"mocha --exit firestorerules.spec.js\""
