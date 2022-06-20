@@ -201,6 +201,7 @@ import {
 import { displayPageAlert } from "@/plugins/errorHandler";
 import { useVuetify } from "@/plugins/contextInject";
 import type { AuthError } from "firebase/auth";
+import router from "@/router";
 
 const drawer = ref(false);
 const mail = ref(false);
@@ -232,7 +233,10 @@ const logout = async () => {
   try {
     const UserModule = useUser();
     await UserModule.logout();
-    pushRouter("/");
+    const route = router.currentRoute;
+    if (route.fullPath !== settings.value.defaultPage) {
+      pushRouter("/");
+    }
   } catch (error) {
     const rawError = error as AuthError;
     displayPageAlert(rawError.message);
