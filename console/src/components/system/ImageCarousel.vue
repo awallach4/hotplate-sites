@@ -41,6 +41,7 @@
                     : ''
                 "
                 alt="Image"
+                contain
                 class="text-center align-center pa-2 ma-2"
                 style="max-width: 100%; max-height: 200px; cursor: pointer"
                 @click="toggle"
@@ -226,7 +227,10 @@ const rmImgs = () => {
         try {
           const selected = retVal.value.storPath[img];
           await deleteFile(selected);
-          retVal.value.storPath.splice(img, 1);
+          retVal.value.storPath.splice(
+            retVal.value.storPath.indexOf(selected),
+            1
+          );
           const indexd = imgDel.value.indexOf(img);
           imgDel.value.splice(indexd, 1);
         } catch (error) {

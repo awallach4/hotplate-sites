@@ -123,7 +123,7 @@ const emit = defineEmits<Emits>();
 
 const retVal = ref(props.value);
 const docFile: Ref<File[]> = ref([]);
-const docDel: Ref<UploadedFile[]> = ref([]);
+const docDel: Ref<number[]> = ref([]);
 const uploadProgress = ref(0);
 
 const canUpload = computed(() => {
@@ -199,12 +199,14 @@ const rmDocs = () => {
         "You are about to delete the selected items.  Do you wish to proceed?"
       )
     ) {
-      docDel.value.forEach(async (doc) => {
+      docDel.value.forEach(async (doc: number) => {
         try {
-          const index = retVal.value.storPath.indexOf(doc);
-          const selected = retVal.value.storPath[index];
+          const selected = retVal.value.storPath[doc];
           await deleteFile(selected.url);
-          retVal.value.storPath.splice(index, 1);
+          retVal.value.storPath.splice(
+            retVal.value.storPath.indexOf(selected),
+            1
+          );
           const indexd = docDel.value.indexOf(doc);
           docDel.value.splice(indexd, 1);
         } catch (error) {
