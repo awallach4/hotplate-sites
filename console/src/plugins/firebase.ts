@@ -7,21 +7,12 @@ import {
 } from "firebase/firestore/lite";
 import { /*connectStorageEmulator,*/ getStorage } from "firebase/storage";
 import { /*connectFunctionsEmulator,*/ getFunctions } from "firebase/functions";
-
-const config = {
-  apiKey: "AIzaSyBa7AtqAJsPWOphFGuKECvonSxYYZZsm1Q",
-  authDomain: "hotplate-demo.firebaseapp.com",
-  projectId: "hotplate-demo",
-  storageBucket: "hotplate-demo.appspot.com",
-  messagingSenderId: "333701603989",
-  appId: "1:333701603989:web:c2ab3d4efc710260f6f19c",
-  measurementId: "G-3FQCP3VPJN"
-};
+import { config, recaptchaSiteKey } from "./firebaseConfig";
 
 export const app = initializeApp(config);
 
 export const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider("6LeXunggAAAAAGnGBukRrWorbkBZQcuIRPZxVJXc"),
+  provider: new ReCaptchaV3Provider(recaptchaSiteKey),
   isTokenAutoRefreshEnabled: true
 });
 
