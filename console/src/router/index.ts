@@ -29,7 +29,7 @@ const router = new VueRouter({
       name: "SettingsPage",
       component: () => import("@/pages/SiteSettings.vue"),
       meta: {
-        needsAdmin: false
+        needsAdmin: true
       }
     },
     {
@@ -101,7 +101,6 @@ router.beforeEach(async (to, from, next) => {
   }
 
   const goingToLogin = to.path === "/login";
-  const goingToSettings = to.path === "/settings";
   const goingToUnauthorized = to.path === "/unauthorized";
 
   const user = await UserModule.getInitialUser();
@@ -145,14 +144,6 @@ router.beforeEach(async (to, from, next) => {
 
   if (to.meta && to.meta.needsAdmin) {
     if (isAdmin && isLoggedIn && isAuthorized) {
-      next();
-    } else if (!isLoggedIn) {
-      next("/login");
-    } else {
-      next("/unauthorized");
-    }
-  } else if (goingToSettings) {
-    if (isWebmaster && isLoggedIn && isAuthorized) {
       next();
     } else if (!isLoggedIn) {
       next("/login");

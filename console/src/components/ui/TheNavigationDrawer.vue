@@ -36,7 +36,7 @@
           <v-list-item v-if="isAdmin" to="/users">
             <v-list-item-title>User Management</v-list-item-title>
           </v-list-item>
-          <v-list-item to="/settings">
+          <v-list-item v-if="isAdmin" to="/settings">
             <v-list-item-title>Site Settings</v-list-item-title>
           </v-list-item>
           <v-list-item to="/theme">

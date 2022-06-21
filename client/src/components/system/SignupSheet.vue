@@ -13,7 +13,7 @@
         :items="items"
         no-data-text="Nobody is signed up"
         item-key="key"
-        @click:row="remove(user.uid, $event)"
+        @click:row="remove($event)"
       />
       <v-card-text>
         <v-dialog v-if="settings.mailURL && canMail" v-model="mail" persistent>
@@ -324,11 +324,11 @@ const add = async () => {
   }
 };
 
-const remove = async (user: string, row: SignupItem) => {
+const remove = async (row: SignupItem) => {
   if (!isAuthorized.value) {
     return;
   }
-  if (row.uid !== user) {
+  if (row.uid !== user.value.uid) {
     return;
   }
   if (!props.data.enabled) {

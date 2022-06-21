@@ -173,8 +173,11 @@ service cloud.firestore {
         request.resource.data.footerTxt is string &&
         request.resource.data.mailURL is string;
       allow update: if
-        isWebmaster() &&
+        isAdmin() &&
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['calEdit', 'calURL', 'calView', 'defaultPage', 'email', 'footerTxt', 'mailURL']);
+      allow update: if
+        isWebmaster() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['defaultPage', 'footerTxt']);
     }
     
     match /configuration/priv-settings {
@@ -189,7 +192,7 @@ service cloud.firestore {
         request.resource.data.meetLink is string &&
         request.resource.data.linkHidden is bool;
       allow update: if
-        isWebmaster() &&
+        isAdmin() &&
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['addresses', 'consoleURL', 'meetLink', 'linkHidden']);
     }
     

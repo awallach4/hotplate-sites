@@ -1927,7 +1927,57 @@ describe("Firestore Security Rules", () => {
     );
   });
 
-  it("allow webmasters to edit a settings document", async () => {
+  it("allow admins to edit a settings document", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "configuration/settings"), {});
+    });
+    await assertSucceeds(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("admin", {
+              admin: true,
+              webmaster: true,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "configuration/settings"
+        ),
+        {
+          calEdit: ""
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("prevent webmasters from editing a settings document", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "configuration/settings"), {});
+    });
+    await assertFails(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("webmaster", {
+              admin: false,
+              webmaster: true,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "configuration/settings"
+        ),
+        {
+          calEdit: ""
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("allow webmasters to edit a settings document if only the defaultPage and footerTxt fields are changed", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {});
     });
@@ -1945,7 +1995,8 @@ describe("Firestore Security Rules", () => {
           "configuration/settings"
         ),
         {
-          calEdit: ""
+          footerTxt: "",
+          defaultPage: ""
         },
         { merge: true }
       )
@@ -2059,11 +2110,36 @@ describe("Firestore Security Rules", () => {
     );
   });
 
-  it("allow webmasters to edit a private settings document", async () => {
+  it("allow admins to edit a private settings document", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/priv-settings"), {});
     });
     await assertSucceeds(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("admin", {
+              admin: true,
+              webmaster: true,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "configuration/priv-settings"
+        ),
+        {
+          meetLink: ""
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("prevent webmasters from editing a private settings document", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "configuration/priv-settings"), {});
+    });
+    await assertFails(
       setDoc(
         doc(
           testEnv
