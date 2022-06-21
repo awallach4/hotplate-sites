@@ -96,7 +96,7 @@
           <v-btn
             block
             color="secondary"
-            class="sectext--text"
+            class="sectext--text mt-6"
             type="submit"
             :disabled="submitting"
           >
