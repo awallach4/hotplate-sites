@@ -239,6 +239,8 @@
               v-model="linkURL"
               label="URL"
               filled
+              persistent-hint
+              hint="Leave blank to remove a link."
               color="secondary"
               append-icon="mdi-close"
               @click:append="linkURL = ''"
@@ -279,8 +281,6 @@
                 v-model="imgUrl"
                 label="Image URL"
                 filled
-                persistent-hint
-                hint="Leave blank to remove a link."
                 :rules="[fieldRequired]"
                 color="secondary"
               />
