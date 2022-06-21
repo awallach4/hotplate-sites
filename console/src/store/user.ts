@@ -45,6 +45,12 @@ export const useUser = defineStore("user", () => {
     authState.value = AuthStates.LOGGED_IN;
   };
 
+  const sendPasswordReset = async (email: string) => {
+    const { auth } = await import("@/plugins/firebase");
+    const { sendPasswordResetEmail } = await import("firebase/auth");
+    await sendPasswordResetEmail(auth, email);
+  };
+
   const logout = async () => {
     const { auth } = await import("@/plugins/firebase");
     const { signOut } = await import("firebase/auth");
@@ -111,6 +117,7 @@ export const useUser = defineStore("user", () => {
     authLevel,
     user,
     loginWithEmail,
+    sendPasswordReset,
     logout,
     getInitialUser,
     createAuthListener
