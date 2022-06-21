@@ -279,6 +279,8 @@
                 v-model="imgUrl"
                 label="Image URL"
                 filled
+                persistent-hint
+                hint="Leave blank to remove a link."
                 :rules="[fieldRequired]"
                 color="secondary"
               />
@@ -939,7 +941,11 @@ onBeforeUnmount(() => {
   editor.value.destroy();
 });
 const insertLink = () => {
-  editor.value.chain().focus().setLink({ href: linkURL.value }).run();
+  if (linkURL.value) {
+    editor.value.chain().focus().setLink({ href: linkURL.value }).run();
+  } else {
+    editor.value.chain().focus().unsetLink().run();
+  }
   addLink.value = false;
 };
 const insertTable = () => {
@@ -1059,10 +1065,6 @@ export default {
     max-width: 100%;
   }
 
-  .theme--light th {
-    background-color: var(--v-card-darken1);
-  }
-
   .v-btn {
     margin: 2px 6px;
   }
@@ -1086,5 +1088,13 @@ export default {
 
 .theme--dark .ProseMirror p.is-editor-empty:first-child::before {
   color: rgb(255, 255, 255, 0.7);
+}
+
+.editor.theme--light th {
+  background-color: var(--v-card-darken1);
+}
+
+.editor.theme--dark th {
+  background-color: var(--v-card-lighten1);
 }
 </style>

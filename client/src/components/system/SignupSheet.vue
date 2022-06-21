@@ -24,7 +24,7 @@
               :disabled="items.length < 1"
               v-on="on"
             >
-              <v-icon class="mr-1">mdi-email</v-icon>Email Attendees
+              <v-icon left>mdi-email</v-icon>Email Attendees
             </v-btn>
           </template>
           <v-card>

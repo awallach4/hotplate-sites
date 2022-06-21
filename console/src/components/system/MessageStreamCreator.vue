@@ -55,7 +55,7 @@
             :disabled="submitting"
             v-on="on"
           >
-            <v-icon>mdi-paperclip</v-icon> Add
+            <v-icon left>mdi-paperclip</v-icon> Add
           </v-btn>
         </template>
         <v-card color="card">

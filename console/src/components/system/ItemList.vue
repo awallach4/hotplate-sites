@@ -53,7 +53,7 @@
         </v-text-field>
       </draggable>
       <v-btn color="secondary" class="sectext--text" @click="addItem"
-        ><v-icon>mdi-plus</v-icon> Add Item</v-btn
+        ><v-icon left>mdi-plus</v-icon> Add Item</v-btn
       >
     </v-card-text>
   </v-drag-frame>

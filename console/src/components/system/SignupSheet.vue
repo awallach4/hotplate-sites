@@ -43,7 +43,7 @@
             class="sectext--text"
             v-bind="attrs"
             v-on="on"
-            ><v-icon class="mr-1">mdi-email</v-icon> Email Details</v-btn
+            ><v-icon left>mdi-email</v-icon> Email Details</v-btn
           >
         </template>
         <v-card>
@@ -128,7 +128,7 @@
         @click:append="removeTime(index)"
       />
       <v-btn color="secondary" class="sectext--text" @click="addTime"
-        ><v-icon>mdi-plus</v-icon> Add Shift</v-btn
+        ><v-icon left>mdi-plus</v-icon> Add Shift</v-btn
       >
       <v-spacer />
       <h3>Event Roles</h3>
@@ -145,7 +145,7 @@
         @click:append="removeRole(index)"
       />
       <v-btn color="secondary" class="sectext--text" @click="addRole"
-        ><v-icon>mdi-plus</v-icon> Add Role</v-btn
+        ><v-icon left>mdi-plus</v-icon> Add Role</v-btn
       >
       <v-spacer />
       <h3>Attendees</h3>
@@ -168,7 +168,7 @@
             :disabled="items.length < 1"
             v-on="on"
           >
-            <v-icon class="mr-1">mdi-email</v-icon>Email Attendees
+            <v-icon left>mdi-email</v-icon>Email Attendees
           </v-btn>
         </template>
         <v-card>
@@ -231,7 +231,6 @@ import {
 } from "@vue/composition-api";
 import type { FieldValue, FirestoreError } from "firebase/firestore/lite";
 import { fieldRequired, minLength } from "@/plugins/formRules";
-import { useSettings } from "@/store/settings";
 import { user } from "@/plugins/authHandler";
 import { displayPageAlert } from "@/plugins/errorHandler";
 import { settings, privateSettings } from "@/plugins/routerStoreHelpers";
