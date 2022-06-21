@@ -27,7 +27,7 @@
           "headers": [
             {
               "key": "Content-Security-Policy",
-              "value": "script-src 'self' 'sha256-rwMOiOeVICH7/Cjy5SkreID3OOi5HTrit357k22hUDQ=' https://www.googletagmanager.com https://storage.googleapis.com https://www.google.com https://www.gstatic.com; font-src https://fonts.gstatic.com https://fonts.googleapis.com https://cdn.jsdelivr.net data: 'self'; style-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdn.jsdelivr.net 'unsafe-inline'"
+              "value": "script-src 'self' 'sha256-rwMOiOeVICH7/Cjy5SkreID3OOi5HTrit357k22hUDQ=' https://www.googletagmanager.com https://storage.googleapis.com https://www.google.com https://www.gstatic.com; font-src https://fonts.gstatic.com https://fonts.googleapis.com https://cdn.jsdelivr.net data: 'self'; frame-src https://www.google.com; style-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdn.jsdelivr.net 'unsafe-inline'"
             },
             {
               "key": "X-Frame-Options",
@@ -88,7 +88,7 @@
           "headers": [
             {
               "key": "Content-Security-Policy",
-              "value": "script-src 'self' 'sha256-rwMOiOeVICH7/Cjy5SkreID3OOi5HTrit357k22hUDQ=' https://www.googletagmanager.com https://storage.googleapis.com https://www.google.com https://www.gstatic.com; font-src https://fonts.gstatic.com https://fonts.googleapis.com https://cdn.jsdelivr.net data: 'self'; style-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdn.jsdelivr.net 'unsafe-inline'"
+              "value": "script-src 'self' 'sha256-rwMOiOeVICH7/Cjy5SkreID3OOi5HTrit357k22hUDQ=' https://www.googletagmanager.com https://storage.googleapis.com https://www.google.com https://www.gstatic.com; font-src https://fonts.gstatic.com https://fonts.googleapis.com https://cdn.jsdelivr.net data: 'self'; frame-src https://www.google.com https://hotplate-docs.netlify.app; style-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdn.jsdelivr.net 'unsafe-inline'"
             },
             {
               "key": "X-Frame-Options",

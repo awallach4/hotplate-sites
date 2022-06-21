@@ -110,7 +110,7 @@
               color="error"
               class="errtext--text ml-auto"
               :disabled="submitting"
-              @click="editingProfile = false"
+              @click="cancelProfileUpdate"
             >
               Cancel
             </v-btn>
@@ -245,7 +245,7 @@
 import { AuthLevels, type UserData, type VFormOptions } from "@/types";
 import { useUser } from "@/store/user";
 import { usePages } from "@/store/pages";
-import { computed, onMounted, ref, type Ref } from "@vue/composition-api";
+import { computed, ref, type Ref } from "@vue/composition-api";
 import { authLevel, user, isAuthorized } from "@/plugins/authHandler";
 import {
   fieldRequired,
@@ -278,6 +278,18 @@ const editProfileForm = ref({} as VFormOptions);
 const emailChange = computed(() => {
   return user.value.email !== email.value;
 });
+
+const getUser = () => {
+  if (user.value.displayName) {
+    displayName.value = user.value.displayName;
+  }
+  if (user.value.email) {
+    email.value = user.value.email;
+  }
+  if (user.value.photoURL) {
+    photoURL.value = user.value.photoURL;
+  }
+};
 
 const changePassword = async () => {
   const isValid = changePasswordForm.value.validate();
@@ -376,6 +388,11 @@ const deleteProfilePhoto = async () => {
   }
 };
 
+const cancelProfileUpdate = () => {
+  getUser();
+  editingProfile.value = false;
+};
+
 const updateProfile = async () => {
   const isValid = editProfileForm.value.validate();
   if (!isValid) {
@@ -452,18 +469,8 @@ const verifyUserEmail = async () => {
   }
 };
 
-onMounted(async () => {
-  if (user.value.displayName) {
-    displayName.value = user.value.displayName;
-  }
-  if (user.value.email) {
-    email.value = user.value.email;
-  }
-  if (user.value.photoURL) {
-    photoURL.value = user.value.photoURL;
-  }
-  PagesModule.viewPage("/profile", "My Account", false);
-});
+getUser();
+PagesModule.viewPage("/profile", "My Account", false);
 </script>
 
 <style lang="scss" scoped>

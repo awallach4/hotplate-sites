@@ -72,7 +72,6 @@ declare module 'vue' {
     VMain: typeof import('vuetify/lib')['VMain']
     VMenu: typeof import('vuetify/lib')['VMenu']
     VNavigationDrawer: typeof import('vuetify/lib')['VNavigationDrawer']
-    VOverlay: typeof import('vuetify/lib')['VOverlay']
     VPageAlert: typeof import('./components/ui/VPageAlert.vue')['default']
     VProfilePhoto: typeof import('./components/ui/VProfilePhoto.vue')['default']
     VProgressLinear: typeof import('vuetify/lib')['VProgressLinear']

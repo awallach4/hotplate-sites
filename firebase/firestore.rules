@@ -91,11 +91,6 @@ service cloud.firestore {
         request.resource.data.dark is map;
       allow delete: if isAdmin();
     }
-
-    match /configuration/documentation {
-    	allow read: if isWebmaster();
-      allow write: if false;
-    }
     
     match /configuration/apps-script-cal-edit {
     	allow read: if 
