@@ -7,6 +7,7 @@ import {
 } from "firebase/firestore/lite";
 import { /*connectStorageEmulator,*/ getStorage } from "firebase/storage";
 import { /*connectFunctionsEmulator,*/ getFunctions } from "firebase/functions";
+import { getPerformance } from "firebase/performance";
 import { config, recaptchaSiteKey } from "./firebaseConfig";
 
 export const app = initializeApp(config);
@@ -20,6 +21,8 @@ export const auth = getAuth(app);
 export const firestore = getFirestore(app);
 export const storage = getStorage(app);
 export const functions = getFunctions(app);
+
+export const performance = getPerformance(app);
 
 // Uncomment to use local emulators.
 // connectAuthEmulator(auth, "http://localhost:9099");
