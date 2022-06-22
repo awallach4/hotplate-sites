@@ -12,6 +12,7 @@ export const initializeLocalTheme = () => {
   if (darkMode) {
     vuetify.theme.dark = darkMode === "true";
   } else {
+    vuetify.theme.dark = matchMedia("(prefers-color-scheme: dark)").matches;
     matchMedia("(prefers-color-scheme: dark)").addEventListener(
       "change",
       (e) => {
