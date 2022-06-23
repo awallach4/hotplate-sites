@@ -127,15 +127,22 @@
 <script lang="ts" setup>
 import draggable from "vuedraggable";
 import type { CompData, ComponentMetaData, VSelectValues } from "@/types";
-import {
-  defineAsyncComponent,
-  onUpdated,
-  ref,
-  watch,
-  type Ref
-} from "@vue/composition-api";
+import { onUpdated, ref, watch, type Ref } from "@vue/composition-api";
 import { displayPageAlert } from "@/plugins/errorHandler";
 import type { FirestoreError } from "firebase/firestore/lite";
+import {
+  AlertMessage,
+  CalendarWidget,
+  ContactForm,
+  DocumentList,
+  ImageCarousel,
+  ItemList,
+  NonexistentComponent,
+  PlainText,
+  RequestForm,
+  RichText,
+  VideoEmbed
+} from "@/components/asyncComponents";
 
 interface ColumnLayoutData {
   layout: string;
@@ -174,40 +181,6 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<Emits>();
-
-const AlertMessage = defineAsyncComponent(
-  () => import("@/components/system/AlertMessage.vue")
-);
-const CalendarWidget = defineAsyncComponent(
-  () => import("@/components/system/CalendarWidget.vue")
-);
-const ContactForm = defineAsyncComponent(
-  () => import("@/components/system/ContactForm.vue")
-);
-const DocumentList = defineAsyncComponent(
-  () => import("@/components/system/DocumentList.vue")
-);
-const ImageCarousel = defineAsyncComponent(
-  () => import("@/components/system/ImageCarousel.vue")
-);
-const ItemList = defineAsyncComponent(
-  () => import("@/components/system/ItemList.vue")
-);
-const NonexistentComponent = defineAsyncComponent(
-  () => import("@/components/system/NonexistentComponent.vue")
-);
-const PlainText = defineAsyncComponent(
-  () => import("@/components/system/PlainText.vue")
-);
-const RequestForm = defineAsyncComponent(
-  () => import("@/components/system/RequestForm.vue")
-);
-const RichText = defineAsyncComponent(
-  () => import("@/components/system/RichText.vue")
-);
-const VideoEmbed = defineAsyncComponent(
-  () => import("@/components/system/VideoEmbed.vue")
-);
 
 const layouts: VSelectValues[] = [
   {

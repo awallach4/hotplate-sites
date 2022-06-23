@@ -52,7 +52,6 @@ export enum PermissionGroups {
 
 export interface PagesSpecialPageConfig {
   dbPath: string;
-  edit: PermissionGroups;
   id: string;
   index: number;
   name: string;

@@ -73,7 +73,6 @@ export interface UserManagementUser {
   isSelectable: boolean;
   permissions: string;
   photoURL: string;
-  type: string;
 }
 
 export interface EventData {
