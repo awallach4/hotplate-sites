@@ -507,19 +507,13 @@ const calendarOptions = ref({
     addGC: {
       text: "Add to Google Calendar",
       click(): void {
-        window.open(
-          "https://www.google.com/calendar/render?cid=0dmoj80v1flkkceb4k8jt9a8l0@group.calendar.google.com",
-          "_blank"
-        );
+        window.open("YOUR_CALENDAR_URL", "_blank");
       }
     },
     downloadFile: {
       text: "Download .ics",
       click(): void {
-        window.open(
-          "https://calendar.google.com/calendar/ical/0dmoj80v1flkkceb4k8jt9a8l0%40group.calendar.google.com/public/basic.ics",
-          "_blank"
-        );
+        window.open("YOUR_CALENDAR_ICAL_FILE_URL", "_blank");
       }
     },
     refresh: {
