@@ -1,12 +1,27 @@
 <template>
   <v-card class="signup-sheet" outlined>
-    <v-card-title class="cardtext--text">
+    <v-card-title class="cardtext--text flex-nowrap">
       {{ retVal.header || "Signup Sheet" }}
       <v-tooltip bottom>
         <template #activator="{ on }">
           <v-btn
-            v-if="canDelete"
+            :aria-label="`${retVal.hidden ? 'Show' : 'Hide'} Signup Sheet`"
+            icon
             class="ml-auto"
+            v-on="on"
+            @click="retVal.hidden = !retVal.hidden"
+          >
+            <v-icon v-if="retVal.hidden">mdi-eye-off</v-icon>
+            <v-icon v-else>mdi-eye</v-icon>
+          </v-btn>
+        </template>
+        {{ retVal.hidden ? "Show" : "Hide" }} Signup Sheet
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template #activator="{ on }">
+          <v-btn
+            v-if="canDelete"
+            aria-label="Delete Signup Sheet"
             icon
             v-on="on"
             @click="deleteSelf(true)"
@@ -43,8 +58,9 @@
             class="sectext--text"
             v-bind="attrs"
             v-on="on"
-            ><v-icon left>mdi-email</v-icon> Email Details</v-btn
           >
+            <v-icon left>mdi-email</v-icon> Email Details
+          </v-btn>
         </template>
         <v-card>
           <v-card-title>Email Details</v-card-title>
@@ -89,16 +105,16 @@
               class="errtext--text ml-auto"
               :disabled="submitting"
               @click="cancelDetails"
-              >Cancel</v-btn
-            >
+              >Cancel
+            </v-btn>
             <v-btn
               type="submit"
               form="detailsEmail"
               color="secondary"
               class="sectext--text"
               :disabled="submitting"
-              >Send</v-btn
-            >
+              >Send
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -127,9 +143,9 @@
         :disabled="dragging"
         @click:append="removeTime(index)"
       />
-      <v-btn color="secondary" class="sectext--text" @click="addTime"
-        ><v-icon left>mdi-plus</v-icon> Add Shift</v-btn
-      >
+      <v-btn color="secondary" class="sectext--text" @click="addTime">
+        <v-icon left>mdi-plus</v-icon> Add Shift
+      </v-btn>
       <v-spacer />
       <h3>Event Roles</h3>
       <v-spacer />
@@ -144,9 +160,9 @@
         :disabled="dragging"
         @click:append="removeRole(index)"
       />
-      <v-btn color="secondary" class="sectext--text" @click="addRole"
-        ><v-icon left>mdi-plus</v-icon> Add Role</v-btn
-      >
+      <v-btn color="secondary" class="sectext--text" @click="addRole">
+        <v-icon left>mdi-plus</v-icon> Add Role
+      </v-btn>
       <v-spacer />
       <h3>Attendees</h3>
       <p>
@@ -263,16 +279,7 @@ const props = withDefaults(defineProps<Props>(), {
   dbPath: "",
   canDelete: true,
   value: () => {
-    return {
-      header: "",
-      text: "",
-      times: [],
-      multiple: true,
-      enabled: true,
-      id: "",
-      roles: [],
-      useCard: true
-    };
+    return {} as SignupData;
   }
 });
 

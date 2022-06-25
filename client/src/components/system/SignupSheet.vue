@@ -181,7 +181,8 @@ const props = withDefaults(defineProps<Props>(), {
       enabled: false,
       roles: [],
       id: "",
-      useCard: true
+      useCard: true,
+      hidden: false
     };
   },
   dbPath: ""
@@ -281,7 +282,7 @@ const add = async () => {
   }
   if (!isSignedUp.value || props.data.multiple) {
     const { generateString } = await import("@/plugins/stringGenerator");
-    const { Timestamp } = await import("firebase/firestore/lite");
+    const { serverTimestamp } = await import("firebase/firestore/lite");
     const member = {
       role: role.value,
       name: name.value,
@@ -290,7 +291,7 @@ const add = async () => {
       shift: shift.value,
       email: "",
       key: generateString(20),
-      time: Timestamp.now()
+      time: serverTimestamp()
     };
     if (user.value.email) {
       member.email = user.value.email;

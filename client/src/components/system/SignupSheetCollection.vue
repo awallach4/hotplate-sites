@@ -6,11 +6,15 @@
           <v-card-title class="cardtext--text">Signup Sheets</v-card-title>
           <v-card-text class="cardtext--text">
             <v-list color="card">
-              <v-list-item-group v-model="sheet" mandatory color="secondary">
-                <v-list-item v-for="(list, index) in sheets" :key="index">
+              <v-list-item-group
+                v-model="currentSheet"
+                mandatory
+                color="secondary"
+              >
+                <v-list-item v-for="(list, index) in signupSheets" :key="index">
                   {{ list.header.length > 0 ? list.header : "Untitled" }}
                 </v-list-item>
-                <v-list-item v-if="sheets.length < 1"
+                <v-list-item v-if="signupSheets.length < 1"
                   >No signup sheets are available.</v-list-item
                 >
               </v-list-item-group>
@@ -18,13 +22,13 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col v-if="sheets.length > 0" cols="12" md="8">
-        <template v-for="(list, index) in sheets">
+      <v-col v-if="signupSheets.length > 0" cols="12" md="8">
+        <template v-for="(list, index) in signupSheets">
           <signup-sheet
-            v-if="index === sheet"
+            v-if="index === currentSheet"
             :key="list.id"
-            :data="sheets[index]"
-            :db-path="`pages/${$route.params.SpecialPage}/components/${metaData.id}/${list.id}-signups`"
+            :data="signupSheets[index]"
+            :db-path="`pages/${$route.params.SpecialPage}/components/${metaData.id}/signup-sheets/${list.id}/signups`"
           />
         </template>
       </v-col>
@@ -34,15 +38,16 @@
 
 <script lang="ts" setup>
 import type { ComponentMetaData, SignupData } from "@/types";
-import { ref } from "@vue/composition-api";
+import { ref, type Ref } from "@vue/composition-api";
 import { SignupSheet } from "@/components/asyncComponents";
+import type { FirestoreError } from "firebase/firestore/lite";
+import { displayPageAlert } from "@/plugins/errorHandler";
+import { useRoute } from "@/plugins/contextInject";
 
 interface Props {
-  sheets: SignupData[];
   metaData: ComponentMetaData;
 }
-withDefaults(defineProps<Props>(), {
-  sheets: () => [] as SignupData[],
+const props = withDefaults(defineProps<Props>(), {
   metaData: () => {
     return {
       id: "",
@@ -51,7 +56,43 @@ withDefaults(defineProps<Props>(), {
   }
 });
 
-const sheet = ref(0);
+const currentSheet = ref(0);
+const signupSheets: Ref<SignupData[]> = ref([]);
+
+const route = useRoute();
+
+const getSheets = async () => {
+  try {
+    const { firestore } = await import("@/plugins/firebase");
+    const { collection, getDocs, orderBy, query, where } = await import(
+      "firebase/firestore/lite"
+    );
+    const sheets = await getDocs(
+      query(
+        collection(
+          firestore,
+          `pages/${route.params.SpecialPage}/components/${props.metaData.id}/signup-sheets`
+        ),
+        orderBy("created", "desc"),
+        where("hidden", "==", false)
+      )
+    );
+
+    signupSheets.value = [];
+
+    sheets.forEach((sheet) => {
+      const data = sheet.data() as SignupData;
+      signupSheets.value.push(data);
+    });
+  } catch (error) {
+    const rawError = error as FirestoreError;
+    displayPageAlert(
+      `An error occurred while getting the signup sheets: ${rawError.message}`
+    );
+  }
+};
+
+getSheets();
 </script>
 
 <style lang="scss" scoped>

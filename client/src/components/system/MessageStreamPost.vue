@@ -360,7 +360,7 @@ const addComment = async () => {
   const newComment: MessageStreamMessageComment = {
     name: "Anonymous User",
     uid: user.value.uid,
-    img: user.value.photoURL,
+    img: user.value.photoURL || "",
     id: generateString(20),
     content: comment.value,
     date: new Date().toLocaleDateString()

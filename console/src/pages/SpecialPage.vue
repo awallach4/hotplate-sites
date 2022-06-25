@@ -281,7 +281,10 @@ const save = async (
       merge: true
     });
     pageData.value.components.forEach(async (component, index) => {
-      if (component.vueComp === "ColumnLayout") {
+      if (
+        component.vueComp === "ColumnLayout" ||
+        component.vueComp === "SignupSheetCollection"
+      ) {
         componentElement.value.forEach((element) => {
           if (element.save) {
             element.save();

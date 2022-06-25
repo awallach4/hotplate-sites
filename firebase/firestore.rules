@@ -48,24 +48,78 @@ service cloud.firestore {
         resource.data.data.hidden == false;
     }
     
-    match /pages/{page}/components/{component}/{componentData}/{data} {
-    	allow read, write: if isWebmaster();
+    match /pages/{page}/components/{component}/col1/{data} {
+      allow read, delete: if isWebmaster();
+      allow create, update: if
+        isWebmaster() &&
+        request.resource.data.keys().hasAll(['data', 'props', 'vueComp', 'index']) &&
+        request.resource.data.keys().hasOnly(['data', 'props', 'vueComp', 'index']) &&
+        request.resource.data.vueComp is string &&
+        request.resource.data.index is int;
       allow read: if
         get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'public' &&
         get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false &&
-        (!("data" in resource.data) ||
-        resource.data.data.hidden == false);
+        resource.data.data.hidden == false;
       allow read: if 
         isLoggedIn() &&
         get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' &&
         get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false &&
-        (!("data" in resource.data) ||
-        resource.data.data.hidden == false);
+        resource.data.data.hidden == false;
+    }
+
+    match /pages/{page}/components/{component}/col2/{data} {
+      allow read, delete: if isWebmaster();
+      allow create, update: if
+        isWebmaster() &&
+        request.resource.data.keys().hasAll(['data', 'props', 'vueComp', 'index']) &&
+        request.resource.data.keys().hasOnly(['data', 'props', 'vueComp', 'index']) &&
+        request.resource.data.vueComp is string &&
+        request.resource.data.index is int;
+      allow read: if
+        get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'public' &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false &&
+        resource.data.data.hidden == false;
+      allow read: if 
+        isLoggedIn() &&
+        get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false &&
+        resource.data.data.hidden == false;
+    }
+
+    match /pages/{page}/components/{component}/col3/{data} {
+      allow read, delete: if isWebmaster();
+      allow create, update: if
+        isWebmaster() &&
+        request.resource.data.keys().hasAll(['data', 'props', 'vueComp', 'index']) &&
+        request.resource.data.keys().hasOnly(['data', 'props', 'vueComp', 'index']) &&
+        request.resource.data.vueComp is string &&
+        request.resource.data.index is int;
+      allow read: if
+        get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'public' &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false &&
+        resource.data.data.hidden == false;
+      allow read: if 
+        isLoggedIn() &&
+        get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false &&
+        resource.data.data.hidden == false;
+    }
+
+    match /pages/{page}/components/{component}/messages/{message} {
+      allow read, write: if isWebmaster();
+      allow read: if
+        get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'public' &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false;
+      allow read: if 
+        isLoggedIn() &&
+        get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false;
       allow update: if
         isLoggedIn() && (
           get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' ||
           get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'public'
-        ) && (
+        ) && 
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false && (
           request.resource.data.diff(resource.data).affectedKeys().hasAll(['comments']) &&
           request.resource.data.diff(resource.data).affectedKeys().hasOnly(['comments']) &&
           request.resource.data.comments is list &&
@@ -75,10 +129,83 @@ service cloud.firestore {
         isLoggedIn() && (
           get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' ||
           get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'public'
-        ) && (
+        ) &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false && (
           request.resource.data.uid == request.auth.uid ||
           resource.data.uid == request.auth.uid
-        );
+        ) &&
+        request.resource.data.keys().hasAll(['comments', 'content', 'createdAt', 'date', 'files', 'id', 'img', 'name', 'uid']) &&
+        request.resource.data.keys().hasOnly(['comments', 'content', 'createdAt', 'date', 'files', 'id', 'img', 'name', 'uid']) &&
+        request.resource.data.comments is list &&
+        request.resource.data.content is string &&
+        request.resource.data.createdAt is timestamp &&
+        request.resource.data.date is string &&
+        request.resource.data.files is list &&
+        request.resource.data.id is string &&
+        request.resource.data.img is string &&
+        request.resource.data.name is string &&
+        request.resource.data.uid is string;
+    }
+
+    match /pages/{page}/components/{component}/signup-sheets/{sheet} {
+      allow read, delete: if isWebmaster();
+      allow create, update: if
+        isWebmaster() &&
+        request.resource.data.keys().hasAll(['created', 'enabled', 'header', 'hidden', 'id', 'multiple', 'roles', 'text', 'times', 'useCard']) &&
+        request.resource.data.keys().hasOnly(['created', 'enabled', 'header', 'hidden', 'id', 'multiple', 'roles', 'text', 'times', 'useCard']) &&
+        request.resource.data.created is timestamp &&
+        request.resource.data.enabled is bool &&
+        request.resource.data.header is string &&
+        request.resource.data.hidden is bool &&
+        request.resource.data.id is string &&
+        request.resource.data.multiple is bool &&
+        request.resource.data.roles is list &&
+        request.resource.data.text is string &&
+        request.resource.data.times is list &&
+        request.resource.data.useCard is bool;
+      allow read: if
+        get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'public' &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false &&
+        resource.data.hidden == false;
+      allow read: if 
+        isLoggedIn() &&
+        get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false &&
+        resource.data.hidden == false;
+    }
+
+    match /pages/{page}/components/{component}/signup-sheets/{sheet}/signups/{signup} {
+      allow read, write: if isWebmaster();
+      allow read: if
+        get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'public' &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)/signup-sheets/$(sheet)).data.hidden == false;
+      allow read: if 
+        isLoggedIn() &&
+        get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)/signup-sheets/$(sheet)).data.hidden == false;
+      allow write: if
+        isLoggedIn() && (
+          get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' ||
+          get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'public'
+        ) &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)/signup-sheets/$(sheet)).data.hidden == false &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)/signup-sheets/$(sheet)).data.enabled == true && (
+          request.resource.data.uid == request.auth.uid ||
+          resource.data.uid == request.auth.uid
+        ) &&
+        request.resource.data.keys().hasAll(['comments', 'email', 'key', 'name', 'role', 'shift', 'time', 'uid']) &&
+        request.resource.data.keys().hasOnly(['comments', 'email', 'key', 'name', 'role', 'shift', 'time', 'uid']) &&
+        request.resource.data.comments is string &&
+        request.resource.data.email is string &&
+        request.resource.data.key is string &&
+        request.resource.data.name is string &&
+        request.resource.data.role is string &&
+        request.resource.data.shift is string &&
+        request.resource.data.time is timestamp &&
+        request.resource.data.uid is string;
     }
     
     match /configuration/theme {

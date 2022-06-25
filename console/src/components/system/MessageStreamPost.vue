@@ -161,7 +161,7 @@ const addComment = async () => {
   const newComment: MessageStreamMessageComment = {
     name: "Admin",
     uid: "admin",
-    img: null,
+    img: "",
     id: generateString(20),
     content: comment.value,
     date: new Date().toLocaleDateString()

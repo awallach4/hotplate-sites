@@ -15,14 +15,18 @@
             <v-card-title class="cardtext--text">Signup Sheets</v-card-title>
             <v-card-text class="cardtext--text">
               <v-list color="card">
-                <v-list-item-group v-model="sheet" mandatory color="secondary">
+                <v-list-item-group
+                  v-model="currentSheet"
+                  mandatory
+                  color="secondary"
+                >
                   <v-list-item
-                    v-for="(list, index) in retVal.sheets"
+                    v-for="(list, index) in signupSheets"
                     :key="index"
                   >
                     {{ list.header.length > 0 ? list.header : "Untitled" }}
                   </v-list-item>
-                  <v-list-item v-if="retVal.sheets.length < 1"
+                  <v-list-item v-if="signupSheets.length < 1"
                     >No signup sheets are available.</v-list-item
                   >
                 </v-list-item-group>
@@ -50,13 +54,13 @@
             </v-card-actions>
           </v-card>
         </v-col>
-        <v-col v-if="retVal.sheets.length > 0" cols="12" md="8">
-          <template v-for="(list, index) in retVal.sheets">
+        <v-col v-if="signupSheets.length > 0" cols="12" md="8">
+          <template v-for="(list, index) in signupSheets">
             <signup-sheet
-              v-if="index === sheet"
+              v-if="index === currentSheet"
               :key="list.id"
-              v-model="retVal.sheets[index]"
-              :db-path="`pages${dbPath}/components/${metaData.id}/${list.id}-signups`"
+              v-model="signupSheets[index]"
+              :db-path="`pages${dbPath}/components/${metaData.id}/signup-sheets/${list.id}/signups`"
               :can-delete="true"
               :dragging="dragging"
               @delete="removeSheet(index)"
@@ -70,12 +74,13 @@
 
 <script lang="ts" setup>
 import SignupSheet from "./SignupSheet.vue";
-import { onUpdated, ref } from "@vue/composition-api";
+import { onUpdated, ref, type Ref } from "@vue/composition-api";
 import type { ComponentMetaData, SignupData } from "@/types";
+import type { FirestoreError } from "firebase/firestore/lite";
+import { displayPageAlert } from "@/plugins/errorHandler";
 
 interface SignupSheetCollectionData {
   hidden: boolean;
-  sheets: SignupData[];
 }
 
 interface Props {
@@ -103,7 +108,6 @@ const props = withDefaults(defineProps<Props>(), {
   },
   value: () => {
     return {
-      sheets: [],
       hidden: false
     };
   }
@@ -112,45 +116,120 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>();
 
 const retVal = ref(props.value);
-const sheet = ref(0);
+const currentSheet = ref(0);
+const signupSheets: Ref<SignupData[]> = ref([]);
 
 const updateData = () => {
   emit("input", retVal.value);
 };
 
+const save = async (
+  err = (e: FirestoreError) => {
+    displayPageAlert(`An error occurred while saving: ${e.message}`);
+  }
+) => {
+  try {
+    const { firestore } = await import("@/plugins/firebase");
+    const { doc, setDoc } = await import("firebase/firestore/lite");
+    signupSheets.value.forEach(async (sheet) => {
+      await setDoc(
+        doc(
+          firestore,
+          `pages${props.dbPath}/components/${props.metaData.id}/signup-sheets/${sheet.id}`
+        ),
+        sheet
+      );
+    });
+  } catch (error) {
+    err(error as FirestoreError);
+  }
+};
+
+const getSheets = async () => {
+  try {
+    const { firestore } = await import("@/plugins/firebase");
+    const { collection, getDocs, orderBy, query } = await import(
+      "firebase/firestore/lite"
+    );
+    const sheets = await getDocs(
+      query(
+        collection(
+          firestore,
+          `pages${props.dbPath}/components/${props.metaData.id}/signup-sheets`
+        ),
+        orderBy("created", "desc")
+      )
+    );
+
+    signupSheets.value = [];
+
+    sheets.forEach((sheet) => {
+      const data = sheet.data() as SignupData;
+      signupSheets.value.push(data);
+    });
+  } catch (error) {
+    const rawError = error as FirestoreError;
+    displayPageAlert(
+      `An error occurred while getting the signup sheets: ${rawError.message}`
+    );
+  }
+};
+
 const addSheet = async () => {
   const { generateString } = await import("@/plugins/stringGenerator");
+  const { firestore } = await import("@/plugins/firebase");
+  const { doc, setDoc, serverTimestamp } = await import(
+    "firebase/firestore/lite"
+  );
   const newSheet: SignupData = {
     enabled: true,
     header: "",
-    id: generateString(20),
     multiple: true,
     roles: [],
     text: "",
+    id: generateString(20),
     times: [],
-    useCard: true
+    useCard: true,
+    hidden: false,
+    created: serverTimestamp()
   };
 
-  retVal.value.sheets.push(newSheet);
+  await setDoc(
+    doc(
+      firestore,
+      `pages${props.dbPath}/components/${props.metaData.id}/signup-sheets/${newSheet.id}`
+    ),
+    newSheet
+  );
+
+  await getSheets();
   updateData();
 };
 
 const removeSheet = async (index: number) => {
-  const sheet = retVal.value.sheets[index];
+  const sheet = signupSheets.value[index];
   const { firestore } = await import("@/plugins/firebase");
-  const { collection, deleteDoc, getDocs } = await import(
+  const { collection, deleteDoc, doc, getDocs } = await import(
     "firebase/firestore/lite"
   );
   const docs = await getDocs(
     collection(
       firestore,
-      `pages${props.dbPath}/components/${props.metaData.id}/${sheet.id}-signups`
+      `pages${props.dbPath}/components/${props.metaData.id}/signup-sheets/${sheet.id}/signups`
     )
   );
   docs.forEach(async (doc) => {
     await deleteDoc(doc.ref);
   });
-  retVal.value.sheets.splice(index, 1);
+
+  await deleteDoc(
+    doc(
+      firestore,
+      `pages${props.dbPath}/components/${props.metaData.id}/signup-sheets/${sheet.id}`
+    )
+  );
+
+  await getSheets();
   updateData();
 };
 
@@ -165,17 +244,18 @@ const deleteSelf = (ask: boolean) => {
     }
   }
 
-  retVal.value.sheets.forEach((sheet) => {
-    removeSheet(retVal.value.sheets.indexOf(sheet));
+  signupSheets.value.forEach((sheet) => {
+    removeSheet(signupSheets.value.indexOf(sheet));
   });
   emit("delete");
 };
 
-defineExpose({ deleteSelf });
+defineExpose({ save, deleteSelf });
 
 onUpdated(() => {
   updateData();
 });
 
+getSheets();
 updateData();
 </script>

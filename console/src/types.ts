@@ -183,7 +183,7 @@ export interface UploadedFile {
 export interface MessageStreamMessageComment {
   name: string;
   uid: string;
-  img: string | null;
+  img: string;
   id: string;
   content: string;
   date: string;
@@ -193,7 +193,7 @@ export interface MessageStreamMessage {
   name: string;
   uid: string;
   id: string;
-  img: string | null;
+  img: string;
   files: UploadedFile[];
   content: string;
   date: string;
@@ -220,6 +220,8 @@ export interface SignupData {
   roles: string[];
   id: string;
   useCard: boolean;
+  created: FieldValue;
+  hidden: boolean;
 }
 
 export interface VFormOptions extends HTMLFormElement {

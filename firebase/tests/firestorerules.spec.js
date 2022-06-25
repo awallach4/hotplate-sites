@@ -10,7 +10,8 @@ const {
   getDoc,
   getDocs,
   setDoc,
-  setLogLevel
+  setLogLevel,
+  serverTimestamp
 } = require("firebase/firestore");
 const { createWriteStream, readFileSync } = require("fs");
 const { get } = require("http");
@@ -546,7 +547,7 @@ describe("Firestore Security Rules", () => {
     );
   });
 
-  it("allow admins to view special page inner component data", async () => {
+  it("allow admins to view special page subcomponent data", async () => {
     await assertSucceeds(
       getDoc(
         doc(
@@ -558,13 +559,67 @@ describe("Firestore Security Rules", () => {
               email_verified: true
             })
             .firestore(),
-          "pages/page1/components/comp/data/item"
+          "pages/page1/components/comp/col1/item"
         )
       )
     );
   });
 
-  it("allow webmasters to view special page inner component data", async () => {
+  it("allow admins to view special page message stream data", async () => {
+    await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("admin", {
+              admin: true,
+              webmaster: true,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page1/components/comp/messages/item"
+        )
+      )
+    );
+  });
+
+  it("allow admins to view special page signup sheet data", async () => {
+    await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("admin", {
+              admin: true,
+              webmaster: true,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page1/components/comp/signup-sheets/item"
+        )
+      )
+    );
+  });
+
+  it("allow admins to view special page signup sheet signups", async () => {
+    await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("admin", {
+              admin: true,
+              webmaster: true,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page1/components/comp/signup-sheets/item/signups/person"
+        )
+      )
+    );
+  });
+
+  it("allow webmasters to view special page subcomponent data", async () => {
     await assertSucceeds(
       getDoc(
         doc(
@@ -576,13 +631,67 @@ describe("Firestore Security Rules", () => {
               email_verified: true
             })
             .firestore(),
-          "pages/page1/components/comp/data/item"
+          "pages/page1/components/comp/col1/item"
         )
       )
     );
   });
 
-  it("prevent users from viewing special page inner component data that has webmaster permissions", async () => {
+  it("allow webmasters to view special page message stream data", async () => {
+    await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("webmaster", {
+              admin: false,
+              webmaster: true,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page1/components/comp/messages/item"
+        )
+      )
+    );
+  });
+
+  it("allow webmasters to view special page signup sheet data", async () => {
+    await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("webmaster", {
+              admin: false,
+              webmaster: true,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page1/components/comp/signup-sheets/item"
+        )
+      )
+    );
+  });
+
+  it("allow webmasters to view special page signup sheet signups", async () => {
+    await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("webmaster", {
+              admin: false,
+              webmaster: true,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page1/components/comp/signup-sheets/item/signups/person"
+        )
+      )
+    );
+  });
+
+  it("prevent users from viewing special page subcomponent data that has webmaster permissions", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       const db = context.firestore();
       await setDoc(doc(db, "pages/page1/components/comp"), {
@@ -591,8 +700,8 @@ describe("Firestore Security Rules", () => {
         }
       });
 
-      await setDoc(doc(db, "pages/page1/components/comp/data/item"), {
-        hello: "hi"
+      await setDoc(doc(db, "pages/page1/components/comp/co1l/item"), {
+        hidden: false
       });
     });
     await assertFails(
@@ -606,13 +715,13 @@ describe("Firestore Security Rules", () => {
               email_verified: true
             })
             .firestore(),
-          "pages/page1/components/comp/data/item"
+          "pages/page1/components/comp/col1/item"
         )
       )
     );
   });
 
-  it("prevent unauthenticated users from viewing special page inner component data that has webmaster permissions", async () => {
+  it("prevent users from viewing special page message stream data that has webmaster permissions", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       const db = context.firestore();
       await setDoc(doc(db, "pages/page1/components/comp"), {
@@ -621,45 +730,174 @@ describe("Firestore Security Rules", () => {
         }
       });
 
-      await setDoc(doc(db, "pages/page1/components/comp/data/item"), {
-        hello: "hi"
+      await setDoc(doc(db, "pages/page1/components/comp/messages/item"), {
+        uid: ""
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page1/components/comp/messages/item"
+        )
+      )
+    );
+  });
+
+  it("prevent users from viewing special page signup sheet data that has webmaster permissions", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page1/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page1/components/comp/signup-sheets/item"), {
+        hidden: false
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page1/components/comp/signup-sheets/item"
+        )
+      )
+    );
+  });
+
+  it("prevent users from viewing special page signup sheet signups that has webmaster permissions", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page1/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page1/components/comp/signup-sheets/item"), {
+        hidden: false
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page1/components/comp/signup-sheets/item/signups/person"
+        )
+      )
+    );
+  });
+
+  it("prevent unauthenticated users from viewing special page subcomponent data that has webmaster permissions", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page1/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page1/components/comp/col1/item"), {
+        hidden: false
       });
     });
     await assertFails(
       getDoc(
         doc(
           testEnv.unauthenticatedContext().firestore(),
-          "pages/page1/components/comp/data/item"
+          "pages/page1/components/comp/col1/item"
         )
       )
     );
   });
 
-  it("allow users to view special page inner component data that has user permissions", async () => {
+  it("prevent unauthenticated users from viewing special page message stream data that has webmaster permissions", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       const db = context.firestore();
-      await setDoc(doc(db, "pages/page2/components/comp"), {
+      await setDoc(doc(db, "pages/page1/components/comp"), {
+        data: {
+          uid: ""
+        }
+      });
+
+      await setDoc(doc(db, "pages/page1/components/comp/messages/item"), {
+        hidden: false
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv.unauthenticatedContext().firestore(),
+          "pages/page1/components/comp/messages/item"
+        )
+      )
+    );
+  });
+
+  it("prevent unauthenticated users from viewing special page signup sheet data that has webmaster permissions", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page1/components/comp"), {
         data: {
           hidden: false
         }
       });
 
-      await setDoc(doc(db, "pages/page2/components/comp/data/item"), {
-        hello: "hi"
+      await setDoc(doc(db, "pages/page1/components/comp/signup-sheets/item"), {
+        hidden: false
       });
     });
-    await assertSucceeds(
+    await assertFails(
       getDoc(
         doc(
-          testEnv
-            .authenticatedContext("user", {
-              admin: false,
-              webmaster: false,
-              authorized: true,
-              email_verified: true
-            })
-            .firestore(),
-          "pages/page2/components/comp/data/item"
+          testEnv.unauthenticatedContext().firestore(),
+          "pages/page1/components/comp/signup-sheets/item"
+        )
+      )
+    );
+  });
+
+  it("prevent unauthenticated users from viewing special page signup sheet signups that has webmaster permissions", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page1/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page1/components/comp/signup-sheets/item"), {
+        hidden: false
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv.unauthenticatedContext().firestore(),
+          "pages/page1/components/comp/signup-sheets/item/signups/person"
         )
       )
     );
@@ -674,7 +912,7 @@ describe("Firestore Security Rules", () => {
         }
       });
 
-      await setDoc(doc(db, "pages/page2/components/comp/data/item"), {
+      await setDoc(doc(db, "pages/page2/components/comp/col1/item"), {
         data: {
           hidden: false
         }
@@ -691,7 +929,7 @@ describe("Firestore Security Rules", () => {
               email_verified: true
             })
             .firestore(),
-          "pages/page2/components/comp/data/item"
+          "pages/page2/components/comp/col1/item"
         )
       )
     );
@@ -706,7 +944,7 @@ describe("Firestore Security Rules", () => {
         }
       });
 
-      await setDoc(doc(db, "pages/page2/components/comp/data/item"), {
+      await setDoc(doc(db, "pages/page2/components/comp/col1/item"), {
         data: {
           hidden: true
         }
@@ -723,13 +961,13 @@ describe("Firestore Security Rules", () => {
               email_verified: true
             })
             .firestore(),
-          "pages/page2/components/comp/data/item"
+          "pages/page2/components/comp/col1/item"
         )
       )
     );
   });
 
-  it("prevent unauthenticated users from viewing special page inner component data that has user permissions", async () => {
+  it("allow users to view special page message stream data that has user permissions", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       const db = context.firestore();
       await setDoc(doc(db, "pages/page2/components/comp"), {
@@ -738,38 +976,234 @@ describe("Firestore Security Rules", () => {
         }
       });
 
-      await setDoc(doc(db, "pages/page2/components/comp/data/item"), {
-        hello: "hi"
+      await setDoc(doc(db, "pages/page2/components/comp/messages/item"), {
+        uid: ""
+      });
+    });
+    await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page2/components/comp/messages/item"
+        )
+      )
+    );
+  });
+
+  it("allow users to view special page signup sheet data that has user permissions and is not hidden", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page2/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page2/components/comp/signup-sheets/item"), {
+        hidden: false
+      });
+    });
+    await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page2/components/comp/signup-sheets/item"
+        )
+      )
+    );
+  });
+
+  it("prevent users from viewing special page signup sheet data that has user permissions and is hidden", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page2/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page2/components/comp/signup-sheets/item"), {
+        hidden: true
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page2/components/comp/signup-sheets/item"
+        )
+      )
+    );
+  });
+
+  it("allow users to view special page signup sheet signups that has user permissions and is not hidden", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page2/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page2/components/comp/signup-sheets/item"), {
+        hidden: false
+      });
+    });
+    await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page2/components/comp/signup-sheets/item/signups/person"
+        )
+      )
+    );
+  });
+
+  it("prevent users from viewing special page signup sheet signups that has user permissions and is hidden", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page2/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page2/components/comp/signup-sheets/item"), {
+        hidden: true
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page2/components/comp/signup-sheets/item/signups/person"
+        )
+      )
+    );
+  });
+
+  it("prevent unauthenticated users from viewing special page subcomponent data that has user permissions", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page2/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page2/components/comp/col1/item"), {
+        hidden: false
       });
     });
     await assertFails(
       getDoc(
         doc(
           testEnv.unauthenticatedContext().firestore(),
-          "pages/page2/components/comp/data/item"
+          "pages/page2/components/comp/col1/item"
         )
       )
     );
   });
 
-  it("allow unauthenticated users to view special page inner component data that has public permissions", async () => {
+  it("prevent unauthenticated users from viewing special page message stream data that has user permissions", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       const db = context.firestore();
-      await setDoc(doc(db, "pages/page3/components/comp"), {
+      await setDoc(doc(db, "pages/page2/components/comp"), {
         data: {
           hidden: false
         }
       });
 
-      await setDoc(doc(db, "pages/page3/components/comp/data/item"), {
-        hello: "hi"
+      await setDoc(doc(db, "pages/page2/components/comp/messages/item"), {
+        uid: ""
       });
     });
-    await assertSucceeds(
+    await assertFails(
       getDoc(
         doc(
           testEnv.unauthenticatedContext().firestore(),
-          "pages/page3/components/comp/data/item"
+          "pages/page2/components/comp/messages/item"
+        )
+      )
+    );
+  });
+
+  it("prevent unauthenticated users from viewing special page signup sheet data that has user permissions", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page2/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page2/components/comp/signup-sheets/item"), {
+        hidden: false
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv.unauthenticatedContext().firestore(),
+          "pages/page2/components/comp/signup-sheets/item"
+        )
+      )
+    );
+  });
+
+  it("prevent unauthenticated users from viewing special page signup sheet signups that has user permissions", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page2/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page2/components/comp/signup-sheets/item"), {
+        hidden: false
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv.unauthenticatedContext().firestore(),
+          "pages/page2/components/comp/signup-sheets/item/signups/person"
         )
       )
     );
@@ -784,7 +1218,7 @@ describe("Firestore Security Rules", () => {
         }
       });
 
-      await setDoc(doc(db, "pages/page3/components/comp/data/item"), {
+      await setDoc(doc(db, "pages/page3/components/comp/col1/item"), {
         data: {
           hidden: false
         }
@@ -794,7 +1228,7 @@ describe("Firestore Security Rules", () => {
       getDoc(
         doc(
           testEnv.unauthenticatedContext().firestore(),
-          "pages/page3/components/comp/data/item"
+          "pages/page3/components/comp/col1/item"
         )
       )
     );
@@ -809,7 +1243,7 @@ describe("Firestore Security Rules", () => {
         }
       });
 
-      await setDoc(doc(db, "pages/page3/components/comp/data/item"), {
+      await setDoc(doc(db, "pages/page3/components/comp/col1/item"), {
         data: {
           hidden: true
         }
@@ -819,13 +1253,13 @@ describe("Firestore Security Rules", () => {
       getDoc(
         doc(
           testEnv.unauthenticatedContext().firestore(),
-          "pages/page3/components/comp/data/item"
+          "pages/page3/components/comp/col1/item"
         )
       )
     );
   });
 
-  it("allow users to view special page inner component data that has public permissions", async () => {
+  it("allow unauthenticated users to view special page message stream data that has public permissions", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       const db = context.firestore();
       await setDoc(doc(db, "pages/page3/components/comp"), {
@@ -834,22 +1268,107 @@ describe("Firestore Security Rules", () => {
         }
       });
 
-      await setDoc(doc(db, "pages/page3/components/comp/data/item"), {
-        hello: "hi"
+      await setDoc(doc(db, "pages/page3/components/comp/messages/item"), {
+        uid: ""
       });
     });
     await assertSucceeds(
       getDoc(
         doc(
-          testEnv
-            .authenticatedContext("user", {
-              admin: false,
-              webmaster: false,
-              authorized: true,
-              email_verified: true
-            })
-            .firestore(),
-          "pages/page3/components/comp/data/item"
+          testEnv.unauthenticatedContext().firestore(),
+          "pages/page3/components/comp/messages/item"
+        )
+      )
+    );
+  });
+
+  it("allow unauthenticated users to view special page signup sheet data that has public permissions and is not hidden", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page3/components/comp/signup-sheets/item"), {
+        hidden: false
+      });
+    });
+    await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv.unauthenticatedContext().firestore(),
+          "pages/page3/components/comp/signup-sheets/item"
+        )
+      )
+    );
+  });
+
+  it("prevent unauthenticated users from viewing special page signup sheet data that has public permissions and is hidden", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page3/components/comp/signup-sheets/item"), {
+        hidden: true
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv.unauthenticatedContext().firestore(),
+          "pages/page3/components/comp/signup-sheets/item"
+        )
+      )
+    );
+  });
+
+  it("allow unauthenticated users to view special page signup sheet signups that has public permissions and is not hidden", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page3/components/comp/signup-sheets/item"), {
+        hidden: false
+      });
+    });
+    await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv.unauthenticatedContext().firestore(),
+          "pages/page3/components/comp/signup-sheets/item/signups/person"
+        )
+      )
+    );
+  });
+
+  it("prevent unauthenticated users from viewing special page signup sheet signups that has public permissions and is hidden", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page3/components/comp/signup-sheets/item"), {
+        hidden: true
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv.unauthenticatedContext().firestore(),
+          "pages/page3/components/comp/signup-sheets/item/signups/person"
         )
       )
     );
@@ -864,7 +1383,7 @@ describe("Firestore Security Rules", () => {
         }
       });
 
-      await setDoc(doc(db, "pages/page3/components/comp/data/item"), {
+      await setDoc(doc(db, "pages/page3/components/comp/col1/item"), {
         data: {
           hidden: false
         }
@@ -881,7 +1400,7 @@ describe("Firestore Security Rules", () => {
               email_verified: true
             })
             .firestore(),
-          "pages/page3/components/comp/data/item"
+          "pages/page3/components/comp/col1/item"
         )
       )
     );
@@ -896,7 +1415,7 @@ describe("Firestore Security Rules", () => {
         }
       });
 
-      await setDoc(doc(db, "pages/page3/components/comp/data/item"), {
+      await setDoc(doc(db, "pages/page3/components/comp/col1/item"), {
         data: {
           hidden: true
         }
@@ -913,13 +1432,163 @@ describe("Firestore Security Rules", () => {
               email_verified: true
             })
             .firestore(),
-          "pages/page3/components/comp/data/item"
+          "pages/page3/components/comp/col1/item"
         )
       )
     );
   });
 
-  it("prevent users from viewing special page inner component data on hidden components", async () => {
+  it("allow users to view special page message stream data that has public permissions", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page3/components/comp/messages/item"), {
+        uid: ""
+      });
+    });
+    await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/messages/item"
+        )
+      )
+    );
+  });
+
+  it("allow users to view special page signup sheet data that has public permissions and is not hidden", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page3/components/comp/signup-sheets/item"), {
+        hidden: false
+      });
+    });
+    await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/signup-sheets/item"
+        )
+      )
+    );
+  });
+
+  it("prevent users from viewing special page signup sheet data that has public permissions and is hidden", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page3/components/comp/signup-sheets/item"), {
+        hidden: true
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/signup-sheets/item"
+        )
+      )
+    );
+  });
+
+  it("allow users to view special page signup sheet signups that has public permissions and is not hidden", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page3/components/comp/signup-sheets/item"), {
+        hidden: false
+      });
+    });
+    await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/signup-sheets/item/signups/person"
+        )
+      )
+    );
+  });
+
+  it("prevent users from viewing special page signup sheet data that has public permissions and is hidden", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page3/components/comp/signup-sheets/item"), {
+        hidden: true
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/signup-sheets/item/signups/person"
+        )
+      )
+    );
+  });
+
+  it("prevent users from viewing special page subcomponent data on hidden components", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "pages/page3/components/comp"), {
         data: {
@@ -938,13 +1607,88 @@ describe("Firestore Security Rules", () => {
               email_verified: true
             })
             .firestore(),
-          "pages/page3/components/comp/data/item"
+          "pages/page3/components/comp/col1/item"
         )
       )
     );
   });
 
-  it("prevent unauthenticated users from viewing special page inner component data on hidden components", async () => {
+  it("prevent users from viewing special page message stream data on hidden components", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "pages/page3/components/comp"), {
+        data: {
+          hidden: true
+        }
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/messages/item"
+        )
+      )
+    );
+  });
+
+  it("prevent users from viewing special page signup sheet data on hidden components", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "pages/page3/components/comp"), {
+        data: {
+          hidden: true
+        }
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/signup-sheets/item"
+        )
+      )
+    );
+  });
+
+  it("prevent users from viewing special page signup sheet signups on hidden components", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "pages/page3/components/comp"), {
+        data: {
+          hidden: true
+        }
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/signup-sheets/item/signups/person"
+        )
+      )
+    );
+  });
+
+  it("prevent unauthenticated users from viewing special page subcomponent data on hidden components", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "pages/page3/components/comp"), {
         data: {
@@ -956,13 +1700,67 @@ describe("Firestore Security Rules", () => {
       getDoc(
         doc(
           testEnv.unauthenticatedContext().firestore(),
-          "pages/page3/components/comp/data/item"
+          "pages/page3/components/comp/col1/item"
         )
       )
     );
   });
 
-  it("allow admins to edit special page inner component data", async () => {
+  it("prevent unauthenticated users from viewing special page message stream data on hidden components", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "pages/page3/components/comp"), {
+        data: {
+          hidden: true
+        }
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv.unauthenticatedContext().firestore(),
+          "pages/page3/components/comp/messages/item"
+        )
+      )
+    );
+  });
+
+  it("prevent unauthenticated users from viewing special page signup sheet data on hidden components", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "pages/page3/components/comp"), {
+        data: {
+          hidden: true
+        }
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv.unauthenticatedContext().firestore(),
+          "pages/page3/components/comp/signup-sheets/item"
+        )
+      )
+    );
+  });
+
+  it("prevent unauthenticated users from viewing special page signup sheet signups on hidden components", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "pages/page3/components/comp"), {
+        data: {
+          hidden: true
+        }
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv.unauthenticatedContext().firestore(),
+          "pages/page3/components/comp/signup-sheets/item/signups/person"
+        )
+      )
+    );
+  });
+
+  it("allow admins to edit special page subcomponent data", async () => {
     await assertSucceeds(
       setDoc(
         doc(
@@ -974,17 +1772,110 @@ describe("Firestore Security Rules", () => {
               email_verified: true
             })
             .firestore(),
-          "pages/page1/components/comp/data/item"
+          "pages/page1/components/comp/col1/item"
         ),
         {
-          components: []
+          data: {},
+          props: {},
+          vueComp: "",
+          index: 0
         },
         { merge: true }
       )
     );
   });
 
-  it("allow webmasters to edit special page inner component data", async () => {
+  it("allow admins to edit special page message stream data", async () => {
+    await assertSucceeds(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("admin", {
+              admin: true,
+              webmaster: true,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page1/components/comp/messages/item"
+        ),
+        {
+          comments: [],
+          content: "",
+          createdAt: serverTimestamp(),
+          date: "",
+          files: [],
+          id: "",
+          img: "",
+          name: "",
+          uid: ""
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("allow admins to edit special page signup sheet data", async () => {
+    await assertSucceeds(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("admin", {
+              admin: true,
+              webmaster: true,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page1/components/comp/signup-sheets/item"
+        ),
+        {
+          created: serverTimestamp(),
+          enabled: true,
+          header: "",
+          hidden: false,
+          id: "",
+          multiple: false,
+          roles: [],
+          text: "",
+          times: [],
+          useCard: true
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("allow admins to edit special page signup sheet signups", async () => {
+    await assertSucceeds(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("admin", {
+              admin: true,
+              webmaster: true,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page1/components/comp/signup-sheets/item/signups/person"
+        ),
+        {
+          comments: [],
+          email: "",
+          key: "",
+          name: "",
+          role: "",
+          shift: "",
+          time: serverTimestamp(),
+          uid: ""
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("allow webmasters to edit special page subcomponent data", async () => {
     await assertSucceeds(
       setDoc(
         doc(
@@ -996,17 +1887,117 @@ describe("Firestore Security Rules", () => {
               email_verified: true
             })
             .firestore(),
-          "pages/page1/components/comp/data/item"
+          "pages/page1/components/comp/col1/item"
         ),
         {
-          components: []
+          data: {},
+          props: {},
+          vueComp: "",
+          index: 0
         },
         { merge: true }
       )
     );
   });
 
-  it("allow users to create special page inner component data that has user permissions and their uid", async () => {
+  it("allow webmasters to edit special page message stream data", async () => {
+    await assertSucceeds(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("webmaster", {
+              admin: false,
+              webmaster: true,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page1/components/comp/messages/item"
+        ),
+        {
+          comments: [],
+          content: "",
+          createdAt: serverTimestamp(),
+          date: "",
+          files: [],
+          id: "",
+          img: "",
+          name: "",
+          uid: ""
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("allow webmasters to edit special page signup sheet data", async () => {
+    await assertSucceeds(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("webmaster", {
+              admin: false,
+              webmaster: true,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page1/components/comp/signup-sheets/item"
+        ),
+        {
+          created: serverTimestamp(),
+          enabled: true,
+          header: "",
+          hidden: false,
+          id: "",
+          multiple: false,
+          roles: [],
+          text: "",
+          times: [],
+          useCard: true
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("allow webmasters to edit special page signup sheet signups", async () => {
+    await assertSucceeds(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("webmaster", {
+              admin: false,
+              webmaster: true,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page1/components/comp/signup-sheets/item/signups/person"
+        ),
+        {
+          comments: [],
+          email: "",
+          key: "",
+          name: "",
+          role: "",
+          shift: "",
+          time: serverTimestamp(),
+          uid: ""
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("allow users to create special page message stream data that has user permissions and their uid", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "pages/page2/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+    });
     await assertSucceeds(
       setDoc(
         doc(
@@ -1018,9 +2009,17 @@ describe("Firestore Security Rules", () => {
               email_verified: true
             })
             .firestore(),
-          "pages/page2/components/comp/data/item"
+          "pages/page2/components/comp/messages/item"
         ),
         {
+          comments: [],
+          content: "",
+          createdAt: serverTimestamp(),
+          date: "",
+          files: [],
+          id: "",
+          img: "",
+          name: "",
           uid: "user1"
         },
         { merge: true }
@@ -1028,14 +2027,144 @@ describe("Firestore Security Rules", () => {
     );
   });
 
-  it("prevent users from editing another user's special page inner component data except comments that has user permissions", async () => {
+  it("allow users to create special page signup sheet signups that has user permissions and their uid", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
-      await setDoc(
-        doc(context.firestore(), "pages/page2/components/comp/data/item"),
-        {
-          uid: "user1"
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page2/components/comp"), {
+        data: {
+          hidden: false
         }
-      );
+      });
+
+      await setDoc(doc(db, "pages/page2/components/comp/signup-sheets/item"), {
+        hidden: false,
+        enabled: true
+      });
+    });
+    await assertSucceeds(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user1", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page2/components/comp/signup-sheets/item/signups/person"
+        ),
+        {
+          comments: "",
+          email: "",
+          key: "",
+          name: "",
+          role: "",
+          shift: "",
+          time: serverTimestamp(),
+          uid: "user1"
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("prevent users from creating special page signup sheet signups that has user permissions and their uid on disabled sheets", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page2/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page2/components/comp/signup-sheets/item"), {
+        hidden: false,
+        enabled: false
+      });
+    });
+    await assertFails(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user1", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page2/components/comp/signup-sheets/item/signups/person"
+        ),
+        {
+          comments: "",
+          email: "",
+          key: "",
+          name: "",
+          role: "",
+          shift: "",
+          time: serverTimestamp(),
+          uid: "user1"
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("prevent users from creating special page signup sheet signups that has user permissions and their uid on hidden sheets", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page2/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page2/components/comp/signup-sheets/item"), {
+        hidden: true,
+        enabled: true
+      });
+    });
+    await assertFails(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user1", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page2/components/comp/signup-sheets/item/signups/person"
+        ),
+        {
+          comments: "",
+          email: "",
+          key: "",
+          name: "",
+          role: "",
+          shift: "",
+          time: serverTimestamp(),
+          uid: "user1"
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("prevent users from editing another user's special page message stream data", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page2/components/comp/messages/item"), {
+        uid: "user1"
+      });
+
+      await setDoc(doc(db, "pages/page2/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
     });
 
     await assertFails(
@@ -1049,26 +2178,85 @@ describe("Firestore Security Rules", () => {
               email_verified: true
             })
             .firestore(),
-          "pages/page2/components/comp/data/item"
+          "pages/page2/components/comp/messages/item"
         ),
         {
-          uid: "user1",
-          newData: ""
+          comments: [],
+          content: "",
+          createdAt: serverTimestamp(),
+          date: "",
+          files: [],
+          id: "",
+          img: "",
+          name: "",
+          uid: "user1"
         },
         { merge: true }
       )
     );
   });
 
-  it("allow users to edit another user's special page inner component data comments that has user permissions", async () => {
+  it("prevent users from editing another user's special page signup sheet signups", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
       await setDoc(
-        doc(context.firestore(), "pages/page2/components/comp/data/item"),
+        doc(
+          db,
+          "pages/page2/components/comp/signup-sheets/item/signups/person"
+        ),
         {
-          uid: "user1",
-          comments: []
+          uid: "user1"
         }
       );
+
+      await setDoc(doc(db, "pages/page2/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+    });
+
+    await assertFails(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user2", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page2/components/comp/signup-sheets/item/signups/person"
+        ),
+        {
+          comments: "",
+          email: "",
+          key: "",
+          name: "",
+          role: "",
+          shift: "",
+          time: serverTimestamp(),
+          uid: "user2"
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("allow users to edit another user's special page message stream comments that has user permissions", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page2/components/comp/messages/item"), {
+        uid: "user1",
+        comments: []
+      });
+
+      await setDoc(doc(db, "pages/page2/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
     });
 
     await assertSucceeds(
@@ -1082,7 +2270,7 @@ describe("Firestore Security Rules", () => {
               email_verified: true
             })
             .firestore(),
-          "pages/page2/components/comp/data/item"
+          "pages/page2/components/comp/messages/item"
         ),
         {
           comments: ["hi"]
@@ -1092,14 +2280,18 @@ describe("Firestore Security Rules", () => {
     );
   });
 
-  it("prevent users from deleting another user's special page inner component data that has user permissions", async () => {
+  it("prevent users from deleting another user's special page message stream data that has user permissions", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
-      await setDoc(
-        doc(context.firestore(), "pages/page2/components/comp/data/item"),
-        {
-          uid: "user1"
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page2/components/comp/messages/item"), {
+        uid: "user1"
+      });
+
+      await setDoc(doc(db, "pages/page2/components/comp"), {
+        data: {
+          hidden: false
         }
-      );
+      });
     });
 
     await assertFails(
@@ -1113,125 +2305,34 @@ describe("Firestore Security Rules", () => {
               email_verified: true
             })
             .firestore(),
-          "pages/page2/components/comp/data/item"
+          "pages/page2/components/comp/messages/item"
         )
       )
     );
   });
 
-  it("prevent users from creating special page inner component data without their uid that has user permissions", async () => {
-    await assertFails(
-      setDoc(
-        doc(
-          testEnv
-            .authenticatedContext("user", {
-              admin: false,
-              webmaster: false,
-              authorized: true,
-              email_verified: true
-            })
-            .firestore(),
-          "pages/page2/components/comp/data/item"
-        ),
-        {},
-        { merge: true }
-      )
-    );
-  });
-
-  it("allow users to create special page inner component data that has public permissions and their uid", async () => {
-    await assertSucceeds(
-      setDoc(
-        doc(
-          testEnv
-            .authenticatedContext("user1", {
-              admin: false,
-              webmaster: false,
-              authorized: true,
-              email_verified: true
-            })
-            .firestore(),
-          "pages/page3/components/comp/data/item"
-        ),
-        {
-          uid: "user1"
-        },
-        { merge: true }
-      )
-    );
-  });
-
-  it("prevent users from editing another user's special page inner component data except comments that has public permissions", async () => {
+  it("prevent users from deleting another user's special page signup sheet signup that has user permissions", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
       await setDoc(
-        doc(context.firestore(), "pages/page3/components/comp/data/item"),
+        doc(
+          db,
+          "pages/page2/components/comp/signup-sheets/item/signups/person"
+        ),
         {
           uid: "user1"
         }
       );
-    });
 
-    await assertFails(
-      setDoc(
-        doc(
-          testEnv
-            .authenticatedContext("user2", {
-              admin: false,
-              webmaster: false,
-              authorized: true,
-              email_verified: true
-            })
-            .firestore(),
-          "pages/page3/components/comp/data/item"
-        ),
-        {
-          uid: "me"
-        },
-        { merge: true }
-      )
-    );
-  });
-
-  it("allow users to edit another user's special page inner component data comments that has public permissions", async () => {
-    await testEnv.withSecurityRulesDisabled(async (context) => {
-      await setDoc(
-        doc(context.firestore(), "pages/page3/components/comp/data/item"),
-        {
-          uid: "user1",
-          comments: []
+      await setDoc(doc(db, "pages/page2/components/comp"), {
+        data: {
+          hidden: false
         }
-      );
-    });
+      });
 
-    await assertSucceeds(
-      setDoc(
-        doc(
-          testEnv
-            .authenticatedContext("user2", {
-              admin: false,
-              webmaster: false,
-              authorized: true,
-              email_verified: true
-            })
-            .firestore(),
-          "pages/page3/components/comp/data/item"
-        ),
-        {
-          comments: ["hi"]
-        },
-        { merge: true }
-      )
-    );
-  });
-
-  it("prevent users from deleting another user's special page inner component data that has public permissions", async () => {
-    await testEnv.withSecurityRulesDisabled(async (context) => {
-      await setDoc(
-        doc(context.firestore(), "pages/page3/components/comp/data/item"),
-        {
-          uid: "user1"
-        }
-      );
+      await setDoc(doc(db, "pages/page2/components/comp/signup-sheets/item"), {
+        hidden: false
+      });
     });
 
     await assertFails(
@@ -1245,13 +2346,20 @@ describe("Firestore Security Rules", () => {
               email_verified: true
             })
             .firestore(),
-          "pages/page3/components/comp/data/item"
+          "pages/page2/components/comp/signup-sheets/item/signups/person"
         )
       )
     );
   });
 
-  it("prevent users from creating special page inner component data without their uid that has public permissions", async () => {
+  it("prevent users from creating special page message stream data without their uid that has user permissions", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "pages/page2/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+    });
     await assertFails(
       setDoc(
         doc(
@@ -1263,9 +2371,527 @@ describe("Firestore Security Rules", () => {
               email_verified: true
             })
             .firestore(),
-          "pages/page3/components/comp/data/item"
+          "pages/page2/components/comp/messages/item"
         ),
-        {},
+        {
+          comments: [],
+          content: "",
+          createdAt: serverTimestamp(),
+          date: "",
+          files: [],
+          id: "",
+          img: "",
+          name: "",
+          uid: "user1"
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("allow users to create special page message stream data that has public permissions and their uid", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+    });
+    await assertSucceeds(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user1", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/messages/item"
+        ),
+        {
+          comments: [],
+          content: "",
+          createdAt: serverTimestamp(),
+          date: "",
+          files: [],
+          id: "",
+          img: "",
+          name: "",
+          uid: "user1"
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("allow users to create special page signup sheet signups that has public permissions and their uid", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page3/components/comp/signup-sheets/item"), {
+        hidden: false,
+        enabled: true
+      });
+    });
+    await assertSucceeds(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user1", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/signup-sheets/item/signups/person"
+        ),
+        {
+          comments: "",
+          email: "",
+          key: "",
+          name: "",
+          role: "",
+          shift: "",
+          time: serverTimestamp(),
+          uid: "user1"
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("prevent users from creating special page signup sheet signups that has public permissions and their uid on disabled sheets", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page3/components/comp/signup-sheets/item"), {
+        hidden: false,
+        enabled: false
+      });
+    });
+    await assertFails(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user1", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/signup-sheets/item/signups/person"
+        ),
+        {
+          comments: "",
+          email: "",
+          key: "",
+          name: "",
+          role: "",
+          shift: "",
+          time: serverTimestamp(),
+          uid: "user1"
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("prevent users from creating special page signup sheet signups that has public permissions and their uid on hidden sheets", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page3/components/comp/signup-sheets/item"), {
+        hidden: true,
+        enabled: true
+      });
+    });
+    await assertFails(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user1", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/signup-sheets/item/signups/person"
+        ),
+        {
+          comments: "",
+          email: "",
+          key: "",
+          name: "",
+          role: "",
+          shift: "",
+          time: serverTimestamp(),
+          uid: "user1"
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("prevent users from editing another user's special page message stream data with public permissions", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page3/components/comp/messages/item"), {
+        uid: "user1"
+      });
+
+      await setDoc(doc(db, "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+    });
+
+    await assertFails(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user2", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/messages/item"
+        ),
+        {
+          comments: [],
+          content: "",
+          createdAt: serverTimestamp(),
+          date: "",
+          files: [],
+          id: "",
+          img: "",
+          name: "",
+          uid: "user1"
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("prevent users from editing another user's special page signup sheet signups that has public permissions", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(
+        doc(
+          db,
+          "pages/page3/components/comp/signup-sheets/item/signups/person"
+        ),
+        {
+          uid: "user1"
+        }
+      );
+
+      await setDoc(doc(db, "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+    });
+
+    await assertFails(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user2", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/signup-sheets/item/signups/person"
+        ),
+        {
+          comments: "",
+          email: "",
+          key: "",
+          name: "",
+          role: "",
+          shift: "",
+          time: serverTimestamp(),
+          uid: "user2"
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("allow users to edit another user's special page message stream comments that has public permissions", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page3/components/comp/messages/item"), {
+        uid: "user1",
+        comments: []
+      });
+
+      await setDoc(doc(db, "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+    });
+
+    await assertSucceeds(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user2", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/messages/item"
+        ),
+        {
+          comments: ["hi"]
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("prevent users from deleting another user's special page message stream data that has public permissions", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page3/components/comp/messages/item"), {
+        uid: "user1"
+      });
+
+      await setDoc(doc(db, "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+    });
+
+    await assertFails(
+      deleteDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user2", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/messages/item"
+        )
+      )
+    );
+  });
+
+  it("prevent users from deleting another user's special page signup sheet signup that has public permissions", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(
+        doc(
+          db,
+          "pages/page3/components/comp/signup-sheets/item/signups/person"
+        ),
+        {
+          uid: "user1"
+        }
+      );
+
+      await setDoc(doc(db, "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page3/components/comp/signup-sheets/item"), {
+        hidden: false
+      });
+    });
+
+    await assertFails(
+      deleteDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user2", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/signup-sheets/item/signups/person"
+        )
+      )
+    );
+  });
+
+  it("prevent users from creating special page message stream data without their uid that has public permissions", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "pages/page3/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+    });
+    await assertFails(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page3/components/comp/messages/item"
+        ),
+        {
+          comments: [],
+          content: "",
+          createdAt: serverTimestamp(),
+          date: "",
+          files: [],
+          id: "",
+          img: "",
+          name: "",
+          uid: "user1"
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("prevent special page subcomponent incorrect data structures", async () => {
+    await assertFails(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("admin", {
+              admin: true,
+              webmaster: true,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page1/components/comp/col1/item"
+        ),
+        {
+          badData: "hello"
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("prevent special page message stream incorrect data structures", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "pages/page2/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+    });
+    await assertFails(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page2/components/comp/messages/item"
+        ),
+        {
+          badData: "hello",
+          uid: "user"
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("prevent special page signup sheet incorrect data structures", async () => {
+    await assertFails(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("admin", {
+              admin: true,
+              webmaster: true,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page1/components/comp/signup-sheets/item"
+        ),
+        {
+          badData: "hello"
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("prevent special page signup sheet signups incorrect data structure", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const db = context.firestore();
+      await setDoc(doc(db, "pages/page2/components/comp"), {
+        data: {
+          hidden: false
+        }
+      });
+
+      await setDoc(doc(db, "pages/page2/components/comp/signup-sheets/item"), {
+        hidden: false
+      });
+    });
+    await assertFails(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              authorized: true,
+              email_verified: true
+            })
+            .firestore(),
+          "pages/page2/components/comp/signup-sheets/item/signups/person"
+        ),
+        {
+          badData: "hello",
+          uid: "user"
+        },
         { merge: true }
       )
     );

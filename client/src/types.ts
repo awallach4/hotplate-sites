@@ -1,4 +1,4 @@
-import type { Timestamp } from "firebase/firestore/lite";
+import type { FieldValue } from "firebase/firestore/lite";
 
 export enum CheckboxIcons {
   CHECKED = "mdi-checkbox-marked",
@@ -88,7 +88,7 @@ export interface SettingsSitePrivate {
 export interface MessageStreamMessageComment {
   name: string;
   uid: string;
-  img: string | null;
+  img: string;
   id: string;
   content: string;
   date: string;
@@ -98,12 +98,12 @@ export interface MessageStreamMessage {
   name: string;
   uid: string;
   id: string;
-  img: string | null;
+  img: string;
   files: UploadedFile[];
   content: string;
   date: string;
   comments: MessageStreamMessageComment[];
-  createdAt?: Timestamp;
+  createdAt?: FieldValue;
 }
 
 export enum AlertMessageTypes {
@@ -141,6 +141,8 @@ export interface SignupData {
   roles: string[];
   id: string;
   useCard: boolean;
+  hidden: boolean;
+  created?: FieldValue;
 }
 
 export interface SignupItem {
@@ -151,7 +153,7 @@ export interface SignupItem {
   shift: string;
   email: string;
   key: string;
-  time?: Timestamp;
+  time?: FieldValue;
 }
 
 export interface SignupSheetCollectionData {

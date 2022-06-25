@@ -163,18 +163,18 @@ const cancel = () => {
 
 const addPost = async () => {
   submitting.value = true;
-  const { Timestamp } = await import("firebase/firestore/lite");
+  const { serverTimestamp } = await import("firebase/firestore/lite");
   const { generateString } = await import("@/plugins/stringGenerator");
   const message: MessageStreamMessage = {
     name: "Admin",
     uid: "admin",
     id: generateString(20),
-    img: null,
+    img: "",
     files: postFiles.value,
     content: postContent.value,
     date: new Date().toLocaleDateString(),
     comments: [],
-    createdAt: Timestamp.now()
+    createdAt: serverTimestamp()
   };
 
   try {
