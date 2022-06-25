@@ -125,7 +125,7 @@ service cloud.firestore {
           request.resource.data.comments is list &&
           resource.data.comments is list
         );
-      allow write: if
+      allow create, update: if
         isLoggedIn() && (
           get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' ||
           get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'public'
@@ -145,6 +145,15 @@ service cloud.firestore {
         request.resource.data.img is string &&
         request.resource.data.name is string &&
         request.resource.data.uid is string;
+      allow delete: if
+        isLoggedIn() && (
+          get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' ||
+          get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'public'
+        ) &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false && (
+          request.resource.data.uid == request.auth.uid ||
+          resource.data.uid == request.auth.uid
+        );
     }
 
     match /pages/{page}/components/{component}/signup-sheets/{sheet} {
@@ -185,7 +194,7 @@ service cloud.firestore {
         get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' &&
         get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false &&
         get(/databases/$(database)/documents/pages/$(page)/components/$(component)/signup-sheets/$(sheet)).data.hidden == false;
-      allow write: if
+      allow create, update: if
         isLoggedIn() && (
           get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' ||
           get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'public'
@@ -206,6 +215,17 @@ service cloud.firestore {
         request.resource.data.shift is string &&
         request.resource.data.time is timestamp &&
         request.resource.data.uid is string;
+      allow delete: if
+        isLoggedIn() && (
+          get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'users' ||
+          get(/databases/$(database)/documents/pages/$(page)).data.permissions == 'public'
+        ) &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)).data.data.hidden == false &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)/signup-sheets/$(sheet)).data.hidden == false &&
+        get(/databases/$(database)/documents/pages/$(page)/components/$(component)/signup-sheets/$(sheet)).data.enabled == true && (
+          request.resource.data.uid == request.auth.uid ||
+          resource.data.uid == request.auth.uid
+        );
     }
     
     match /configuration/theme {
