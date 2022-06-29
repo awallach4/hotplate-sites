@@ -250,6 +250,7 @@ import { fieldRequired, minLength } from "@/plugins/formRules";
 import { user } from "@/plugins/authHandler";
 import { displayPageAlert } from "@/plugins/errorHandler";
 import { settings, privateSettings } from "@/plugins/routerStoreHelpers";
+import { siteURL } from "@/CONSOLE_CONFIG";
 
 interface SignupItem {
   role: string;
@@ -439,8 +440,8 @@ const sendDetails = async () => {
   submitting.value = true;
   const postData: EmailData = {
     to: recipients.value.join(),
-    subject: `New Signup Available at YOUR_SITE_URL: ${retVal.value.header}`,
-    body: `<p>A new signup sheet has been created at <a href="YOUR_SITE_URL" target="_blank" rel="noreferrer noopener nofollow">YOUR_SITE_URL</a> for "${retVal.value.header}".  See the event details below.</p>${retVal.value.text}`
+    subject: `New Signup Available at ${siteURL}: ${retVal.value.header}`,
+    body: `<p>A new signup sheet has been created at <a href="${siteURL}" target="_blank" rel="noreferrer noopener nofollow">${siteURL}</a> for "${retVal.value.header}".  See the event details below.</p>${retVal.value.text}`
   };
 
   if (user.value.displayName) {

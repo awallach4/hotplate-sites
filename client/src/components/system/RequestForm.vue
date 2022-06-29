@@ -75,6 +75,7 @@ import { minLength } from "@/plugins/formRules";
 import { useVuetify } from "@/plugins/contextInject";
 import { displayPageAlert } from "@/plugins/errorHandler";
 import { settings } from "@/plugins/routerStoreHelpers";
+import { companyName } from "@/CLIENT_CONFIG";
 
 interface Props {
   items: ItemListItem[];
@@ -135,7 +136,7 @@ const request = async () => {
   submitting.value = true;
   const postData: EmailData = {
     to: props.email,
-    subject: "YOUR_COMPANY Item Request",
+    subject: `${companyName} Item Request`,
     body: message.value
   };
   if (user.value.email) {

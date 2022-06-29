@@ -57,6 +57,7 @@ import {
   type Ref
 } from "@vue/composition-api";
 import type { FullCalendarEvent } from "@/types";
+import { googleCalendarICalFile, googleCalendarURL } from "@/CLIENT_CONFIG";
 
 interface Props {
   useCard?: boolean;
@@ -135,13 +136,13 @@ const calendarOptions = ref({
     addGC: {
       text: "Add to Google Calendar",
       click: () => {
-        window.open("YOUR_CALENDAR_URL", "_blank");
+        window.open(googleCalendarURL, "_blank");
       }
     },
     downloadFile: {
       text: "Download .ics",
       click: () => {
-        window.open("YOUR_CALENDAR_ICAL_FILE_URL", "_blank");
+        window.open(googleCalendarICalFile, "_blank");
       }
     },
     refresh: {

@@ -67,6 +67,7 @@ import { ref } from "@vue/composition-api";
 import { displayPageAlert } from "@/plugins/errorHandler";
 import { TiptapEditor } from "@/components/asyncComponents";
 import { settings } from "@/plugins/routerStoreHelpers";
+import { companyName } from "@/CLIENT_CONFIG";
 
 interface Props {
   email: string;
@@ -103,7 +104,7 @@ const send = async (): Promise<void> => {
     to: props.email,
     subject: `${name.value} (${sender.value}) Submitted a Contact Form`,
     body: message.value,
-    sender: "YOUR_COMPANY",
+    sender: companyName,
     reply: sender.value
   };
   try {

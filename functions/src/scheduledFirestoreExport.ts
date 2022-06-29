@@ -2,6 +2,7 @@ import * as functions from "firebase-functions";
 import * as firestoreBackup from "@google-cloud/firestore";
 
 const client = new firestoreBackup.v1.FirestoreAdminClient();
+// Replace this value with the storage bucket where you will be storing your Firestore backups.
 const bucket = "YOUR_BUCKET_ID";
 
 const scheduledFirestoreExport = functions.pubsub

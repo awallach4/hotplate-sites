@@ -38,8 +38,8 @@
                 block
                 type="submit"
                 :disabled="creatingUser"
-                >Create User</v-btn
-              >
+                >Create User
+              </v-btn>
             </v-form>
           </v-card-text>
         </v-card>
@@ -120,7 +120,8 @@
               block
               :disabled="!isUserSelected || updating"
               @click="deleteUser"
-              >Delete User</v-btn
+            >
+              Delete User</v-btn
             >
           </v-card-text>
         </v-card>
@@ -186,6 +187,7 @@ import { usePages } from "@/store/pages";
 import type { HttpsCallableResult } from "firebase/functions";
 import { displayPageAlert } from "@/plugins/errorHandler";
 import { loading } from "@/plugins/routerStoreHelpers";
+import { companyName } from "@/CONSOLE_CONFIG";
 
 const headers: VSelectValues[] = [
   {
@@ -295,9 +297,9 @@ const createUser = async () => {
     const userPassword = createNewUser.data.password;
     const postData: EmailData = {
       to: newUserEmail.value,
-      subject: "Welcome to YOUR_COMPANY!",
-      sender: "YOUR_COMPANY Accounts",
-      body: `<p>Welcome to YOUR_COMPANY, ${newUserUsername.value}!  To log into your new account, please use the email address that you are currently reading this from.  Your password is: <strong>${userPassword}</strong>.  Please log into your account and click the link to verify your email address.  You will not be able to make any changes to your account until this address is verified.  Once your email is verified, please log back in and <strong> change your password IMMEDIATELY.</strong>  If you have any questions, please contact a site administrator for help.  Thank you!</p>`
+      subject: `Welcome to ${companyName}!`,
+      sender: `${companyName} Accounts`,
+      body: `<p>Welcome to ${companyName}, ${newUserUsername.value}!  To log into your new account, please use the email address that you are currently reading this from.  Your password is: <strong>${userPassword}</strong>.  Please log into your account and click the link to verify your email address.  You will not be able to make any changes to your account until this address is verified.  Once your email is verified, please log back in and <strong> change your password IMMEDIATELY.</strong>  If you have any questions, please contact a site administrator for help.  Thank you!</p>`
     };
 
     const { sendEmail } = await import("@/plugins/mailService");

@@ -8,9 +8,9 @@ import {
 import { /*connectStorageEmulator,*/ getStorage } from "firebase/storage";
 import { /*connectFunctionsEmulator,*/ getFunctions } from "firebase/functions";
 import { getPerformance } from "firebase/performance";
-import { config, recaptchaSiteKey } from "./firebaseConfig";
+import { firebaseConfig, recaptchaSiteKey } from "@/CONSOLE_CONFIG";
 
-export const app = initializeApp(config);
+export const app = initializeApp(firebaseConfig);
 
 export const appCheck = initializeAppCheck(app, {
   provider: new ReCaptchaV3Provider(recaptchaSiteKey),

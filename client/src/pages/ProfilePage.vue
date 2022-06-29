@@ -6,9 +6,10 @@
       <template #prepend>
         <v-icon class="mr-3" color="infotext">mdi-information-outline</v-icon>
       </template>
-      Welcome to YOUR_COMPANY, {{ displayName || "New User" }}! Please click the
-      button to sign out and verify your email address. You will not be able to
-      view any private pages or edit your profile until your email is verified.
+      Welcome to {{ companyName }}, {{ displayName || "New User" }}! Please
+      click the button to sign out and verify your email address. You will not
+      be able to view any private pages or edit your profile until your email is
+      verified.
       <v-spacer />
       <v-btn outlined color="infotext" @click="verifyUserEmail"
         >Verify Email</v-btn
@@ -127,9 +128,9 @@
           <v-divider />
           <v-expansion-panels>
             <v-expansion-panel class="card">
-              <v-expansion-panel-header class="cardtext--text"
-                ><h3>Delete Account</h3></v-expansion-panel-header
-              >
+              <v-expansion-panel-header class="cardtext--text">
+                <h3>Delete Account</h3>
+              </v-expansion-panel-header>
               <v-expansion-panel-content class="cardtext--text" align="center">
                 <v-alert type="error" class="errtext--text mb-6">
                   <template #prepend>
@@ -259,6 +260,7 @@ import type { FirebaseError } from "firebase/app";
 import { deleteFile, uploadFile } from "@/plugins/firebaseStorage";
 import { pushRouter } from "@/plugins/routerStoreHelpers";
 import type { AuthError } from "firebase/auth";
+import { companyName } from "@/CLIENT_CONFIG";
 
 const PagesModule = usePages();
 const displayName = ref("");

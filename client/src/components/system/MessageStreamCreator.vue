@@ -150,6 +150,7 @@ import { privateSettings, settings } from "@/plugins/routerStoreHelpers";
 import { displayPageAlert } from "@/plugins/errorHandler";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { deleteFile, uploadFile } from "@/plugins/firebaseStorage";
+import { companyName } from "@/CLIENT_CONFIG";
 
 interface Props {
   storPath: string;
@@ -234,7 +235,7 @@ const addPost = async () => {
       to: recipients.value.join(),
       subject: "Anonymous User Posted to the Message Board",
       body,
-      sender: "YOUR_COMPANY Message Board"
+      sender: `${companyName} Message Board`
     };
     if (user.value.email) {
       postData.reply = user.value.email;

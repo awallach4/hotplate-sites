@@ -195,8 +195,8 @@
                       block
                       type="submit"
                       :disabled="active"
-                      >Create Event</v-btn
-                    >
+                      >Create Event
+                    </v-btn>
                   </v-form>
                 </v-card-text>
               </v-card>
@@ -303,8 +303,8 @@
                       block
                       type="submit"
                       :disabled="active"
-                      >Update Event</v-btn
-                    >
+                      >Update Event
+                    </v-btn>
                   </v-form>
                 </v-card-text>
               </v-card>
@@ -342,6 +342,7 @@ import {
 import { computed, onMounted, ref, type Ref } from "@vue/composition-api";
 import { fieldRequired, maxLength } from "@/plugins/formRules";
 import { settings, privateSettings } from "@/plugins/routerStoreHelpers";
+import { googleCalendarICalFile, googleCalendarURL } from "@/CONSOLE_CONFIG";
 
 interface CalendarEditorData {
   useCard: boolean;
@@ -507,13 +508,13 @@ const calendarOptions = ref({
     addGC: {
       text: "Add to Google Calendar",
       click(): void {
-        window.open("YOUR_CALENDAR_URL", "_blank");
+        window.open(googleCalendarURL, "_blank");
       }
     },
     downloadFile: {
       text: "Download .ics",
       click(): void {
-        window.open("YOUR_CALENDAR_ICAL_FILE_URL", "_blank");
+        window.open(googleCalendarICalFile, "_blank");
       }
     },
     refresh: {
