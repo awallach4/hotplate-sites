@@ -1,5 +1,5 @@
 <template>
-  <div v-if="pageData.components" id="spec-page">
+  <div v-if="pageData.components" id="base-page">
     <template v-for="component in pageData.components">
       <component
         :is="checkComponent(component.vueComp)"
@@ -29,7 +29,6 @@ import {
   NonexistentComponent,
   PageHeader,
   PlainText,
-  RequestForm,
   RichText,
   SignupSheetCollection,
   VideoEmbed
@@ -42,18 +41,16 @@ const pageData = ref({
   components: []
 } as PageData);
 const pageIndex = computed(() => {
-  const index = PagesModule.specialPages.findIndex((item) => {
-    return item.dbPath === `/${route.params.SpecialPage}`;
+  const index = PagesModule.pages.findIndex((item) => {
+    return item.dbPath === `/${route.params.BasePage}`;
   });
   return index;
 });
 const pageMetaData = computed(() => {
-  return PagesModule.specialPages[pageIndex.value];
+  return PagesModule.pages[pageIndex.value];
 });
 const dbPath = computed(() => {
-  return (
-    (route.params.SpecialPage[0] === "/" ? "" : "/") + route.params.SpecialPage
-  );
+  return (route.params.BasePage[0] === "/" ? "" : "/") + route.params.BasePage;
 });
 
 const getPageData = async () => {
@@ -108,8 +105,6 @@ const checkComponent = (component: string) => {
       return PageHeader;
     case "PlainText":
       return PlainText;
-    case "RequestForm":
-      return RequestForm;
     case "RichText":
       return RichText;
     case "SignupSheetCollection":

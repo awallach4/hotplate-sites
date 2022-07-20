@@ -7,7 +7,8 @@ import {
   type SettingsSitePrivate
 } from "@/types";
 import { ref, type Ref } from "@vue/composition-api";
-import type { User } from "firebase/auth";
+import type { AuthError, User } from "firebase/auth";
+import { getAuthError } from "@/plugins/errorHandler";
 
 export const useUser = defineStore("user", () => {
   const authState = ref(AuthStates.LOGGED_OUT);
@@ -39,7 +40,7 @@ export const useUser = defineStore("user", () => {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
       authState.value = AuthStates.LOGGED_OUT;
-      throw error;
+      throw getAuthError(error as AuthError);
     }
 
     authState.value = AuthStates.LOGGED_IN;
@@ -72,44 +73,38 @@ export const useUser = defineStore("user", () => {
     const { getIdTokenResult, onAuthStateChanged } = await import(
       "firebase/auth"
     );
-    onAuthStateChanged(
-      auth,
-      async (firebaseUser) => {
-        const SettingsModule = useSettings();
-        if (firebaseUser) {
-          const { uid, displayName, email, photoURL, emailVerified } =
-            firebaseUser;
-          user.value = { uid, displayName, email, photoURL, emailVerified };
-          const token = await getIdTokenResult(firebaseUser);
-          const isAdmin = token.claims.admin;
-          const isWebmaster = token.claims.webmaster;
-          const isAuthorized = token.claims.authorized;
-          const isEmailVerified = firebaseUser.emailVerified;
+    onAuthStateChanged(auth, async (firebaseUser) => {
+      const SettingsModule = useSettings();
+      if (firebaseUser) {
+        const { uid, displayName, email, photoURL, emailVerified } =
+          firebaseUser;
+        user.value = { uid, displayName, email, photoURL, emailVerified };
+        const token = await getIdTokenResult(firebaseUser);
+        const isAdmin = token.claims.admin;
+        const isWebmaster = token.claims.webmaster;
+        const isAuthorized = token.claims.authorized;
+        const isEmailVerified = firebaseUser.emailVerified;
 
-          if (isAdmin && isWebmaster && isAuthorized && isEmailVerified) {
-            authLevel.value = AuthLevels.ADMIN;
-            SettingsModule.getSitePrivateSettings();
-          } else if (isWebmaster && isAuthorized && isEmailVerified) {
-            authLevel.value = AuthLevels.WEBMASTER;
-            SettingsModule.getSitePrivateSettings();
-          } else if (isAuthorized && isEmailVerified) {
-            authLevel.value = AuthLevels.USER;
-            SettingsModule.getSitePrivateSettings();
-          } else {
-            authLevel.value = AuthLevels.NONE;
-          }
-          authState.value = AuthStates.LOGGED_IN;
+        if (isAdmin && isWebmaster && isAuthorized && isEmailVerified) {
+          authLevel.value = AuthLevels.ADMIN;
+          SettingsModule.getSitePrivateSettings();
+        } else if (isWebmaster && isAuthorized && isEmailVerified) {
+          authLevel.value = AuthLevels.WEBMASTER;
+          SettingsModule.getSitePrivateSettings();
+        } else if (isAuthorized && isEmailVerified) {
+          authLevel.value = AuthLevels.USER;
+          SettingsModule.getSitePrivateSettings();
         } else {
-          user.value = null;
           authLevel.value = AuthLevels.NONE;
-          authState.value = AuthStates.LOGGED_OUT;
-          SettingsModule.sitePrivateSettings = {} as SettingsSitePrivate;
         }
-      },
-      (error) => {
-        throw error;
+        authState.value = AuthStates.LOGGED_IN;
+      } else {
+        user.value = null;
+        authLevel.value = AuthLevels.NONE;
+        authState.value = AuthStates.LOGGED_OUT;
+        SettingsModule.sitePrivateSettings = {} as SettingsSitePrivate;
       }
-    );
+    });
   };
 
   return {

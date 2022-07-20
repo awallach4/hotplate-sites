@@ -1,5 +1,7 @@
 import { useSettings } from "@/store/settings";
 import type { FullCalendarEvent, GoogleCalendarEvent } from "@/types";
+import type { FirestoreError } from "firebase/firestore/lite";
+import { getFirestoreError } from "./errorHandler";
 
 /**
  * Gets an array of calendar events from Google Calendar using the Apps Script Calendar Service.
@@ -27,9 +29,10 @@ export async function getGoogleCalendarEvents(): Promise<FullCalendarEvent[]> {
       password = "";
     }
   } catch (error) {
-    const err = error as { message: string };
     throw new Error(
-      `An error occurred while getting the script password: ${err.message}`
+      `An error occurred while getting the script password: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 

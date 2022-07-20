@@ -32,7 +32,7 @@
         </v-list-group>
         <v-divider v-if="isLoggedIn" />
         <v-list-item-group color="secondary">
-          <div v-for="path in specialPages" :key="path.id" class="mb-2">
+          <div v-for="path in pages" :key="path.id" class="mb-2">
             <v-list-item
               v-if="
                 path.permissions === 'public' ||
@@ -196,9 +196,9 @@ import {
   privateSettings,
   pushRouter,
   settings,
-  specialPages
+  pages
 } from "@/plugins/routerStoreHelpers";
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { displayPageAlert, getAuthError } from "@/plugins/errorHandler";
 import { useVuetify } from "@/plugins/contextInject";
 import type { AuthError } from "firebase/auth";
 import router from "@/router";
@@ -238,8 +238,9 @@ const logout = async () => {
       pushRouter("/");
     }
   } catch (error) {
-    const rawError = error as AuthError;
-    displayPageAlert(rawError.message);
+    displayPageAlert(
+      `An error occurred while signing out: ${getAuthError(error as AuthError)}`
+    );
   }
 };
 

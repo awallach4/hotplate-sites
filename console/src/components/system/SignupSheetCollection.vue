@@ -77,7 +77,7 @@ import SignupSheet from "./SignupSheet.vue";
 import { onUpdated, ref, type Ref } from "@vue/composition-api";
 import type { ComponentMetaData, SignupData } from "@/types";
 import type { FirestoreError } from "firebase/firestore/lite";
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 
 interface SignupSheetCollectionData {
   hidden: boolean;
@@ -125,7 +125,7 @@ const updateData = () => {
 
 const save = async (
   err = (e: FirestoreError) => {
-    displayPageAlert(`An error occurred while saving: ${e.message}`);
+    displayPageAlert(`An error occurred while saving: ${getFirestoreError(e)}`);
   }
 ) => {
   try {
@@ -168,9 +168,10 @@ const getSheets = async () => {
       signupSheets.value.push(data);
     });
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while getting the signup sheets: ${rawError.message}`
+      `An error occurred while getting the signup sheets: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 };

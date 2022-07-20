@@ -29,10 +29,10 @@ export const maxLength = (
 ): true | string => (value && value.length <= max) || message;
 
 export const notIncludes = (value: string): true | string => {
-  const pattern = /[/\\[\]{}()]/g;
+  const pattern = /[^\w\s\s-]/g;
   return (
     !pattern.test(value) ||
-    'Page names cannot include "/", "\\", "[", "]", "{", "}", "(", or ")".'
+    'Page names cannot include special characters other than "-" and "_".'
   );
 };
 

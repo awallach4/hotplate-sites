@@ -248,7 +248,7 @@ import {
 import type { FieldValue, FirestoreError } from "firebase/firestore/lite";
 import { fieldRequired, minLength } from "@/plugins/formRules";
 import { user } from "@/plugins/authHandler";
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import { settings, privateSettings } from "@/plugins/routerStoreHelpers";
 import { siteURL } from "@/CONSOLE_CONFIG";
 
@@ -505,9 +505,10 @@ const getSignups = async () => {
     });
     updateData();
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while getting the signups: ${rawError.message}`
+      `An error occurred while getting the signups: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 };

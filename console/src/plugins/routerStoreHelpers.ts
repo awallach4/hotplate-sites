@@ -1,11 +1,7 @@
 import router from "@/router";
 import { usePages } from "@/store/pages";
 import { useSettings } from "@/store/settings";
-import type {
-  PagesSpecialPageConfig,
-  SettingsSite,
-  SettingsSitePrivate
-} from "@/types";
+import type { PageConfig, SettingsSite, SettingsSitePrivate } from "@/types";
 import { computed } from "@vue/composition-api";
 
 /**
@@ -47,14 +43,14 @@ export const privateSettings = computed({
   }
 });
 
-export const specialPages = computed({
+export const pages = computed({
   get: () => {
     const PagesModule = usePages();
-    return PagesModule.specialPages;
+    return PagesModule.pages;
   },
-  set: (pages: PagesSpecialPageConfig[]) => {
+  set: (newPages: PageConfig[]) => {
     const PagesModule = usePages();
-    PagesModule.specialPages = pages;
+    PagesModule.pages = newPages;
   }
 });
 

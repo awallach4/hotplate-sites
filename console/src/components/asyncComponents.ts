@@ -64,10 +64,6 @@ export const PlainText = defineAsyncComponent(
   () => import("@/components/system/PlainText.vue")
 );
 
-export const RequestForm = defineAsyncComponent(
-  () => import("@/components/system/RequestForm.vue")
-);
-
 export const RichText = defineAsyncComponent(
   () => import("@/components/system/RichText.vue")
 );

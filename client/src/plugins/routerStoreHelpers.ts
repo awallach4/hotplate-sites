@@ -30,9 +30,9 @@ export const privateSettings = computed(() => {
   return SettingsModule.sitePrivateSettings;
 });
 
-export const specialPages = computed(() => {
+export const pages = computed(() => {
   const PagesModule = usePages();
-  return PagesModule.specialPages;
+  return PagesModule.pages;
 });
 
 export const loading = computed(() => {

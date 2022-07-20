@@ -18,7 +18,7 @@ export enum PermissionGroups {
   UNSET = ""
 }
 
-export interface PagesSpecialPageConfig {
+export interface PageConfig {
   dbPath: string;
   id: string;
   index: number;

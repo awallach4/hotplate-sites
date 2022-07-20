@@ -6,7 +6,7 @@ import {
   AuthLevels,
   AuthStates,
   PermissionGroups,
-  type PagesSpecialPageConfig
+  type PageConfig
 } from "@/types";
 
 const router = new VueRouter({
@@ -29,9 +29,9 @@ const router = new VueRouter({
       component: () => import("@/pages/ErrorPage.vue")
     },
     {
-      path: "/:SpecialPage",
-      name: "SpecialPage",
-      component: () => import("@/pages/SpecialPage.vue")
+      path: "/:BasePage",
+      name: "BasePage",
+      component: () => import("@/pages/BasePage.vue")
     }
   ],
   scrollBehavior(to, from, savedPosition) {
@@ -55,8 +55,8 @@ router.beforeEach(async (to, from, next) => {
   if (Object.keys(SettingsModule.siteSettings).length === 0) {
     await SettingsModule.getSettings();
   }
-  if (PagesModule.specialPages.length === 0) {
-    await PagesModule.getSpecialPages();
+  if (PagesModule.pages.length === 0) {
+    await PagesModule.getPages();
   }
 
   const user = await UserModule.getInitialUser();
@@ -91,10 +91,10 @@ router.beforeEach(async (to, from, next) => {
     isWebmaster = false;
   }
 
-  if (to.name === "SpecialPage") {
-    const pages: PagesSpecialPageConfig[] = PagesModule.specialPages;
+  if (to.name === "BasePage") {
+    const pages: PageConfig[] = PagesModule.pages;
     const thispage = pages.findIndex((item) => {
-      return item.dbPath === `/${to.params.SpecialPage}`;
+      return item.dbPath === `/${to.params.BasePage}`;
     });
     if (pages[thispage]) {
       const pagePerms = pages[thispage].permissions;

@@ -9,9 +9,9 @@ const router = new VueRouter({
   base: import.meta.env.BASE_URL,
   routes: <RouteConfig[]>[
     {
-      path: "/spec/:index",
-      name: "SpecialPage",
-      component: () => import("@/pages/SpecialPage.vue"),
+      path: "/pages/:index",
+      name: "BasePage",
+      component: () => import("@/pages/BasePage.vue"),
       meta: {
         needsAdmin: false
       }
@@ -96,8 +96,8 @@ router.beforeEach(async (to, from, next) => {
   if (Object.keys(SettingsModule.siteSettings).length === 0) {
     await SettingsModule.getSettings();
   }
-  if (PagesModule.specialPages.length === 0) {
-    await PagesModule.getSpecialPages();
+  if (PagesModule.pages.length === 0) {
+    await PagesModule.getPages();
   }
 
   const goingToLogin = to.path === "/login";

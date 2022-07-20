@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import { deleteFile } from "@/plugins/firebaseStorage";
 import type { ComponentMetaData, MessageStreamMessage } from "@/types";
 import { onUpdated, ref, type Ref } from "@vue/composition-api";
@@ -112,9 +112,10 @@ const getMessages = async () => {
       messages.value.push(data);
     });
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while getting the messages: ${rawError.message}`
+      `An error occurred while getting the messages: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 
@@ -157,9 +158,10 @@ const deleteSelf = async (ask: boolean) => {
         )
       );
     } catch (error) {
-      const rawError = error as FirestoreError;
       displayPageAlert(
-        `An error occurred while deleting the posts: ${rawError.message}`
+        `An error occurred while deleting the posts: ${getFirestoreError(
+          error as FirestoreError
+        )}`
       );
     }
   });

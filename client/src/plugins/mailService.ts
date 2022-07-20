@@ -1,7 +1,9 @@
 import { useSettings } from "@/store/settings";
 import { PermissionGroups, type EmailData } from "@/types";
 import { computed } from "@vue/composition-api";
+import type { FirestoreError } from "firebase/firestore/lite";
 import { isAuthorized, isWebmaster } from "./authHandler";
+import { getFirestoreError } from "./errorHandler";
 
 export const canMail = computed(() => {
   const SettingsModule = useSettings();
@@ -42,7 +44,9 @@ export const sendEmail = async (postData: EmailData): Promise<void> => {
     }
   } catch (error) {
     throw new Error(
-      `An error occurred while getting the script password: ${error}`
+      `An error occurred while getting the script password: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 

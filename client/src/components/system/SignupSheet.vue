@@ -163,7 +163,7 @@ import { isAuthorized, user } from "@/plugins/authHandler";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { fieldRequired } from "@/plugins/formRules";
 import { TiptapEditor } from "@/components/asyncComponents";
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import { settings } from "@/plugins/routerStoreHelpers";
 
 interface Props {
@@ -259,9 +259,10 @@ const getSignups = async () => {
       items.value.push(data);
     });
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while getting the signups: ${rawError.message}`
+      `An error occurred while getting the signups: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 };
@@ -302,9 +303,10 @@ const add = async () => {
       await setDoc(doc(firestore, `${props.dbPath}/${member.key}`), member);
       await getSignups();
     } catch (error) {
-      const rawError = error as FirestoreError;
       displayPageAlert(
-        `An error occurred while signing up: ${rawError.message}`
+        `An error occurred while signing up: ${getFirestoreError(
+          error as FirestoreError
+        )}`
       );
     }
     comments.value = "";
@@ -344,9 +346,10 @@ const remove = async (row: SignupItem) => {
       await deleteDoc(doc(firestore, `${props.dbPath}/${row.key}`));
       await getSignups();
     } catch (error) {
-      const rawError = error as FirestoreError;
       displayPageAlert(
-        `An error occurred while removing your signup: ${rawError.message}`
+        `An error occurred while removing your signup: ${getFirestoreError(
+          error as FirestoreError
+        )}`
       );
     }
   }

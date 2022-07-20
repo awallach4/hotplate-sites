@@ -1,3 +1,4 @@
+import { getAuthError, getFirestoreError } from "@/plugins/errorHandler";
 import {
   AuthLevels,
   AuthStates,
@@ -6,7 +7,8 @@ import {
   type UserData
 } from "@/types";
 import { ref, type Ref } from "@vue/composition-api";
-import type { User } from "firebase/auth";
+import type { User, AuthError } from "firebase/auth";
+import type { FirestoreError } from "firebase/firestore/lite";
 import { defineStore } from "pinia";
 import { useSettings } from "./settings";
 
@@ -41,7 +43,7 @@ export const useUser = defineStore("user", () => {
       logEvent(analytics, "login", { method: "password" });
     } catch (error) {
       authState.value = AuthStates.LOGGED_OUT;
-      throw error;
+      throw getAuthError(error as AuthError);
     }
 
     authState.value = AuthStates.LOGGED_IN;
@@ -163,56 +165,53 @@ export const useUser = defineStore("user", () => {
     const { getIdTokenResult, onAuthStateChanged } = await import(
       "firebase/auth"
     );
-    onAuthStateChanged(
-      auth,
-      async (firebaseUser) => {
-        const SettingsModule = useSettings();
-        if (firebaseUser) {
-          const { uid, displayName, email, photoURL, emailVerified } =
-            firebaseUser;
-          user.value = { uid, displayName, email, photoURL, emailVerified };
-          const token = await getIdTokenResult(firebaseUser);
-          const isAdmin = token.claims.admin;
-          const isWebmaster = token.claims.webmaster;
-          const isAuthorized = token.claims.authorized;
-          const isEmailVerified = firebaseUser.emailVerified;
-
-          if (isAdmin && isWebmaster && isAuthorized && isEmailVerified) {
-            authLevel.value = AuthLevels.ADMIN;
-            SettingsModule.getSitePrivateSettings();
-          } else if (isWebmaster && isAuthorized && isEmailVerified) {
-            authLevel.value = AuthLevels.WEBMASTER;
-            SettingsModule.getSitePrivateSettings();
-          } else if (isAuthorized && isEmailVerified) {
-            authLevel.value = AuthLevels.USER;
-            SettingsModule.getSitePrivateSettings();
-          } else {
-            authLevel.value = AuthLevels.NONE;
-          }
-          authState.value = AuthStates.LOGGED_IN;
-
-          try {
-            const { firestore } = await import("@/plugins/firebase");
-            const { doc, getDoc } = await import("firebase/firestore/lite");
-            const userDoc = await getDoc(doc(firestore, `users/${uid}`));
-            const data = userDoc.data() as UserData;
-            userProfile.value = data;
-          } catch (error) {
-            await logout();
-            throw error;
-          }
-        } else {
-          user.value = null;
-          userProfile.value = null;
-          authLevel.value = AuthLevels.NONE;
-          authState.value = AuthStates.LOGGED_OUT;
-          SettingsModule.sitePrivateSettings = {} as SettingsSitePrivate;
-        }
-      },
-      (error) => {
-        throw error;
+    onAuthStateChanged(auth, async (firebaseUser) => {
+      const SettingsModule = useSettings();
+      if (Object.keys(SettingsModule.siteSettings).length === 0) {
+        await SettingsModule.getSettings();
       }
-    );
+      if (firebaseUser) {
+        const { uid, displayName, email, photoURL, emailVerified } =
+          firebaseUser;
+        user.value = { uid, displayName, email, photoURL, emailVerified };
+        const token = await getIdTokenResult(firebaseUser);
+        const isAdmin = token.claims.admin;
+        const isWebmaster = token.claims.webmaster;
+        const isAuthorized = token.claims.authorized;
+        const isEmailVerified = firebaseUser.emailVerified;
+
+        if (isAdmin && isWebmaster && isAuthorized && isEmailVerified) {
+          authLevel.value = AuthLevels.ADMIN;
+          SettingsModule.getSitePrivateSettings();
+        } else if (isWebmaster && isAuthorized && isEmailVerified) {
+          authLevel.value = AuthLevels.WEBMASTER;
+          SettingsModule.getSitePrivateSettings();
+        } else if (isAuthorized && isEmailVerified) {
+          authLevel.value = AuthLevels.USER;
+          SettingsModule.getSitePrivateSettings();
+        } else {
+          authLevel.value = AuthLevels.NONE;
+        }
+        authState.value = AuthStates.LOGGED_IN;
+
+        try {
+          const { firestore } = await import("@/plugins/firebase");
+          const { doc, getDoc } = await import("firebase/firestore/lite");
+          const userDoc = await getDoc(doc(firestore, `users/${uid}`));
+          const data = userDoc.data() as UserData;
+          userProfile.value = data;
+        } catch (error) {
+          await logout();
+          throw getFirestoreError(error as FirestoreError);
+        }
+      } else {
+        user.value = null;
+        userProfile.value = null;
+        authLevel.value = AuthLevels.NONE;
+        authState.value = AuthStates.LOGGED_OUT;
+        SettingsModule.sitePrivateSettings = {} as SettingsSitePrivate;
+      }
+    });
   };
 
   return {

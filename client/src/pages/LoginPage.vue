@@ -114,7 +114,7 @@ import { useUser } from "@/store/user";
 import type { VFormOptions } from "@/types";
 import { fieldRequired, validEmail } from "@/plugins/formRules";
 import { ref, watch } from "@vue/composition-api";
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { displayPageAlert, getAuthError } from "@/plugins/errorHandler";
 import { pushRouter } from "@/plugins/routerStoreHelpers";
 import type { AuthError } from "firebase/auth";
 
@@ -150,19 +150,7 @@ const login = async () => {
     );
     pushRouter("/");
   } catch (error) {
-    const rawError = error as AuthError;
-    if (rawError.code === "auth/wrong-password") {
-      displayPageAlert("Your password is incorrect.");
-    } else if (
-      rawError.code === "auth/invalid-email" ||
-      rawError.code === "auth/user-not-found"
-    ) {
-      displayPageAlert(
-        "Your email address is invalid or your account was not found."
-      );
-    } else {
-      displayPageAlert(rawError.message);
-    }
+    displayPageAlert(error as string);
     submitting.value = false;
   }
 };
@@ -180,17 +168,7 @@ const resetPassword = async () => {
     submitting.value = false;
     resetPasswordDialog.value = false;
   } catch (error) {
-    const rawError = error as AuthError;
-    if (
-      rawError.code === "auth/invalid-email" ||
-      rawError.code === "auth/user-not-found"
-    ) {
-      displayPageAlert(
-        "Your email address is invalid or your account was not found."
-      );
-    } else {
-      displayPageAlert(rawError.message);
-    }
+    displayPageAlert(getAuthError(error as AuthError));
     submitting.value = false;
   }
 };

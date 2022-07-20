@@ -116,6 +116,14 @@ try {
     height: 100% !important;
   }
 
+  .handle {
+    cursor: grab;
+  }
+
+  .sortable-chosen .handle {
+    cursor: grabbing !important;
+  }
+
   li p {
     margin: 0;
   }

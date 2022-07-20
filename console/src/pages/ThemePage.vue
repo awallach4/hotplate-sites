@@ -90,7 +90,7 @@ import type {
 } from "vuetify/types/services/theme";
 import { computed, ref } from "@vue/composition-api";
 import type { FirestoreError } from "firebase/firestore/lite";
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 
 const items: VSelectValues[] = [
   {
@@ -175,7 +175,7 @@ const textColors = computed(() => {
 const save = async (
   callback: () => void,
   err = (e: FirestoreError) => {
-    displayPageAlert(`An error occurred while saving: ${e.message}`);
+    displayPageAlert(`An error occurred while saving: ${getFirestoreError(e)}`);
   }
 ) => {
   try {
@@ -252,9 +252,10 @@ const getThemes = async () => {
       themes.value.dark = {} as VuetifyThemeVariant;
     }
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while getting the themes: ${rawError.message}`
+      `An error occurred while getting the themes: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 };

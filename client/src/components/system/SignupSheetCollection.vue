@@ -28,7 +28,7 @@
             v-if="index === currentSheet"
             :key="list.id"
             :data="signupSheets[index]"
-            :db-path="`pages/${$route.params.SpecialPage}/components/${metaData.id}/signup-sheets/${list.id}/signups`"
+            :db-path="`pages/${$route.params.BasePage}/components/${metaData.id}/signup-sheets/${list.id}/signups`"
           />
         </template>
       </v-col>
@@ -41,7 +41,7 @@ import type { ComponentMetaData, SignupData } from "@/types";
 import { ref, type Ref } from "@vue/composition-api";
 import { SignupSheet } from "@/components/asyncComponents";
 import type { FirestoreError } from "firebase/firestore/lite";
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import { useRoute } from "@/plugins/contextInject";
 
 interface Props {
@@ -71,7 +71,7 @@ const getSheets = async () => {
       query(
         collection(
           firestore,
-          `pages/${route.params.SpecialPage}/components/${props.metaData.id}/signup-sheets`
+          `pages/${route.params.BasePage}/components/${props.metaData.id}/signup-sheets`
         ),
         orderBy("created", "desc"),
         where("hidden", "==", false)
@@ -85,9 +85,10 @@ const getSheets = async () => {
       signupSheets.value.push(data);
     });
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while getting the signup sheets: ${rawError.message}`
+      `An error occurred while getting the signup sheets: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 };

@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import type {
   MessageStreamMessageComment,
   MessageStreamMessage
@@ -69,9 +69,10 @@ const removeComment = async () => {
     );
     emit("fetch");
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while deleting the comment: ${rawError.message}`
+      `An error occurred while deleting the comment: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
     emit("fetch");
   }

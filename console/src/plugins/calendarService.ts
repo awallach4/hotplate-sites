@@ -4,6 +4,8 @@ import type {
   FullCalendarEvent,
   GoogleCalendarEvent
 } from "@/types";
+import type { FirestoreError } from "firebase/firestore/lite";
+import { getFirestoreError } from "./errorHandler";
 
 /**
  * Edits the calendar using the Apps Script Calendar Service.
@@ -32,9 +34,10 @@ export async function editGoogleCalendar(postData: EventData): Promise<void> {
       postData.password = "";
     }
   } catch (error) {
-    const err = error as { message: string };
     throw new Error(
-      `An error occurred while getting the password for the script: ${err.message}`
+      `An error occurred while getting the password for the script: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 
@@ -90,9 +93,10 @@ export async function getGoogleCalendarEvents(): Promise<FullCalendarEvent[]> {
       password = "";
     }
   } catch (error) {
-    const err = error as { message: string };
     throw new Error(
-      `An error occurred while getting the password for the script: ${err.message}`
+      `An error occurred while getting the password for the script: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 

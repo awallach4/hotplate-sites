@@ -33,11 +33,12 @@
 <script lang="ts" setup>
 import { isAuthorized, user } from "@/plugins/authHandler";
 import { useRoute } from "@/plugins/contextInject";
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import type {
   MessageStreamMessage,
   MessageStreamMessageComment
 } from "@/types";
+import type { FirestoreError } from "firebase/firestore/lite";
 
 interface Props {
   comment: MessageStreamMessageComment;
@@ -67,15 +68,16 @@ const removeComment = async () => {
     await updateDoc(
       doc(
         firestore,
-        `pages/${route.params.SpecialPage}/components/${props.componentId}/messages/${props.message.id}`
+        `pages/${route.params.BasePage}/components/${props.componentId}/messages/${props.message.id}`
       ),
       { comments: arrayRemove(props.comment) }
     );
     emit("fetch");
   } catch (error) {
-    const rawError = error as { message: string };
     displayPageAlert(
-      `An error occurred while deleting the comment: ${rawError.message}`
+      `An error occurred while deleting the comment: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
     emit("fetch");
   }

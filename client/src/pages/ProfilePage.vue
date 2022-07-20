@@ -255,12 +255,16 @@ import {
   matchStrings,
   includes
 } from "@/plugins/formRules";
-import { displayPageAlert } from "@/plugins/errorHandler";
-import type { FirebaseError } from "firebase/app";
+import {
+  displayPageAlert,
+  getAuthError,
+  getFirestoreError
+} from "@/plugins/errorHandler";
 import { deleteFile, uploadFile } from "@/plugins/firebaseStorage";
 import { pushRouter } from "@/plugins/routerStoreHelpers";
 import type { AuthError } from "firebase/auth";
 import { companyName } from "@/CLIENT_CONFIG";
+import type { FirestoreError } from "firebase/firestore/lite";
 
 const PagesModule = usePages();
 const displayName = ref("");
@@ -314,8 +318,7 @@ const changePassword = async () => {
       submitting.value = false;
       displayPageAlert("Password change successful.");
     } catch (error) {
-      const rawError = error as AuthError;
-      displayPageAlert(rawError.message);
+      displayPageAlert(getAuthError(error as AuthError));
       submitting.value = false;
     }
   }
@@ -344,8 +347,7 @@ const deleteAccount = async () => {
         submitting.value = false;
         pushRouter("/");
       } catch (error) {
-        const rawError = error as AuthError;
-        displayPageAlert(rawError.message);
+        displayPageAlert(getAuthError(error as AuthError));
         submitting.value = false;
       }
     } else {
@@ -373,16 +375,29 @@ const deleteProfilePhoto = async () => {
     if (confirm("Are you sure you want to delete this image?")) {
       try {
         await deleteFile(photoURL.value);
+      } catch (error) {
+        displayPageAlert(
+          `An error occurred while deleting the image: ${error}`
+        );
+      }
+      try {
         photoURL.value = "";
         const newData = {} as UserData;
         newData.photoURL = "";
         const UserModule = useUser();
         await UserModule.editProfile(newData);
       } catch (error) {
-        const err = error as FirebaseError;
-        displayPageAlert(
-          `An error occurred while deleting the image: ${err.message}`
-        );
+        const authError = getAuthError(error as AuthError);
+        const firestoreError = getFirestoreError(error as FirestoreError);
+        if (authError.includes("/")) {
+          displayPageAlert(
+            `An error occurred while deleting the image: ${firestoreError}`
+          );
+        } else {
+          displayPageAlert(
+            `An error occurred while deleting the image: ${authError}`
+          );
+        }
       }
     }
   } else {
@@ -417,20 +432,32 @@ const updateProfile = async () => {
           email.value
         );
       } catch (error) {
-        const rawError = error as AuthError;
-        displayPageAlert(rawError.message);
+        const authError = getAuthError(error as AuthError);
+        const firestoreError = getFirestoreError(error as FirestoreError);
+        if (authError.includes("/")) {
+          displayPageAlert(
+            `An error occurred while changing your email address: ${firestoreError}`
+          );
+        } else {
+          displayPageAlert(
+            `An error occurred while changing your email address: ${authError}`
+          );
+        }
         submitting.value = false;
         return;
       }
     }
-    try {
-      if (fileInput.value) {
+    if (fileInput.value) {
+      try {
         photoURL.value = await uploadFile(
           `profile-photos/${user.value.uid}`,
           fileInput.value
         );
+      } catch (error) {
+        displayPageAlert(error as string);
       }
-
+    }
+    try {
       const newData = {} as UserData;
 
       if (displayName.value !== undefined) {
@@ -446,10 +473,17 @@ const updateProfile = async () => {
       submitting.value = false;
       editingProfile.value = false;
     } catch (error) {
-      const rawError = error as FirebaseError;
-      displayPageAlert(
-        `An error occurred while updating your profile: ${rawError.message}`
-      );
+      const authError = getAuthError(error as AuthError);
+      const firestoreError = getFirestoreError(error as FirestoreError);
+      if (authError.includes("/")) {
+        displayPageAlert(
+          `An error occurred while updating your profile: ${firestoreError}`
+        );
+      } else {
+        displayPageAlert(
+          `An error occurred while updating your profile: ${authError}`
+        );
+      }
       submitting.value = false;
     }
   }
@@ -464,9 +498,10 @@ const verifyUserEmail = async () => {
     );
     pushRouter("/");
   } catch (error) {
-    const rawError = error as FirebaseError;
     displayPageAlert(
-      `An error occurred while sending the verification email: ${rawError.message}`
+      `An error occurred while sending the verification email: ${getAuthError(
+        error as AuthError
+      )}`
     );
   }
 };

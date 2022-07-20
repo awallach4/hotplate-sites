@@ -1,9 +1,11 @@
+import { getFirestoreError } from "@/plugins/errorHandler";
 import {
   PermissionGroups,
   type SettingsSite,
   type SettingsSitePrivate
 } from "@/types";
 import { ref, type Ref } from "@vue/composition-api";
+import type { FirestoreError } from "firebase/firestore/lite";
 import { defineStore } from "pinia";
 
 export const useSettings = defineStore("settings", () => {
@@ -43,7 +45,7 @@ export const useSettings = defineStore("settings", () => {
         footerTxt: "",
         mailURL: ""
       };
-      throw error;
+      throw getFirestoreError(error as FirestoreError);
     }
   };
 
@@ -72,7 +74,7 @@ export const useSettings = defineStore("settings", () => {
         linkHidden: false,
         meetLink: ""
       };
-      throw error;
+      throw getFirestoreError(error as FirestoreError);
     }
   };
 

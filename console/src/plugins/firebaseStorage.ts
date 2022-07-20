@@ -1,4 +1,5 @@
 import type { StorageError, UploadTaskSnapshot } from "firebase/storage";
+import { getStorageError } from "./errorHandler";
 
 /**
  * Uploads a file to Firebase Storage.
@@ -55,7 +56,7 @@ export const uploadFile = async (
       }
     },
     (error) => {
-      throw error.message;
+      throw getStorageError(error);
     }
   );
   try {
@@ -63,8 +64,7 @@ export const uploadFile = async (
     const url = await getDownloadURL(uploadTask.snapshot.ref);
     return url;
   } catch (error) {
-    const rawError = error as StorageError;
-    throw rawError.message;
+    throw getStorageError(error as StorageError);
   }
 };
 
@@ -82,7 +82,6 @@ export const deleteFile = async (path: string) => {
     const imgRef = storageRef(storage, path);
     await deleteObject(imgRef);
   } catch (error) {
-    const rawError = error as StorageError;
-    throw rawError.message;
+    throw getStorageError(error as StorageError);
   }
 };

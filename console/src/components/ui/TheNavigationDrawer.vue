@@ -71,7 +71,7 @@
             </v-text-field>
             <v-select
               v-model="settings.defaultPage"
-              :items="pages"
+              :items="publicPages"
               filled
               dense
               label="Default Page"
@@ -90,8 +90,8 @@
           <v-divider />
           <v-subheader>Pages</v-subheader>
           <draggable
-            v-model="specialPages"
-            :disabled="specialPages.length < 2 || $route.name === 'SpecialPage'"
+            v-model="pages"
+            :disabled="pages.length < 2 || $route.name === 'BasePage'"
             ghost-class="elevation-10"
             style="width: 100%"
             handle=".handle"
@@ -100,12 +100,12 @@
             @end="savePageOrder"
           >
             <v-list-item
-              v-for="(page, index) in specialPages"
+              v-for="(page, index) in pages"
               :key="page.dbPath"
-              :to="`/spec/${index}`"
+              :to="`/pages/${index}`"
             >
               <v-list-item-icon
-                v-if="specialPages.length > 1 && $route.name !== 'SpecialPage'"
+                v-if="pages.length > 1 && $route.name !== 'BasePage'"
                 class="handle"
               >
                 <v-icon>mdi-drag-vertical</v-icon>
@@ -113,10 +113,14 @@
               <v-list-item-title>{{ page.name }}</v-list-item-title>
             </v-list-item>
           </draggable>
-          <v-spacer />
           <v-dialog v-model="modal" max-width="400px">
             <template #activator="{ on }">
-              <v-btn color="secondary" class="sectext--text" block v-on="on">
+              <v-btn
+                color="secondary"
+                class="sectext--text mt-2"
+                block
+                v-on="on"
+              >
                 <v-icon left>mdi-plus</v-icon> Add Page
               </v-btn>
             </template>
@@ -235,7 +239,7 @@ import { usePages } from "@/store/pages";
 import { useUser } from "@/store/user";
 import {
   PermissionGroups,
-  type PagesSpecialPageConfig,
+  type PageConfig,
   type VFormOptions,
   type VSelectValues
 } from "@/types";
@@ -251,14 +255,18 @@ import {
 import type { FirestoreError } from "firebase/firestore/lite";
 import { isWebmaster, isAdmin, user, permissions } from "@/plugins/authHandler";
 import {
-  specialPages,
+  pages,
   settings,
   pageTitle,
   loading,
   pushRouter,
   canSave
 } from "@/plugins/routerStoreHelpers";
-import { displayPageAlert } from "@/plugins/errorHandler";
+import {
+  displayPageAlert,
+  getAuthError,
+  getFirestoreError
+} from "@/plugins/errorHandler";
 import { useVuetify } from "@/plugins/contextInject";
 import type { AuthError } from "firebase/auth";
 
@@ -290,14 +298,16 @@ watch(modal, (newValue) => {
   }
 });
 
-const pages = computed(() => {
+const publicPages = computed(() => {
   const options: VSelectValues[] = [];
-  specialPages.value.forEach((page) => {
-    const route: VSelectValues = {
-      text: page.name,
-      value: page.dbPath
-    };
-    options.push(route);
+  pages.value.forEach((page) => {
+    if (page.permissions === PermissionGroups.PUBLIC) {
+      const route: VSelectValues = {
+        text: page.name,
+        value: page.dbPath
+      };
+      options.push(route);
+    }
   });
   options.push({
     text: "Log In",
@@ -327,9 +337,10 @@ const savePageSettings = async () => {
 
     displayPageAlert("The page settings have been saved.");
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while saving the page settings: ${rawError.message}`
+      `An error occurred while saving the site settings: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 };
@@ -337,8 +348,8 @@ const savePageSettings = async () => {
 const savePageOrder = async () => {
   const { firestore } = await import("@/plugins/firebase");
   const { doc, setDoc } = await import("firebase/firestore/lite");
-  specialPages.value.forEach((page) => {
-    page.index = specialPages.value.indexOf(page);
+  pages.value.forEach((page) => {
+    page.index = pages.value.indexOf(page);
     setDoc(doc(firestore, `pages${page.dbPath}`), page, { merge: true });
   });
   displayPageAlert("The new page order has been saved.");
@@ -353,8 +364,7 @@ const logout = async () => {
   try {
     await UserModule.logout();
   } catch (error) {
-    const rawError = error as AuthError;
-    displayPageAlert(rawError.message);
+    displayPageAlert(getAuthError(error as AuthError));
   }
   pushRouter("/login");
 };
@@ -365,26 +375,51 @@ const createPage = async () => {
     return;
   }
   const { generateString } = await import("@/plugins/stringGenerator");
-  const page: PagesSpecialPageConfig = {
+  const page: PageConfig = {
     name: newPageName.value,
     permissions: newPagePermissions.value,
     dbPath: newDbPath.value,
-    index: specialPages.value.length,
+    index: pages.value.length,
     id: generateString(20)
   };
 
   try {
-    const PagesModule = usePages();
-    specialPages.value.push(page);
-    PagesModule.specialPages = specialPages.value;
     const { firestore } = await import("@/plugins/firebase");
-    const { doc, setDoc } = await import("firebase/firestore/lite");
+    const { collection, doc, getDocs, query, where, setDoc } = await import(
+      "firebase/firestore/lite"
+    );
+    const existingPages = await getDocs(
+      query(
+        collection(firestore, "pages"),
+        where("dbPath", "==", newDbPath.value)
+      )
+    );
+    if (
+      existingPages.size > 0 ||
+      newDbPath.value === "/login" ||
+      newDbPath.value === "/log-in" ||
+      newDbPath.value === "/register" ||
+      newDbPath.value === "/profile" ||
+      newDbPath.value === "/error" ||
+      newDbPath.value === "login" ||
+      newDbPath.value === "log-in" ||
+      newDbPath.value === "register" ||
+      newDbPath.value === "profile" ||
+      newDbPath.value === "error"
+    ) {
+      displayPageAlert("The page name is already taken!");
+      return;
+    }
+    const PagesModule = usePages();
+    pages.value.push(page);
+    PagesModule.pages = pages.value;
     await setDoc(doc(firestore, `pages${newDbPath.value}`), page);
     modal.value = false;
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while creating the special page: ${rawError.message}`
+      `An error occurred while creating the page: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 };
