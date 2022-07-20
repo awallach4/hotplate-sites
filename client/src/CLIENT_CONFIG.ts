@@ -2,10 +2,6 @@
 
 export const companyName = "YOUR_COMPANY";
 
-// Note:  This is the URL of your Google Calendar, NOT the URL from Google Apps Script.
-export const googleCalendarURL = "YOUR_GOOGLE_CALENDAR_URL";
-export const googleCalendarICalFile = "YOUR_CALENDAR_ICAL_FILE_URL";
-
 // Firebase config object from the Firebase Console for your CLIENT app.  Some properties may be missing.
 export const firebaseConfig = {
   apiKey: "YOUR_API_KEY",

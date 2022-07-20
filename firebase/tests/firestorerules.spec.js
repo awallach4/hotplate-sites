@@ -3729,7 +3729,7 @@ describe("Firestore Security Rules", () => {
           addresses: [],
           consoleURL: "",
           meetLink: "",
-          linkHidden: false
+          useMeeting: false
         },
         { merge: true }
       )

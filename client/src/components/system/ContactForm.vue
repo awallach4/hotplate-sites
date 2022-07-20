@@ -3,7 +3,7 @@
     <card-wrap :is-elevated="useCard" :header="header">
       <p v-html="sanitized(text)" />
       <v-form
-        v-if="canMail && email && settings.mailURL"
+        v-if="canMail && email && settings.mailURL && settings.useEmail"
         ref="form"
         :disabled="submitting"
         @submit.prevent="send"
@@ -42,17 +42,17 @@
           Send
         </v-btn>
       </v-form>
-      <strong v-else-if="!canMail && settings.mailURL"
+      <strong v-else-if="!canMail && !email"
         >We're sorry, but it looks like you're not allowed to send emails.
         Please contact a site administrator for more information.</strong
       >
-      <strong v-else-if="canMail && !email && settings.mailURL"
+      <strong v-else-if="canMail && !email"
         >We're sorry, but this form is missing an email recipient. Please
         contact a webmaster for assitance.</strong
       >
-      <strong v-else-if="!settings.mailURL">
-        We're sorry, but the email service script URL was not found. Please
-        contact a site administrator for assistance.
+      <strong v-else>
+        We're sorry, but the email service has not been enabled by an
+        administrator.
       </strong>
     </card-wrap>
   </div>

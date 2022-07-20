@@ -1,6 +1,6 @@
 <template>
   <card-wrap :is-elevated="useCard" :header="header" class="calendar-widget">
-    <template v-if="settings.calURL">
+    <template v-if="settings.useCalendar">
       <p>
         Times shown are in your local timezone.
         <br />
@@ -34,10 +34,8 @@
       </v-card>
     </template>
     <template v-else>
-      <strong
-        >We're sorry, but the calendar service script URL was not found. Please
-        contact a site administrator for assistance.</strong
-      >
+      We're sorry, but the calendar service has not been enabled by an
+      administrator.
     </template>
   </card-wrap>
 </template>
@@ -48,16 +46,14 @@ import type { EventClickArg } from "@fullcalendar/vue";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import listPlugin from "@fullcalendar/list";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { useSettings } from "@/store/settings";
 import {
-  computed,
   defineAsyncComponent,
   onMounted,
   ref,
   type Ref
 } from "@vue/composition-api";
 import type { FullCalendarEvent } from "@/types";
-import { googleCalendarICalFile, googleCalendarURL } from "@/CLIENT_CONFIG";
+import { settings } from "@/plugins/routerStoreHelpers";
 
 interface Props {
   useCard?: boolean;
@@ -136,13 +132,23 @@ const calendarOptions = ref({
     addGC: {
       text: "Add to Google Calendar",
       click: () => {
-        window.open(googleCalendarURL, "_blank");
+        window.open(
+          `https://www.google.com/calendar/render?cid=${encodeURI(
+            settings.value.calID
+          )}`,
+          "_blank"
+        );
       }
     },
     downloadFile: {
       text: "Download .ics",
       click: () => {
-        window.open(googleCalendarICalFile, "_blank");
+        window.open(
+          `https://calendar.google.com/calendar/ical/${encodeURI(
+            settings.value.calID
+          )}/public/basic.ics`,
+          "_blank"
+        );
       }
     },
     refresh: {
@@ -160,10 +166,6 @@ const calendarOptions = ref({
   eventColor: "var(--v-primary-base)",
   eventTextColor: "var(--v-pritext-base)",
   eventClick: openInfo
-});
-const settings = computed(() => {
-  const SettingsModule = useSettings();
-  return SettingsModule.siteSettings;
 });
 
 onMounted(async () => {

@@ -21,7 +21,7 @@
         label="Header"
         :disabled="dragging"
       />
-      <template v-if="settings.calURL">
+      <template v-if="settings.useCalendar">
         <p>
           Times shown are in your local timezone.
           <br />
@@ -313,7 +313,7 @@
         </v-card>
       </template>
       <template v-else>
-        <strong>The calendar service script URL was not found.</strong>
+        <strong>The calendar service is not enabled.</strong>
       </template>
     </v-card-text>
   </v-drag-frame>
@@ -342,7 +342,6 @@ import {
 import { computed, onMounted, ref, type Ref } from "@vue/composition-api";
 import { fieldRequired, maxLength } from "@/plugins/formRules";
 import { settings, privateSettings } from "@/plugins/routerStoreHelpers";
-import { googleCalendarICalFile, googleCalendarURL } from "@/CONSOLE_CONFIG";
 
 interface CalendarEditorData {
   useCard: boolean;
@@ -508,13 +507,23 @@ const calendarOptions = ref({
     addGC: {
       text: "Add to Google Calendar",
       click(): void {
-        window.open(googleCalendarURL, "_blank");
+        window.open(
+          `https://www.google.com/calendar/render?cid=${encodeURI(
+            settings.value.calID
+          )}`,
+          "_blank"
+        );
       }
     },
     downloadFile: {
       text: "Download .ics",
       click(): void {
-        window.open(googleCalendarICalFile, "_blank");
+        window.open(
+          `https://calendar.google.com/calendar/ical/${encodeURI(
+            settings.value.calID
+          )}/public/basic.ics`,
+          "_blank"
+        );
       }
     },
     refresh: {
@@ -551,7 +560,8 @@ const addEvent = async () => {
     location: location.value,
     description: sanitized(desc.value),
     guests: guests.value.join(),
-    invite: sendInvite.value
+    invite: sendInvite.value,
+    id: settings.value.calID
   } as EventData;
   if (allDay.value) {
     if (endDate.value) {
@@ -587,7 +597,8 @@ const remove = async () => {
   selectedOpen.value = false;
   const postData: EventData = {
     method: "deleteEvent",
-    event: selectedEvent.value.id
+    event: selectedEvent.value.id,
+    id: settings.value.calID
   };
   try {
     await editGoogleCalendar(postData);
@@ -652,7 +663,8 @@ const modify = async () => {
     event: selectedEvent.value.id,
     title: editTitle.value,
     location: editLocation.value,
-    description: sanitized(editDesc.value)
+    description: sanitized(editDesc.value),
+    id: settings.value.calID
   };
   if (editAllDay.value) {
     if (editEndDate.value) {

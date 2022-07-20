@@ -70,6 +70,7 @@ export interface UploadedFile {
 
 export interface SettingsSite {
   calEdit: PermissionGroups;
+  calID: string;
   calURL: string;
   calView: PermissionGroups;
   controlledAuth: boolean;
@@ -77,13 +78,15 @@ export interface SettingsSite {
   email: PermissionGroups;
   footerTxt: string;
   mailURL: string;
+  useCalendar: boolean;
+  useEmail: boolean;
 }
 
 export interface SettingsSitePrivate {
   addresses: VSelectValues[];
   consoleURL: string;
   meetLink: string;
-  linkHidden: boolean;
+  useMeeting: boolean;
 }
 
 export interface MessageStreamMessageComment {

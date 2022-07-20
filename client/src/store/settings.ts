@@ -26,25 +26,31 @@ export const useSettings = defineStore("settings", () => {
       } else {
         siteSettings.value = {
           calEdit: PermissionGroups.UNSET,
+          calID: "",
           calView: PermissionGroups.UNSET,
           calURL: "",
           controlledAuth: true,
           defaultPage: "",
           email: PermissionGroups.UNSET,
           footerTxt: "",
-          mailURL: ""
+          mailURL: "",
+          useCalendar: false,
+          useEmail: false
         };
       }
     } catch (error) {
       siteSettings.value = {
         calEdit: PermissionGroups.UNSET,
+        calID: "",
         calView: PermissionGroups.UNSET,
         calURL: "",
         controlledAuth: true,
         defaultPage: "",
         email: PermissionGroups.UNSET,
         footerTxt: "",
-        mailURL: ""
+        mailURL: "",
+        useCalendar: false,
+        useEmail: false
       };
       throw getFirestoreError(error as FirestoreError);
     }
@@ -64,7 +70,7 @@ export const useSettings = defineStore("settings", () => {
         sitePrivateSettings.value = {
           addresses: [],
           consoleURL: "",
-          linkHidden: false,
+          useMeeting: false,
           meetLink: ""
         };
       }
@@ -72,7 +78,7 @@ export const useSettings = defineStore("settings", () => {
       sitePrivateSettings.value = {
         addresses: [],
         consoleURL: "",
-        linkHidden: false,
+        useMeeting: false,
         meetLink: ""
       };
       throw getFirestoreError(error as FirestoreError);

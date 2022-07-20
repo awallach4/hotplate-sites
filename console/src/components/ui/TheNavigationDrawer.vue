@@ -36,39 +36,31 @@
           <v-list-item v-if="isAdmin" to="/users">
             <v-list-item-title>User Management</v-list-item-title>
           </v-list-item>
-          <v-list-item v-if="isAdmin" to="/settings">
-            <v-list-item-title>Site Settings</v-list-item-title>
-          </v-list-item>
           <v-list-item to="/theme">
             <v-list-item-title>Site Theme</v-list-item-title>
           </v-list-item>
-          <v-list-group color="secondary">
+          <v-list-item v-if="isAdmin" to="/external-services">
+            <v-list-item-title>External Services</v-list-item-title>
+          </v-list-item>
+          <v-list-group color="secondary" eager>
             <template #activator>
-              <v-list-item-title>Page Settings</v-list-item-title>
+              <v-list-item-title>Site Settings</v-list-item-title>
             </template>
+            <v-text-field
+              v-model="privateSettings.consoleURL"
+              label="Admin Console URL"
+              color="secondary"
+              filled
+              dense
+              hint="Enter the base URL for this console for easy access.  This is only visible to webmasters and administrators."
+            />
             <v-text-field
               v-model="settings.footerTxt"
               filled
               dense
               label="Footer Text"
               color="secondary"
-            >
-              <template #append>
-                <v-tooltip bottom>
-                  <template #activator="{ on }">
-                    <v-btn
-                      aria-label="Add Copyright Symbol"
-                      icon
-                      v-on="on"
-                      @click="addCopy"
-                    >
-                      <v-icon>mdi-copyright</v-icon>
-                    </v-btn>
-                  </template>
-                  Add Copyright Symbol
-                </v-tooltip>
-              </template>
-            </v-text-field>
+            />
             <v-select
               v-model="settings.defaultPage"
               :items="publicPages"
@@ -82,9 +74,9 @@
               color="secondary"
               class="sectext--text mb-2"
               block
-              @click="savePageSettings"
+              @click="saveSiteSettings"
             >
-              <v-icon left>mdi-check</v-icon> Save Page Settings
+              <v-icon left>mdi-check</v-icon> Save Site Settings
             </v-btn>
           </v-list-group>
           <v-divider />
@@ -257,6 +249,7 @@ import { isWebmaster, isAdmin, user, permissions } from "@/plugins/authHandler";
 import {
   pages,
   settings,
+  privateSettings,
   pageTitle,
   loading,
   pushRouter,
@@ -316,11 +309,7 @@ const publicPages = computed(() => {
   return options;
 });
 
-const addCopy = () => {
-  settings.value.footerTxt = `${settings.value.footerTxt}\u00A9`;
-};
-
-const savePageSettings = async () => {
+const saveSiteSettings = async () => {
   try {
     const { firestore } = await import("@/plugins/firebase");
     const { doc, setDoc } = await import("firebase/firestore/lite");
@@ -334,8 +323,15 @@ const savePageSettings = async () => {
         merge: true
       }
     );
+    await setDoc(
+      doc(firestore, "configuration/priv-settings"),
+      {
+        consoleURL: privateSettings.value.consoleURL
+      },
+      { merge: true }
+    );
 
-    displayPageAlert("The page settings have been saved.");
+    displayPageAlert("The site settings have been saved.");
   } catch (error) {
     displayPageAlert(
       `An error occurred while saving the site settings: ${getFirestoreError(

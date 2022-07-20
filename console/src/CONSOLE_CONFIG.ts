@@ -1,11 +1,6 @@
 // [TODO] Replace the placeholders in this file with the applicable content to your site.
 
 export const companyName = "YOUR_COMPANY";
-export const siteURL = "YOUR_WEBSITE'S_URL";
-
-// Note:  This is the URL of your Google Calendar, NOT the URL from Google Apps Script.
-export const googleCalendarURL = "YOUR_GOOGLE_CALENDAR_URL";
-export const googleCalendarICalFile = "YOUR_CALENDAR_ICAL_FILE_URL";
 
 // Firebase config object from the Firebase Console for your CONSOLE app.  Some properties may be missing.
 export const firebaseConfig = {

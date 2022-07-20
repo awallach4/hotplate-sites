@@ -51,7 +51,11 @@
         :disabled="dragging"
       />
       <v-spacer />
-      <v-dialog v-if="settings.mailURL" v-model="details" max-width="500px">
+      <v-dialog
+        v-if="settings.mailURL && settings.useEmail"
+        v-model="details"
+        max-width="500px"
+      >
         <template #activator="{ on, attrs }">
           <v-btn
             color="secondary"
@@ -176,7 +180,11 @@
         item-key="key"
         @click:row="confirmRemove($event)"
       />
-      <v-dialog v-if="settings.mailURL" v-model="mail" persistent>
+      <v-dialog
+        v-if="settings.mailURL && settings.useEmail"
+        v-model="mail"
+        persistent
+      >
         <template #activator="{ on }">
           <v-btn
             color="secondary"
@@ -250,7 +258,7 @@ import { fieldRequired, minLength } from "@/plugins/formRules";
 import { user } from "@/plugins/authHandler";
 import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import { settings, privateSettings } from "@/plugins/routerStoreHelpers";
-import { siteURL } from "@/CONSOLE_CONFIG";
+import { companyName } from "@/CONSOLE_CONFIG";
 
 interface SignupItem {
   role: string;
@@ -440,8 +448,8 @@ const sendDetails = async () => {
   submitting.value = true;
   const postData: EmailData = {
     to: recipients.value.join(),
-    subject: `New Signup Available at ${siteURL}: ${retVal.value.header}`,
-    body: `<p>A new signup sheet has been created at <a href="${siteURL}" target="_blank" rel="noreferrer noopener nofollow">${siteURL}</a> for "${retVal.value.header}".  See the event details below.</p>${retVal.value.text}`
+    subject: `New Signup Available from ${companyName}: ${retVal.value.header}`,
+    body: `<p>A new signup sheet has been created by ${companyName} for "${retVal.value.header}".  See the event details below.</p>${retVal.value.text}`
   };
 
   if (user.value.displayName) {

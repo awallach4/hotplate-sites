@@ -73,9 +73,7 @@
       />
       <v-tooltip
         v-if="
-          !privateSettings.linkHidden &&
-          privateSettings.meetLink &&
-          isAuthorized
+          privateSettings.useMeeting && privateSettings.meetLink && isAuthorized
         "
         bottom
       >
@@ -94,7 +92,11 @@
         </template>
         Join Meeting
       </v-tooltip>
-      <v-dialog v-if="canMail && settings.mailURL" v-model="mail" persistent>
+      <v-dialog
+        v-if="canMail && settings.useEmail && settings.mailURL"
+        v-model="mail"
+        persistent
+      >
         <v-card color="card" class="cardtext--text">
           <v-card-title>Send Email</v-card-title>
           <v-card-text>
@@ -151,7 +153,7 @@
           </v-card-text>
         </v-card>
       </v-dialog>
-      <v-tooltip v-if="canMail && settings.mailURL" bottom>
+      <v-tooltip v-if="canMail && settings.mailURL && settings.useEmail" bottom>
         <template #activator="{ on }">
           <v-btn
             icon

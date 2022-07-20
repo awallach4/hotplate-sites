@@ -16,6 +16,9 @@ import { getFirestoreError } from "./errorHandler";
  */
 export async function editGoogleCalendar(postData: EventData): Promise<void> {
   const SettingsModule = useSettings();
+  if (!SettingsModule.siteSettings.useCalendar) {
+    throw new Error("The calendar service is not enabled.");
+  }
   const script = SettingsModule.siteSettings.calURL;
   if (!script) {
     throw new Error("No calendar service script was found.");
@@ -75,6 +78,9 @@ export async function editGoogleCalendar(postData: EventData): Promise<void> {
  */
 export async function getGoogleCalendarEvents(): Promise<FullCalendarEvent[]> {
   const SettingsModule = useSettings();
+  if (!SettingsModule.siteSettings.useCalendar) {
+    throw new Error("The calendar service is not enabled.");
+  }
   const script = SettingsModule.siteSettings.calURL;
   if (!script) {
     throw new Error("No calendar service script was found.");
@@ -100,9 +106,12 @@ export async function getGoogleCalendarEvents(): Promise<FullCalendarEvent[]> {
     );
   }
 
-  const http = await fetch(`${script}?password=${password}`, {
-    method: "GET"
-  });
+  const http = await fetch(
+    `${script}?id=${SettingsModule.siteSettings.calID}&password=${password}`,
+    {
+      method: "GET"
+    }
+  );
 
   if (!http.ok) {
     throw new Error(

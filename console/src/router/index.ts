@@ -25,9 +25,9 @@ const router = new VueRouter({
       }
     },
     {
-      path: "/settings",
-      name: "SettingsPage",
-      component: () => import("@/pages/SiteSettings.vue"),
+      path: "/external-services",
+      name: "ExternalServicesPage",
+      component: () => import("@/pages/ExternalServicesPage.vue"),
       meta: {
         needsAdmin: true
       }

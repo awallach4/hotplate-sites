@@ -16,7 +16,11 @@
         @click:row="remove($event)"
       />
       <v-card-text>
-        <v-dialog v-if="settings.mailURL && canMail" v-model="mail" persistent>
+        <v-dialog
+          v-if="settings.useEmail && settings.mailURL && canMail"
+          v-model="mail"
+          persistent
+        >
           <template #activator="{ on }">
             <v-btn
               color="secondary"

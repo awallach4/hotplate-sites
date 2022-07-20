@@ -26,6 +26,9 @@ export const canMail = computed(() => {
  */
 export const sendEmail = async (postData: EmailData): Promise<void> => {
   const SettingsModule = useSettings();
+  if (!SettingsModule.siteSettings.useEmail) {
+    throw new Error("The email service is not enabled.");
+  }
   const script = SettingsModule.siteSettings.mailURL;
   if (!script) {
     throw new Error("No email service script was found.");

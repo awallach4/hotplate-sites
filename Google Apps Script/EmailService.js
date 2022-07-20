@@ -17,9 +17,12 @@ const sendMail = (data) => {
 };
 
 const getPassword = () => {
-  const email = "YOUR_SERVICE_ACCOUNT_EMAIL";
-  const key = "YOUR_PRIVATE_KEY";
-  const projectId = "YOUR_PROJECT_ID";
+  const scriptProperties = PropertiesService.getScriptProperties();
+  const email = scriptProperties.getProperty("firestore-email");
+  const key = scriptProperties
+    .getProperty("firestore-private-key")
+    .replace(/\\n/g, "\n");
+  const projectId = scriptProperties.getProperty("firestore-project-id");
   const firestore = FirestoreApp.getFirestore(email, key, projectId);
   const doc = firestore.getDocument("configuration/apps-script-mail");
   const dbPw = doc.obj.password;

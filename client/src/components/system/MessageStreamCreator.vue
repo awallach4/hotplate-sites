@@ -107,7 +107,7 @@
         </v-card>
       </v-dialog>
       <v-switch
-        v-if="canMail && settings.mailURL"
+        v-if="canMail && settings.mailURL && settings.useEmail"
         v-model="email"
         label="Send Email"
         color="secondary"
@@ -115,7 +115,7 @@
         :disabled="submitting"
       />
       <complex-v-select
-        v-if="email && canMail && settings.mailURL"
+        v-if="email && canMail && settings.mailURL && settings.useEmail"
         v-model="recipients"
         :items="privateSettings.addresses"
         :disabled="submitting"

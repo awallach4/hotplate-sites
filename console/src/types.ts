@@ -28,6 +28,7 @@ export interface PageConfig {
 
 export interface SettingsSite {
   calEdit: PermissionGroups;
+  calID: string;
   calURL: string;
   calView: PermissionGroups;
   controlledAuth: boolean;
@@ -35,13 +36,15 @@ export interface SettingsSite {
   email: PermissionGroups;
   footerTxt: string;
   mailURL: string;
+  useCalendar: boolean;
+  useEmail: boolean;
 }
 
 export interface SettingsSitePrivate {
   addresses: VSelectValues[];
   consoleURL: string;
   meetLink: string;
-  linkHidden: boolean;
+  useMeeting: boolean;
 }
 
 export enum AuthLevels {
@@ -89,6 +92,7 @@ export interface EventData {
   description?: string;
   guests?: string;
   invite?: boolean;
+  id: string;
 }
 
 export interface GoogleCalendarEvent {
