@@ -273,7 +273,7 @@ import { fieldRequired, validEmail } from "@/plugins/formRules";
 import { user } from "@/plugins/authHandler";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { usePages } from "@/store/pages";
-import type { HttpsCallableResult } from "firebase/functions";
+import type { FunctionsError, HttpsCallableResult } from "firebase/functions";
 import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import { loading, settings } from "@/plugins/routerStoreHelpers";
 import { companyName } from "@/CONSOLE_CONFIG";
@@ -457,7 +457,10 @@ const createUser = async () => {
     updating.value = false;
     userCreator.value = false;
   } catch (error) {
-    displayPageAlert(`An error occurred: ${error}`);
+    const rawError = error as FunctionsError;
+    displayPageAlert(
+      `An error occurred while creating the user: ${rawError.message}`
+    );
     updating.value = false;
   }
 
@@ -574,7 +577,10 @@ const updateUser = async () => {
     userEditor.value = false;
     getUsers();
   } catch (error) {
-    displayPageAlert(`An error occurred while updating the user: ${error}`);
+    const rawError = error as FunctionsError;
+    displayPageAlert(
+      `An error occurred while updating the user: ${rawError.message}`
+    );
     updating.value = false;
   }
 };
@@ -598,7 +604,10 @@ const deleteUser = async (focusUser: UserManagementUser) => {
       displayPageAlert("Successfully removed user.");
       updating.value = false;
     } catch (error) {
-      displayPageAlert(`An error occurred while deleting the user: ${error}`);
+      const rawError = error as FunctionsError;
+      displayPageAlert(
+        `An error occurred while deleting the user: ${rawError.message}`
+      );
       updating.value = false;
     }
   }
@@ -624,10 +633,11 @@ const toggleDisabled = async (focusUser: UserManagementUser) => {
     );
     updating.value = false;
   } catch (error) {
+    const rawError = error as FunctionsError;
     displayPageAlert(
       `An error occurred while ${
         focusUser.disabled ? "enabling" : "disabling"
-      } the user: ${error}`
+      } the user: ${rawError.message}`
     );
     updating.value = false;
   }
@@ -657,10 +667,11 @@ const toggleAuthorized = async (focusUser: UserManagementUser) => {
     );
     updating.value = false;
   } catch (error) {
+    const rawError = error as FunctionsError;
     displayPageAlert(
       `An error occurred while ${
         focusUser.authorized ? "deauthorizing" : "authorizing"
-      } the user: ${error}`
+      } the user: ${rawError.message}`
     );
     updating.value = false;
   }
@@ -683,7 +694,10 @@ const signOutUser = async (focusUser: UserManagementUser) => {
     displayPageAlert("Successfully signed out the user.");
     updating.value = false;
   } catch (error) {
-    displayPageAlert(`An error occurred while signing out the user: ${error}`);
+    const rawError = error as FunctionsError;
+    displayPageAlert(
+      `An error occurred while signing out the user: ${rawError.message}`
+    );
     updating.value = false;
   }
 
