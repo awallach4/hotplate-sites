@@ -47,6 +47,12 @@
             </v-list-item>
           </div>
           <v-list-item v-if="!isLoggedIn" to="/login"> Log In </v-list-item>
+          <v-list-item
+            v-if="!settings.controlledAuth && !isLoggedIn"
+            to="/register"
+          >
+            Register
+          </v-list-item>
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>

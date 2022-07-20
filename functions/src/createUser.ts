@@ -65,6 +65,7 @@ const createUser = functions.https.onCall(async (data, context) => {
     });
 
     await firestore.doc(`users/${userRecord.uid}`).set({
+      authorized: true,
       displayName: name,
       email: email,
       disabled: false,

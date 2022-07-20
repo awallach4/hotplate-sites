@@ -72,6 +72,7 @@ export interface SettingsSite {
   calEdit: PermissionGroups;
   calURL: string;
   calView: PermissionGroups;
+  controlledAuth: boolean;
   defaultPage: string;
   email: PermissionGroups;
   footerTxt: string;
@@ -225,6 +226,7 @@ export interface AuthUser {
 }
 
 export interface UserData {
+  authorized: boolean;
   disabled: boolean;
   displayName: string;
   email: string;

@@ -19,6 +19,11 @@ const router = new VueRouter({
       component: () => import("@/pages/LoginPage.vue")
     },
     {
+      path: "/register",
+      name: "RegisterPage",
+      component: () => import("@/pages/RegisterPage.vue")
+    },
+    {
       path: "/profile",
       name: "ProfilePage",
       component: () => import("@/pages/ProfilePage.vue")
@@ -133,6 +138,14 @@ router.beforeEach(async (to, from, next) => {
     if (to.path === "/login") {
       if (isLoggedIn) {
         next("/profile");
+      } else {
+        next();
+      }
+    } else if (to.path === "/register") {
+      if (isLoggedIn) {
+        next("/profile");
+      } else if (SettingsModule.siteSettings.controlledAuth) {
+        next("/login");
       } else {
         next();
       }

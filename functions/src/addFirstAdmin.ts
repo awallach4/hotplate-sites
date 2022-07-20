@@ -40,6 +40,7 @@ const addFirstAdmin = functions.https.onRequest(async (req, res) => {
       const user = await auth.getUser(uid);
       await firestore.doc(`users/${uid}`).set(
         {
+          authorized: true,
           displayName: user.displayName,
           email: user.email,
           photoURL: user.photoURL,

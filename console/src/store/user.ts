@@ -94,6 +94,8 @@ export const useUser = defineStore("user", () => {
         } else if (isAuthorized && isEmailVerified) {
           authLevel.value = AuthLevels.USER;
           SettingsModule.getSitePrivateSettings();
+        } else if (SettingsModule.siteSettings.controlledAuth) {
+          authLevel.value = AuthLevels.USER;
         } else {
           authLevel.value = AuthLevels.NONE;
         }

@@ -24,8 +24,7 @@
         <v-icon class="mr-3" color="errtext">mdi-alert-octagon-outline</v-icon>
       </template>
       We're sorry, but it looks like you are not an authorized user. Please
-      delete your account and have the site administrator create a new one for
-      you.
+      contact a site administrator for assistance.
     </v-alert>
     <v-row>
       <v-col cols="12" sm="6">
@@ -38,7 +37,7 @@
               :size="50"
             />
             <template v-if="!editingProfile">
-              <p>Name: {{ displayName }}</p>
+              <p>Username: {{ displayName }}</p>
               <p>Email Address: {{ email }}</p>
               <v-btn
                 type="button"
@@ -60,7 +59,7 @@
               >
                 <v-text-field
                   v-model="displayName"
-                  label="Name"
+                  label="Username"
                   outlined
                   dense
                   color="secondary"
@@ -126,7 +125,7 @@
             </v-btn>
           </v-card-actions>
           <v-divider />
-          <v-expansion-panels>
+          <v-expansion-panels flat>
             <v-expansion-panel class="card">
               <v-expansion-panel-header class="cardtext--text">
                 <h3>Delete Account</h3>
@@ -513,9 +512,5 @@ PagesModule.viewPage("/profile", "My Account", false);
 <style lang="scss" scoped>
 .spacer {
   height: 24px;
-}
-
-.v-expansion-panel::before {
-  box-shadow: none;
 }
 </style>
