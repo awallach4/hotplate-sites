@@ -1,4 +1,4 @@
-import { ref, watch } from "@vue/composition-api";
+import { ref, watch } from "vue";
 import type { AuthError } from "firebase/auth";
 import type { FirestoreError } from "firebase/firestore/lite";
 import type { StorageError } from "firebase/storage";

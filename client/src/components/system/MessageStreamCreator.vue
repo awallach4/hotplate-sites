@@ -143,7 +143,7 @@
 import { user } from "@/plugins/authHandler";
 import { canMail } from "@/plugins/mailService";
 import type { EmailData, MessageStreamMessage, UploadedFile } from "@/types";
-import { ref, type Ref } from "@vue/composition-api";
+import { ref, type Ref } from "vue";
 import { useRoute } from "@/plugins/contextInject";
 import { TiptapEditor, VProfilePhoto } from "@/components/asyncComponents";
 import { privateSettings, settings } from "@/plugins/routerStoreHelpers";

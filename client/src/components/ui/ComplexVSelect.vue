@@ -46,7 +46,7 @@
 
 <script lang="ts" setup>
 import { CheckboxIcons, type VSelectValues } from "@/types";
-import { computed } from "@vue/composition-api";
+import { computed } from "vue";
 
 interface Props {
   items: VSelectValues[];

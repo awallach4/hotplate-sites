@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onUpdated, ref } from "@vue/composition-api";
+import { onUpdated, ref } from "vue";
 
 interface PlainTextData {
   text: string;

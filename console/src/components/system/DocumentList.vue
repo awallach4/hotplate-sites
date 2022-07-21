@@ -79,7 +79,7 @@
 import { displayPageAlert } from "@/plugins/errorHandler";
 import { deleteFile, uploadFile } from "@/plugins/firebaseStorage";
 import type { ComponentMetaData, UploadedFile } from "@/types";
-import { computed, onUpdated, ref, type Ref } from "@vue/composition-api";
+import { computed, onUpdated, ref, type Ref } from "vue";
 
 interface DocumentListData {
   header: string;

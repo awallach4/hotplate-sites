@@ -6,7 +6,7 @@ import {
   type SettingsSitePrivate,
   type UserData
 } from "@/types";
-import { ref, type Ref } from "@vue/composition-api";
+import { ref, type Ref } from "vue";
 import type { User, AuthError } from "firebase/auth";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { defineStore } from "pinia";

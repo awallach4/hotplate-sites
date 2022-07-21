@@ -235,7 +235,7 @@ import {
   type VFormOptions,
   type VSelectValues
 } from "@/types";
-import { computed, ref, watch } from "@vue/composition-api";
+import { computed, ref, watch } from "vue";
 import {
   fieldRequired,
   minLength,

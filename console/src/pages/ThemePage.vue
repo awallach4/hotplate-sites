@@ -88,7 +88,7 @@ import type {
   VuetifyThemes,
   VuetifyThemeVariant
 } from "vuetify/types/services/theme";
-import { computed, ref } from "@vue/composition-api";
+import { computed, ref } from "vue";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 

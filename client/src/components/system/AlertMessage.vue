@@ -9,7 +9,7 @@
 
 <script lang="ts" setup>
 import { AlertMessageTypes, VAlertIconTypes, VThemeColors } from "@/types";
-import { computed } from "@vue/composition-api";
+import { computed } from "vue";
 
 interface Props {
   text?: string;

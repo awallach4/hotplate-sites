@@ -245,7 +245,7 @@
 import { AuthLevels, type UserData, type VFormOptions } from "@/types";
 import { useUser } from "@/store/user";
 import { usePages } from "@/store/pages";
-import { computed, ref, type Ref } from "@vue/composition-api";
+import { computed, ref, type Ref } from "vue";
 import { authLevel, user, isAuthorized } from "@/plugins/authHandler";
 import {
   fieldRequired,

@@ -74,7 +74,7 @@
 
 <script lang="ts" setup>
 import SignupSheet from "./SignupSheet.vue";
-import { onUpdated, ref, type Ref } from "@vue/composition-api";
+import { onUpdated, ref, type Ref } from "vue";
 import type { ComponentMetaData, SignupData } from "@/types";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";

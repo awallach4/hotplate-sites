@@ -268,7 +268,7 @@ import {
   type UserManagementUser,
   type VFormOptions
 } from "@/types";
-import { ref, watch, type Ref } from "@vue/composition-api";
+import { ref, watch, type Ref } from "vue";
 import { fieldRequired, validEmail } from "@/plugins/formRules";
 import { user } from "@/plugins/authHandler";
 import type { FirestoreError } from "firebase/firestore/lite";

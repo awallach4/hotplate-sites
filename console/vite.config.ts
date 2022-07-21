@@ -1,6 +1,5 @@
 import { defineConfig } from "vite";
-import { createVuePlugin as vue } from "vite-plugin-vue2";
-import ScriptSetup from "unplugin-vue2-script-setup/vite";
+import vue from "@vitejs/plugin-vue2";
 import Components from "unplugin-vue-components/vite";
 import { VuetifyResolver } from "unplugin-vue-components/resolvers";
 import { VitePWA } from "vite-plugin-pwa";
@@ -30,9 +29,7 @@ export default defineConfig({
     }
   },
   plugins: [
-    vue({
-      jsx: true
-    }),
+    vue(),
     VitePWA({
       includeAssets: [
         "android-chrome-192x192.png",
@@ -75,7 +72,6 @@ export default defineConfig({
         ]
       }
     }),
-    ScriptSetup(),
     Components({
       dts: "./src/components.d.ts",
       resolvers: [VuetifyResolver()]

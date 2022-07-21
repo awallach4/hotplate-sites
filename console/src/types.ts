@@ -18,6 +18,13 @@ export enum PermissionGroups {
   UNSET = ""
 }
 
+export enum AlertMessageTypes {
+  SUCCESS = "success",
+  INFORMATION = "info",
+  WARNING = "warning",
+  ERROR = "error"
+}
+
 export interface PageConfig {
   dbPath: string;
   id: string;

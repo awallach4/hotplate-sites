@@ -1,4 +1,4 @@
-import { defineAsyncComponent } from "@vue/composition-api";
+import { defineAsyncComponent } from "vue";
 
 export const VPageAlert = defineAsyncComponent(
   () => import("@/components/ui/VPageAlert.vue")

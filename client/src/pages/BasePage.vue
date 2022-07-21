@@ -16,7 +16,7 @@
 import type { CompData, PageData } from "@/types";
 import { usePages } from "@/store/pages";
 import { useRoute } from "@/plugins/contextInject";
-import { computed, ref } from "@vue/composition-api";
+import { computed, ref } from "vue";
 import {
   AlertMessage,
   CalendarWidget,

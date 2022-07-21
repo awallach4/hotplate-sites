@@ -127,7 +127,7 @@
 <script lang="ts" setup>
 import draggable from "vuedraggable";
 import type { CompData, ComponentMetaData, VSelectValues } from "@/types";
-import { onUpdated, ref, watch, type Ref } from "@vue/composition-api";
+import { onUpdated, ref, watch, type Ref } from "vue";
 import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import type { FirestoreError } from "firebase/firestore/lite";
 import {

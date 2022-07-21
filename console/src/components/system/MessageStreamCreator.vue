@@ -124,7 +124,7 @@
 
 <script lang="ts" setup>
 import type { UploadedFile, MessageStreamMessage } from "@/types";
-import { ref, type Ref } from "@vue/composition-api";
+import { ref, type Ref } from "vue";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import { deleteFile, uploadFile } from "@/plugins/firebaseStorage";

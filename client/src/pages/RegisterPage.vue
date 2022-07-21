@@ -106,7 +106,7 @@ import {
   minLength,
   validEmail
 } from "@/plugins/formRules";
-import { ref, type Ref } from "@vue/composition-api";
+import { ref, type Ref } from "vue";
 import {
   displayPageAlert,
   getAuthError,

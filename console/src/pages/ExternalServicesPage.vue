@@ -207,7 +207,7 @@
 <script lang="ts" setup>
 import { usePages } from "@/store/pages";
 import { useSettings } from "@/store/settings";
-import { onUnmounted } from "@vue/composition-api";
+import { onUnmounted } from "vue";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import { settings, privateSettings } from "@/plugins/routerStoreHelpers";

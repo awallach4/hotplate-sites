@@ -4,10 +4,9 @@
       <v-card-title :class="data.useCard ? 'cardtext--text' : 'bgtext--text'">{{
         data.header
       }}</v-card-title>
-      <v-card-text
-        :class="data.useCard ? 'cardtext--text' : 'bgtext--text'"
-        v-html="sanitized(data.text)"
-      />
+      <v-card-text :class="data.useCard ? 'cardtext--text' : 'bgtext--text'">
+        <span v-html="sanitized(data.text)" />
+      </v-card-text>
       <v-data-table
         :headers="headers"
         :items="items"
@@ -162,7 +161,7 @@
 import type { EmailData, SignupData, SignupItem, VFormOptions } from "@/types";
 import sanitized from "@/plugins/dompurify";
 import { canMail } from "@/plugins/mailService";
-import { computed, onMounted, ref, type Ref } from "@vue/composition-api";
+import { computed, onMounted, ref, type Ref } from "vue";
 import { isAuthorized, user } from "@/plugins/authHandler";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { fieldRequired } from "@/plugins/formRules";

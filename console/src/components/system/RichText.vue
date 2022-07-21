@@ -89,13 +89,7 @@ import sanitized from "@/plugins/dompurify";
 import { displayPageAlert } from "@/plugins/errorHandler";
 import { deleteFile, uploadFile } from "@/plugins/firebaseStorage";
 import type { ComponentMetaData, UploadedFile } from "@/types";
-import {
-  computed,
-  onUpdated,
-  ref,
-  watch,
-  type Ref
-} from "@vue/composition-api";
+import { computed, onUpdated, ref, watch, type Ref } from "vue";
 
 interface RichTextData {
   header: string;

@@ -10,7 +10,7 @@
 
 <script lang="ts" setup>
 import type { ItemListItem } from "@/types";
-import { computed } from "@vue/composition-api";
+import { computed } from "vue";
 
 interface Props {
   header?: string;

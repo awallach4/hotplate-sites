@@ -95,7 +95,7 @@ import type {
   MessageStreamMessage,
   MessageStreamMessageComment
 } from "@/types";
-import { ref } from "@vue/composition-api";
+import { ref } from "vue";
 import type { FirestoreError } from "firebase/firestore/lite";
 import MessageStreamComment from "./MessageStreamComment.vue";
 

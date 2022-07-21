@@ -21,7 +21,7 @@
 
 <script lang="ts" setup>
 import { LayoutOptions, type CompData, type ComponentMetaData } from "@/types";
-import { computed, ref, type Ref } from "@vue/composition-api";
+import { computed, ref, type Ref } from "vue";
 import {
   AlertMessage,
   CalendarWidget,

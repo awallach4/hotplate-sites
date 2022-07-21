@@ -46,7 +46,7 @@
 import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import { deleteFile } from "@/plugins/firebaseStorage";
 import type { ComponentMetaData, MessageStreamMessage } from "@/types";
-import { onUpdated, ref, type Ref } from "@vue/composition-api";
+import { onUpdated, ref, type Ref } from "vue";
 import type { FirestoreError } from "firebase/firestore/lite";
 
 interface MessageStreamData {

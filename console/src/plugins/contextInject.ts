@@ -1,4 +1,4 @@
-import { computed, getCurrentInstance } from "@vue/composition-api";
+import { computed, getCurrentInstance } from "vue";
 
 export const useRouter = () => {
   const instance = getCurrentInstance();

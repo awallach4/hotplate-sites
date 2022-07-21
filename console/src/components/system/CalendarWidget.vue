@@ -339,7 +339,7 @@ import {
   editGoogleCalendar,
   getGoogleCalendarEvents
 } from "@/plugins/calendarService";
-import { computed, onMounted, ref, type Ref } from "@vue/composition-api";
+import { computed, onMounted, ref, type Ref } from "vue";
 import { fieldRequired, maxLength } from "@/plugins/formRules";
 import { settings, privateSettings } from "@/plugins/routerStoreHelpers";
 

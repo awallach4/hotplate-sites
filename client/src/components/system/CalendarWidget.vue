@@ -46,12 +46,7 @@ import type { EventClickArg } from "@fullcalendar/vue";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import listPlugin from "@fullcalendar/list";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import {
-  defineAsyncComponent,
-  onMounted,
-  ref,
-  type Ref
-} from "@vue/composition-api";
+import { defineAsyncComponent, onMounted, ref, type Ref } from "vue";
 import type { FullCalendarEvent } from "@/types";
 import { settings } from "@/plugins/routerStoreHelpers";
 

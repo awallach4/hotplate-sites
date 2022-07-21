@@ -128,7 +128,7 @@
 
 <script lang="ts" setup>
 import draggable from "vuedraggable";
-import { computed, ref, watch, type Ref } from "@vue/composition-api";
+import { computed, ref, watch, type Ref } from "vue";
 import {
   PermissionGroups,
   type CompData,

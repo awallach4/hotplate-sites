@@ -112,7 +112,7 @@
 import { usePages } from "@/store/pages";
 import { useUser } from "@/store/user";
 import type { VFormOptions } from "@/types";
-import { ref, watch } from "@vue/composition-api";
+import { ref, watch } from "vue";
 import { fieldRequired, validEmail } from "@/plugins/formRules";
 import { displayPageAlert, getAuthError } from "@/plugins/errorHandler";
 import { pushRouter } from "@/plugins/routerStoreHelpers";

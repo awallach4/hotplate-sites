@@ -29,20 +29,13 @@
 </template>
 
 <script lang="ts" setup>
-import type { VSelectValues } from "@/types";
-import { onUpdated, ref } from "@vue/composition-api";
+import { AlertMessageTypes, type VSelectValues } from "@/types";
+import { onUpdated, ref } from "vue";
 
 interface AlertMessageData {
   text: string;
   type: string;
   hidden: boolean;
-}
-
-enum AlertMessageTypes {
-  SUCCESS = "success",
-  INFORMATION = "info",
-  WARNING = "warning",
-  ERROR = "error"
 }
 
 interface Props {

@@ -63,7 +63,7 @@ import type { EmailData, VFormOptions } from "@/types";
 import sanitized from "@/plugins/dompurify";
 import { canMail } from "@/plugins/mailService";
 import { fieldRequired, validEmail } from "@/plugins/formRules";
-import { ref } from "@vue/composition-api";
+import { ref } from "vue";
 import { displayPageAlert } from "@/plugins/errorHandler";
 import { TiptapEditor } from "@/components/asyncComponents";
 import { settings } from "@/plugins/routerStoreHelpers";

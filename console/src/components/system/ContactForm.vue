@@ -46,7 +46,7 @@
 
 <script lang="ts" setup>
 import sanitized from "@/plugins/dompurify";
-import { computed, onUpdated, ref, watch } from "@vue/composition-api";
+import { computed, onUpdated, ref, watch } from "vue";
 
 interface ContactFormData {
   email: string;

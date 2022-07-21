@@ -1,6 +1,6 @@
 import { useSettings } from "@/store/settings";
 import { PermissionGroups, type EmailData } from "@/types";
-import { computed } from "@vue/composition-api";
+import { computed } from "vue";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { isAuthorized, isWebmaster } from "./authHandler";
 import { getFirestoreError } from "./errorHandler";

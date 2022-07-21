@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "@vue/composition-api";
+import { computed } from "vue";
 
 interface Props {
   canDelete: boolean;

@@ -189,7 +189,7 @@
 import type { EmailData, VFormOptions } from "@/types";
 import { useUser } from "@/store/user";
 import { canMail } from "@/plugins/mailService";
-import { computed, ref, type Ref } from "@vue/composition-api";
+import { computed, ref, type Ref } from "vue";
 import {
   user,
   isLoggedIn,

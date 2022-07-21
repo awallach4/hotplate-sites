@@ -639,7 +639,7 @@ import Highlight from "@tiptap/extension-highlight";
 import TextAlign from "@tiptap/extension-text-align";
 import type { VFormOptions } from "@/types";
 import { fieldRequired, minValue } from "@/plugins/formRules";
-import { computed, onBeforeUnmount, ref, watch } from "@vue/composition-api";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
 
 interface Props {
   modelValue?: string;

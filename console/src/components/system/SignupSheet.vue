@@ -246,13 +246,7 @@ import {
   type SignupData,
   type VFormOptions
 } from "@/types";
-import {
-  computed,
-  onUpdated,
-  ref,
-  watch,
-  type Ref
-} from "@vue/composition-api";
+import { computed, onUpdated, ref, watch, type Ref } from "vue";
 import type { FieldValue, FirestoreError } from "firebase/firestore/lite";
 import { fieldRequired, minLength } from "@/plugins/formRules";
 import { user } from "@/plugins/authHandler";

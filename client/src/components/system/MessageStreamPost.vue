@@ -215,7 +215,7 @@ import type {
   MessageStreamMessageComment,
   UploadedFile
 } from "@/types";
-import { ref, watch, type Ref } from "@vue/composition-api";
+import { ref, watch, type Ref } from "vue";
 import { isAuthorized, user } from "@/plugins/authHandler";
 import { useRoute } from "@/plugins/contextInject";
 import {

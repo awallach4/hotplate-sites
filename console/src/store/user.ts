@@ -6,7 +6,7 @@ import {
   type AuthUser,
   type SettingsSitePrivate
 } from "@/types";
-import { ref, type Ref } from "@vue/composition-api";
+import { ref, type Ref } from "vue";
 import type { AuthError, User } from "firebase/auth";
 import { getAuthError } from "@/plugins/errorHandler";
 

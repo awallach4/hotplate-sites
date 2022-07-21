@@ -14,12 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  type Ref
-} from "@vue/composition-api";
+import { onBeforeUnmount, onMounted, ref, type Ref } from "vue";
 import { useUser } from "./store/user";
 import {
   pageAlertState,
