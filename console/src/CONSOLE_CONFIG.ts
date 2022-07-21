@@ -1,3 +1,8 @@
+// Uncomment the FIREBASE_APPCHECK_DEBUG_TOKEN statement for development mode only.
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+// self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+
 // [TODO] Replace the placeholders in this file with the applicable content to your site.
 
 export const companyName = "YOUR_COMPANY";
