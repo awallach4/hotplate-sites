@@ -66,3 +66,7 @@ node_modules/
 
 # editor files
 .vscode/
+
+# config files
+CLIENT_CONFIG.ts
+CONSOLE_CONFIG.ts
