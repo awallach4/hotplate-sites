@@ -42,7 +42,7 @@
           Send
         </v-btn>
       </v-form>
-      <strong v-else-if="!canMail && !email"
+      <strong v-else-if="!canMail"
         >We're sorry, but it looks like you're not allowed to send emails.
         Please contact a site administrator for more information.</strong
       >
