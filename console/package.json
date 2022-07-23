@@ -31,9 +31,9 @@
     "@tiptap/starter-kit": "^2.0.0-beta.189",
     "@tiptap/vue-2": "^2.0.0-beta.83",
     "dompurify": "^2.3.10",
-    "firebase": "^9.9.0",
+    "firebase": "^9.9.1",
     "pinia": "^2.0.16",
-    "vue": "^2.7.7",
+    "vue": "^2.7.8",
     "vue-router": "^3.5.4",
     "vuedraggable": "^2.24.3",
     "vuetify": "^2.6.7"
@@ -50,12 +50,12 @@
     "eslint-plugin-vue": "^9.2.0",
     "prettier": "^2.7.1",
     "rollup-plugin-visualizer": "^5.7.1",
-    "sass": "^1.53.0",
+    "sass": "^1.54.0",
     "typescript": "~4.7.4",
     "unplugin-vue-components": "^0.21.1",
     "vite": "^3.0.2",
     "vite-plugin-pwa": "^0.12.3",
-    "vue-tsc": "^0.38.9"
+    "vue-tsc": "^0.39.0"
   },
   "license": "MIT"
 }
