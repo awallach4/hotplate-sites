@@ -93,7 +93,7 @@ router.beforeEach(async (to, from, next) => {
   PagesModule.pageTitle = "Loading...";
   SettingsModule.applicationLoadingState = true;
 
-  if (Object.keys(SettingsModule.siteSettings).length === 0) {
+  if (!SettingsModule.hasFetched) {
     await SettingsModule.getSettings();
   }
   if (PagesModule.pages.length === 0) {
@@ -103,7 +103,7 @@ router.beforeEach(async (to, from, next) => {
   const goingToLogin = to.path === "/login";
   const goingToUnauthorized = to.path === "/unauthorized";
 
-  const user = await UserModule.getInitialUser();
+  await UserModule.getInitialUser();
   const authLevel = UserModule.authLevel;
   let isAuthorized = false;
   if (authLevel === AuthLevels.ADMIN) {
@@ -120,11 +120,6 @@ router.beforeEach(async (to, from, next) => {
     isLoggedIn = true;
   } else {
     isLoggedIn = false;
-  }
-  if (user && isAuthorized) {
-    if (Object.keys(SettingsModule.sitePrivateSettings).length === 0) {
-      SettingsModule.getSitePrivateSettings();
-    }
   }
 
   let isWebmaster;

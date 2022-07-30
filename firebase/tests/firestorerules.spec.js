@@ -93,7 +93,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -119,7 +118,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -145,7 +143,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -166,7 +163,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -208,7 +204,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -226,7 +221,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -251,7 +245,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -294,7 +287,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -337,7 +329,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -380,7 +371,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -405,7 +395,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -441,7 +430,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -466,7 +454,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -491,7 +478,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -512,7 +498,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -555,7 +540,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -573,7 +557,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -591,7 +574,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -609,7 +591,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -627,7 +608,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -645,7 +625,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -663,7 +642,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -681,7 +659,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -711,7 +688,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -741,7 +717,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -771,7 +746,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -801,7 +775,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -925,7 +898,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -957,7 +929,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -987,7 +958,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1017,7 +987,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1047,7 +1016,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1077,7 +1045,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1107,7 +1074,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1396,7 +1362,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1428,7 +1393,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1458,7 +1422,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1488,7 +1451,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1518,7 +1480,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1548,7 +1509,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1578,7 +1538,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1603,7 +1562,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1628,7 +1586,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1653,7 +1610,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1678,7 +1634,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1768,7 +1723,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1793,7 +1747,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1823,7 +1776,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1854,7 +1806,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1883,7 +1834,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1908,7 +1858,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1938,7 +1887,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -1969,7 +1917,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2005,7 +1952,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user1", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2048,7 +1994,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user1", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2090,7 +2035,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user1", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2132,7 +2076,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user1", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2174,7 +2117,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user2", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2223,7 +2165,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user2", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2266,7 +2207,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user2", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2301,7 +2241,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user2", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2342,7 +2281,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user2", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2367,7 +2305,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2404,7 +2341,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user1", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2447,7 +2383,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user1", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2489,7 +2424,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user1", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2531,7 +2465,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user1", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2573,7 +2506,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user2", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2622,7 +2554,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user2", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2665,7 +2596,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user2", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2700,7 +2630,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user2", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2741,7 +2670,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user2", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2766,7 +2694,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2796,7 +2723,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2825,7 +2751,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2848,7 +2773,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2882,7 +2806,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2912,7 +2835,6 @@ describe("Firestore Security Rules", () => {
         doc(
           testEnv
             .authenticatedContext("person", {
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -2925,15 +2847,7 @@ describe("Firestore Security Rules", () => {
   it("allow users to view their own profile information.", async () => {
     await assertSucceeds(
       getDoc(
-        doc(
-          testEnv
-            .authenticatedContext("person", {
-              authorized: true,
-              email_verified: true
-            })
-            .firestore(),
-          "users/person"
-        )
+        doc(testEnv.authenticatedContext("person").firestore(), "users/person")
       )
     );
   });
@@ -2944,7 +2858,176 @@ describe("Firestore Security Rules", () => {
     );
   });
 
-  it("allow users to edit their own profile if their email is verified", async () => {
+  it("allow users to create their account if invite-only authentication is disabled", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "configuration/settings"), {
+        controlledAuth: false
+      });
+    });
+
+    await assertSucceeds(
+      setDoc(
+        doc(testEnv.authenticatedContext("person").firestore(), "users/person"),
+        {
+          displayName: "person"
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("prevent users from creating their account if invite-only authentication is enabled", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "configuration/settings"), {
+        controlledAuth: true
+      });
+    });
+
+    await assertFails(
+      setDoc(
+        doc(testEnv.authenticatedContext("person").firestore(), "users/person"),
+        {
+          displayName: "person"
+        },
+        { merge: true }
+      )
+    );
+  });
+
+  it("allow admins to view the new users collection", async () => {
+    await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("admin", {
+              admin: true,
+              webmaster: true,
+              email_verified: true
+            })
+            .firestore(),
+          "new-users/some-user"
+        )
+      )
+    );
+  });
+
+  it("allow admins to edit the new users collection", async () => {
+    await assertSucceeds(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("admin", {
+              admin: true,
+              webmaster: true,
+              email_verified: true
+            })
+            .firestore(),
+          "new-users/some-user"
+        ),
+        {
+          email: "user@mail.com"
+        }
+      )
+    );
+  });
+
+  it("prevent webmasters from viewing the new users collection", async () => {
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("webmaster", {
+              admin: false,
+              webmaster: true,
+              email_verified: true
+            })
+            .firestore(),
+          "new-users/some-user"
+        )
+      )
+    );
+  });
+
+  it("prevent webmasters from editing the new users collection", async () => {
+    await assertFails(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("webmaster", {
+              admin: false,
+              webmaster: true,
+              email_verified: true
+            })
+            .firestore(),
+          "new-users/some-user"
+        ),
+        {
+          email: "user@mail.com"
+        }
+      )
+    );
+  });
+
+  it("prevent users from viewing the new users collection", async () => {
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              email_verified: true
+            })
+            .firestore(),
+          "new-users/some-user"
+        )
+      )
+    );
+  });
+
+  it("prevent users from editing the new users collection", async () => {
+    await assertFails(
+      setDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              email_verified: true
+            })
+            .firestore(),
+          "new-users/some-user"
+        ),
+        {
+          email: "user@mail.com"
+        }
+      )
+    );
+  });
+
+  it("prevent unauthenticated users from viewing the new users collection", async () => {
+    await assertFails(
+      getDoc(
+        doc(testEnv.unauthenticatedContext().firestore(), "new-users/some-user")
+      )
+    );
+  });
+
+  it("prevent unauthenticated users from editing the new users collection", async () => {
+    await assertFails(
+      setDoc(
+        doc(
+          testEnv.unauthenticatedContext().firestore(),
+          "new-users/some-user"
+        ),
+        {
+          email: "user@mail.com"
+        }
+      )
+    );
+  });
+
+  it("allow users to edit their own profile", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "users/person"), {
         disabled: false,
@@ -2957,15 +3040,7 @@ describe("Firestore Security Rules", () => {
 
     await assertSucceeds(
       setDoc(
-        doc(
-          testEnv
-            .authenticatedContext("person", {
-              authorized: true,
-              email_verified: true
-            })
-            .firestore(),
-          "users/person"
-        ),
+        doc(testEnv.authenticatedContext("person").firestore(), "users/person"),
         {
           displayName: "person"
         },
@@ -2987,77 +3062,9 @@ describe("Firestore Security Rules", () => {
 
     await assertFails(
       setDoc(
-        doc(
-          testEnv
-            .authenticatedContext("person", {
-              authorized: true,
-              email_verified: true
-            })
-            .firestore(),
-          "users/person"
-        ),
+        doc(testEnv.authenticatedContext("person").firestore(), "users/person"),
         {
           permissions: "admin"
-        },
-        { merge: true }
-      )
-    );
-  });
-
-  it("prevent users from editing their own profile if their email is not verified", async () => {
-    await testEnv.withSecurityRulesDisabled(async (context) => {
-      await setDoc(doc(context.firestore(), "users/person"), {
-        disabled: false,
-        displayName: "new",
-        email: "test@test.com",
-        permissions: "User",
-        photoURL: ""
-      });
-    });
-
-    await assertFails(
-      setDoc(
-        doc(
-          testEnv
-            .authenticatedContext("person", {
-              authorized: true,
-              email_verified: false
-            })
-            .firestore(),
-          "users/person"
-        ),
-        {
-          displayName: "person"
-        },
-        { merge: true }
-      )
-    );
-  });
-
-  it("prevent users from editing their own profile if they are not authorized", async () => {
-    await testEnv.withSecurityRulesDisabled(async (context) => {
-      await setDoc(doc(context.firestore(), "users/person"), {
-        disabled: false,
-        displayName: "new",
-        email: "test@test.com",
-        permissions: "User",
-        photoURL: ""
-      });
-    });
-
-    await assertFails(
-      setDoc(
-        doc(
-          testEnv
-            .authenticatedContext("person", {
-              authorized: false,
-              email_verified: true
-            })
-            .firestore(),
-          "users/person"
-        ),
-        {
-          displayName: "person"
         },
         { merge: true }
       )
@@ -3080,7 +3087,6 @@ describe("Firestore Security Rules", () => {
         doc(
           testEnv
             .authenticatedContext("maliciousUser", {
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3102,7 +3108,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3130,7 +3135,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3162,7 +3166,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3172,166 +3175,6 @@ describe("Firestore Security Rules", () => {
           displayName: "Updated"
         },
         { merge: true }
-      )
-    );
-  });
-
-  it("allow admins to edit the admin collection", async () => {
-    await assertSucceeds(
-      setDoc(
-        doc(
-          testEnv
-            .authenticatedContext("admin", {
-              admin: true,
-              webmaster: true,
-              authorized: true,
-              email_verified: true
-            })
-            .firestore(),
-          "admin/person"
-        ),
-        {
-          name: "Person"
-        },
-        { merge: true }
-      )
-    );
-  });
-
-  it("allow admins to read the admin collection", async () => {
-    await assertSucceeds(
-      getDoc(
-        doc(
-          testEnv
-            .authenticatedContext("admin", {
-              admin: true,
-              webmaster: true,
-              authorized: true,
-              email_verified: true
-            })
-            .firestore(),
-          "admin/person"
-        )
-      )
-    );
-  });
-
-  it("allow admins to edit the webmasters collection", async () => {
-    await assertSucceeds(
-      setDoc(
-        doc(
-          testEnv
-            .authenticatedContext("admin", {
-              admin: true,
-              webmaster: true,
-              authorized: true,
-              email_verified: true
-            })
-            .firestore(),
-          "webmasters/person"
-        ),
-        {
-          name: "Person"
-        },
-        { merge: true }
-      )
-    );
-  });
-
-  it("allow admins to read the webmasters collection", async () => {
-    await assertSucceeds(
-      getDoc(
-        doc(
-          testEnv
-            .authenticatedContext("admin", {
-              admin: true,
-              webmaster: true,
-              authorized: true,
-              email_verified: true
-            })
-            .firestore(),
-          "webmasters/person"
-        )
-      )
-    );
-  });
-
-  it("prevent other users from editing the admin collection", async () => {
-    await assertFails(
-      setDoc(
-        doc(
-          testEnv
-            .authenticatedContext("webmaster", {
-              admin: false,
-              webmaster: true,
-              authorized: true,
-              email_verified: true
-            })
-            .firestore(),
-          "admin/person"
-        ),
-        {
-          name: "Person"
-        },
-        { merge: true }
-      )
-    );
-  });
-
-  it("prevent other users from reading the admin collection", async () => {
-    await assertFails(
-      getDoc(
-        doc(
-          testEnv
-            .authenticatedContext("webmaster", {
-              admin: false,
-              webmaster: true,
-              authorized: true,
-              email_verified: true
-            })
-            .firestore(),
-          "admin/person"
-        )
-      )
-    );
-  });
-
-  it("prevent other users from editing the webmasters collection", async () => {
-    await assertFails(
-      setDoc(
-        doc(
-          testEnv
-            .authenticatedContext("webmaster", {
-              admin: false,
-              webmaster: true,
-              authorized: true,
-              email_verified: true
-            })
-            .firestore(),
-          "webmasters/person"
-        ),
-        {
-          name: "Person"
-        },
-        { merge: true }
-      )
-    );
-  });
-
-  it("prevent other users from reading the webmasters collection", async () => {
-    await assertFails(
-      getDoc(
-        doc(
-          testEnv
-            .authenticatedContext("webmaster", {
-              admin: false,
-              webmaster: true,
-              authorized: true,
-              email_verified: true
-            })
-            .firestore(),
-          "webmasters/person"
-        )
       )
     );
   });
@@ -3352,7 +3195,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3375,7 +3217,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3398,7 +3239,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3420,7 +3260,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3468,7 +3307,6 @@ describe("Firestore Security Rules", () => {
         doc(
           testEnv
             .authenticatedContext("person", {
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3497,7 +3335,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3515,7 +3352,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3543,7 +3379,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3564,7 +3399,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3589,7 +3423,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3614,7 +3447,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3637,7 +3469,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3661,7 +3492,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3682,7 +3512,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3719,7 +3548,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3747,7 +3575,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3772,7 +3599,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3794,7 +3620,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3818,7 +3643,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3839,7 +3663,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3876,7 +3699,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3894,7 +3716,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3907,7 +3728,8 @@ describe("Firestore Security Rules", () => {
   it("prevent users from viewing the calendar editing password if the permissions are set to webmasters", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        calEdit: "webmasters"
+        calEdit: "webmasters",
+        useCalendar: true
       });
     });
     await assertFails(
@@ -3917,7 +3739,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3930,7 +3751,8 @@ describe("Firestore Security Rules", () => {
   it("prevent unauthenticated users from viewing the calendar editing password if the permissions are set to webmasters", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        calEdit: "webmasters"
+        calEdit: "webmasters",
+        useCalendar: true
       });
     });
     await assertFails(
@@ -3946,7 +3768,8 @@ describe("Firestore Security Rules", () => {
   it("allow users to view the calendar editing password if the permissions are set to users", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        calEdit: "users"
+        calEdit: "users",
+        useCalendar: true
       });
     });
     await assertSucceeds(
@@ -3956,7 +3779,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -3969,7 +3791,8 @@ describe("Firestore Security Rules", () => {
   it("prevent unauthenticated users from viewing the calendar editing password if the permissions are set to users", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        calEdit: "users"
+        calEdit: "users",
+        useCalendar: true
       });
     });
     await assertFails(
@@ -3985,7 +3808,8 @@ describe("Firestore Security Rules", () => {
   it("allow users to view the calendar editing password if the permissions are set to public", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        calEdit: "public"
+        calEdit: "public",
+        useCalendar: true
       });
     });
     await assertSucceeds(
@@ -3995,7 +3819,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -4008,10 +3831,51 @@ describe("Firestore Security Rules", () => {
   it("allow unauthenticated users to view the calendar editing password if the permissions are set to public", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        calEdit: "public"
+        calEdit: "public",
+        useCalendar: true
       });
     });
     await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv.unauthenticatedContext().firestore(),
+          "configuration/apps-script-cal-edit"
+        )
+      )
+    );
+  });
+
+  it("prevent users from viewing the calendar editing password if the calendar service is disabled", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "configuration/settings"), {
+        calEdit: "public",
+        useCalendar: false
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              email_verified: true
+            })
+            .firestore(),
+          "configuration/apps-script-cal-edit"
+        )
+      )
+    );
+  });
+
+  it("prevent unauthenticated users from viewing the calendar editing password if the calendar service is disabled.", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "configuration/settings"), {
+        calEdit: "public",
+        useCalendar: false
+      });
+    });
+    await assertFails(
       getDoc(
         doc(
           testEnv.unauthenticatedContext().firestore(),
@@ -4029,7 +3893,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -4047,7 +3910,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -4060,7 +3922,8 @@ describe("Firestore Security Rules", () => {
   it("prevent users from viewing the calendar viewing password if the permissions are set to webmasters", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        calView: "webmasters"
+        calView: "webmasters",
+        useCalendar: true
       });
     });
     await assertFails(
@@ -4070,7 +3933,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -4083,7 +3945,8 @@ describe("Firestore Security Rules", () => {
   it("prevent unauthenticated users from viewing the calendar viewing password if the permissions are set to webmasters", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        calView: "webmasters"
+        calView: "webmasters",
+        useCalendar: true
       });
     });
     await assertFails(
@@ -4099,7 +3962,8 @@ describe("Firestore Security Rules", () => {
   it("allow users to view the calendar viewing password if the permissions are set to users", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        calView: "users"
+        calView: "users",
+        useCalendar: true
       });
     });
     await assertSucceeds(
@@ -4109,7 +3973,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -4122,7 +3985,8 @@ describe("Firestore Security Rules", () => {
   it("prevent unauthenticated users from viewing the calendar viewing password if the permissions are set to users", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        calView: "users"
+        calView: "users",
+        useCalendar: true
       });
     });
     await assertFails(
@@ -4138,7 +4002,8 @@ describe("Firestore Security Rules", () => {
   it("allow users to view the calendar viewing password if the permissions are set to public", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        calView: "public"
+        calView: "public",
+        useCalendar: true
       });
     });
     await assertSucceeds(
@@ -4148,7 +4013,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -4161,10 +4025,51 @@ describe("Firestore Security Rules", () => {
   it("allow unauthenticated users to view the calendar viewing password if the permissions are set to public", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        calView: "public"
+        calView: "public",
+        useCalendar: true
       });
     });
     await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv.unauthenticatedContext().firestore(),
+          "configuration/apps-script-cal-view"
+        )
+      )
+    );
+  });
+
+  it("prevent users from viewing the calendar viewing password if the calendar service is disabled", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "configuration/settings"), {
+        calEdit: "public",
+        useCalendar: false
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              email_verified: true
+            })
+            .firestore(),
+          "configuration/apps-script-cal-view"
+        )
+      )
+    );
+  });
+
+  it("prevent unauthenticated users from viewing the calendar viewing password if the calendar service is disabled.", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "configuration/settings"), {
+        calEdit: "public",
+        useCalendar: false
+      });
+    });
+    await assertFails(
       getDoc(
         doc(
           testEnv.unauthenticatedContext().firestore(),
@@ -4182,7 +4087,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("admin", {
               admin: true,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -4200,7 +4104,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("webmaster", {
               admin: false,
               webmaster: true,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -4213,7 +4116,8 @@ describe("Firestore Security Rules", () => {
   it("prevent users from viewing the emailing password if the permissions are set to webmasters", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        email: "webmasters"
+        email: "webmasters",
+        useEmail: true
       });
     });
     await assertFails(
@@ -4223,7 +4127,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -4236,7 +4139,8 @@ describe("Firestore Security Rules", () => {
   it("prevent unauthenticated users from viewing the emailing password if the permissions are set to webmasters", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        email: "webmasters"
+        email: "webmasters",
+        useEmail: true
       });
     });
     await assertFails(
@@ -4252,7 +4156,8 @@ describe("Firestore Security Rules", () => {
   it("allow users to view the emailing password if the permissions are set to users", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        email: "users"
+        email: "users",
+        useEmail: true
       });
     });
     await assertSucceeds(
@@ -4262,7 +4167,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -4275,7 +4179,8 @@ describe("Firestore Security Rules", () => {
   it("prevent unauthenticated users from viewing the emailing password if the permissions are set to users", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        email: "users"
+        email: "users",
+        useEmail: true
       });
     });
     await assertFails(
@@ -4291,7 +4196,8 @@ describe("Firestore Security Rules", () => {
   it("allow users to view the emailing password if the permissions are set to public", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        email: "public"
+        email: "public",
+        useEmail: true
       });
     });
     await assertSucceeds(
@@ -4301,7 +4207,6 @@ describe("Firestore Security Rules", () => {
             .authenticatedContext("user", {
               admin: false,
               webmaster: false,
-              authorized: true,
               email_verified: true
             })
             .firestore(),
@@ -4314,10 +4219,51 @@ describe("Firestore Security Rules", () => {
   it("allow unauthenticated users to view the emailing password if the permissions are set to public", async () => {
     await testEnv.withSecurityRulesDisabled(async (context) => {
       await setDoc(doc(context.firestore(), "configuration/settings"), {
-        email: "public"
+        email: "public",
+        useEmail: true
       });
     });
     await assertSucceeds(
+      getDoc(
+        doc(
+          testEnv.unauthenticatedContext().firestore(),
+          "configuration/apps-script-mail"
+        )
+      )
+    );
+  });
+
+  it("prevent users from viewing the emailing password if the email service is disabled", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "configuration/settings"), {
+        calEdit: "public",
+        useEmail: false
+      });
+    });
+    await assertFails(
+      getDoc(
+        doc(
+          testEnv
+            .authenticatedContext("user", {
+              admin: false,
+              webmaster: false,
+              email_verified: true
+            })
+            .firestore(),
+          "configuration/apps-script-mail"
+        )
+      )
+    );
+  });
+
+  it("prevent unauthenticated users from viewing the emailing password if the calendar service is disabled.", async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), "configuration/settings"), {
+        calEdit: "public",
+        useEmail: false
+      });
+    });
+    await assertFails(
       getDoc(
         doc(
           testEnv.unauthenticatedContext().firestore(),

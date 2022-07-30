@@ -3,7 +3,7 @@ service firebase.storage {
   match /b/{bucket}/o {
   
   	function isLoggedIn() {
-    	return request.auth != null && request.auth.token.email_verified == true && request.auth.token.authorized == true;
+    	return request.auth != null && request.auth.token.email_verified == true;
     }
     
     function isWebmaster() {

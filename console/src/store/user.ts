@@ -1,11 +1,6 @@
 import { useSettings } from "./settings";
 import { defineStore } from "pinia";
-import {
-  AuthLevels,
-  AuthStates,
-  type AuthUser,
-  type SettingsSitePrivate
-} from "@/types";
+import { AuthLevels, AuthStates, type AuthUser } from "@/types";
 import { ref, type Ref } from "vue";
 import type { AuthError, User } from "firebase/auth";
 import { getAuthError } from "@/plugins/errorHandler";
@@ -61,9 +56,9 @@ export const useUser = defineStore("user", () => {
   const getInitialUser = async (): Promise<User | null> => {
     const { auth } = await import("@/plugins/firebase");
     return new Promise((resolve, reject) => {
-      const unsubscribe = auth.onAuthStateChanged((user) => {
+      const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
         unsubscribe();
-        resolve(user);
+        resolve(firebaseUser);
       }, reject);
     });
   };
@@ -82,20 +77,17 @@ export const useUser = defineStore("user", () => {
         const token = await getIdTokenResult(firebaseUser);
         const isAdmin = token.claims.admin;
         const isWebmaster = token.claims.webmaster;
-        const isAuthorized = token.claims.authorized;
         const isEmailVerified = firebaseUser.emailVerified;
 
-        if (isAdmin && isWebmaster && isAuthorized && isEmailVerified) {
+        if (isAdmin && isWebmaster && isEmailVerified) {
           authLevel.value = AuthLevels.ADMIN;
           SettingsModule.getSitePrivateSettings();
-        } else if (isWebmaster && isAuthorized && isEmailVerified) {
+        } else if (isWebmaster && isEmailVerified) {
           authLevel.value = AuthLevels.WEBMASTER;
           SettingsModule.getSitePrivateSettings();
-        } else if (isAuthorized && isEmailVerified) {
+        } else if (isEmailVerified) {
           authLevel.value = AuthLevels.USER;
           SettingsModule.getSitePrivateSettings();
-        } else if (SettingsModule.siteSettings.controlledAuth) {
-          authLevel.value = AuthLevels.USER;
         } else {
           authLevel.value = AuthLevels.NONE;
         }
@@ -104,7 +96,12 @@ export const useUser = defineStore("user", () => {
         user.value = null;
         authLevel.value = AuthLevels.NONE;
         authState.value = AuthStates.LOGGED_OUT;
-        SettingsModule.sitePrivateSettings = {} as SettingsSitePrivate;
+        SettingsModule.sitePrivateSettings = {
+          addresses: [],
+          consoleURL: "",
+          meetLink: "",
+          useMeeting: false
+        };
       }
     });
   };

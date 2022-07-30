@@ -28,14 +28,14 @@ const updateUser = functions.https.onCall(async (data, context) => {
   if (!caller.customClaims) {
     throw new functions.https.HttpsError(
       "permission-denied",
-      "You are not authorized to disable user accounts."
+      "You are not authorized to modify user accounts."
     );
   }
   const isAdmin = caller.customClaims.admin;
   if (!isAdmin) {
     throw new functions.https.HttpsError(
       "permission-denied",
-      "You are not authorized to disable user accounts."
+      "You are not authorized to modify user accounts."
     );
   }
 
@@ -79,32 +79,6 @@ const updateUser = functions.https.onCall(async (data, context) => {
     } else if (mode === "signout") {
       await auth.revokeRefreshTokens(uid);
       return { success: true, msg: "Successfully signed out the user." };
-    } else if (mode === "authorize") {
-      if (typeof content !== "boolean") {
-        throw new functions.https.HttpsError(
-          "invalid-argument",
-          "The request data (content parameter) must be true or false."
-        );
-      }
-
-      const currentClaims = (await auth.getUser(uid)).customClaims as {
-        admin: boolean;
-        webmaster: boolean;
-        authorized: boolean;
-      };
-      await auth.setCustomUserClaims(uid, {
-        admin: currentClaims.admin,
-        webmaster: currentClaims.webmaster,
-        authorized: content
-      });
-      await auth.revokeRefreshTokens(uid);
-      await firestore.doc(`users/${uid}`).update({
-        authorized: content
-      });
-      return {
-        success: true,
-        msg: `Successfully ${content ? "authorized" : "deauthorized"} the user.`
-      };
     } else {
       throw new functions.https.HttpsError(
         "invalid-argument",

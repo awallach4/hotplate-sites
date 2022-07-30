@@ -1,11 +1,5 @@
 import { getAuthError, getFirestoreError } from "@/plugins/errorHandler";
-import {
-  AuthLevels,
-  AuthStates,
-  type AuthUser,
-  type SettingsSitePrivate,
-  type UserData
-} from "@/types";
+import { AuthLevels, AuthStates, type AuthUser, type UserData } from "@/types";
 import { ref, type Ref } from "vue";
 import type { User, AuthError } from "firebase/auth";
 import type { FirestoreError } from "firebase/firestore/lite";
@@ -25,13 +19,6 @@ export const useUser = defineStore("user", () => {
     persistence: boolean,
     photo?: File | null
   ) => {
-    const SettingsModule = useSettings();
-    if (SettingsModule.siteSettings.controlledAuth) {
-      throw {
-        code: "auth/invite-only",
-        message: "Account creation disabled by administrator."
-      };
-    }
     authState.value = AuthStates.LOGGING_IN;
     try {
       const { auth, analytics, firestore } = await import("@/plugins/firebase");
@@ -60,26 +47,28 @@ export const useUser = defineStore("user", () => {
           photo
         );
         await updateProfile(newUser.user, { displayName, photoURL });
-        await setDoc(doc(firestore, `users/${newUser.user.uid}`), {
-          disabled: false,
-          displayName,
-          email,
-          permissions: "User",
-          photoURL
-        });
+        await setDoc(
+          doc(firestore, `users/${newUser.user.uid}`),
+          {
+            displayName,
+            photoURL
+          },
+          { merge: true }
+        );
         if (user.value) {
           user.value.displayName = displayName;
           user.value.photoURL = photoURL;
         }
       } else {
         await updateProfile(newUser.user, { displayName });
-        await setDoc(doc(firestore, `users/${newUser.user.uid}`), {
-          disabled: false,
-          displayName,
-          email,
-          permissions: "User",
-          photoURL: ""
-        });
+        await setDoc(
+          doc(firestore, `users/${newUser.user.uid}`),
+          {
+            displayName,
+            photoURL: ""
+          },
+          { merge: true }
+        );
         if (user.value) {
           user.value.displayName = displayName;
           user.value.photoURL = "";
@@ -252,23 +241,17 @@ export const useUser = defineStore("user", () => {
         const token = await getIdTokenResult(firebaseUser);
         const isAdmin = token.claims.admin;
         const isWebmaster = token.claims.webmaster;
-        const isAuthorized = token.claims.authorized;
         const isEmailVerified = firebaseUser.emailVerified;
 
-        if (isAdmin && isWebmaster && isAuthorized && isEmailVerified) {
+        if (isAdmin && isWebmaster && isEmailVerified) {
           authLevel.value = AuthLevels.ADMIN;
           SettingsModule.getSitePrivateSettings();
-        } else if (isWebmaster && isAuthorized && isEmailVerified) {
+        } else if (isWebmaster && isEmailVerified) {
           authLevel.value = AuthLevels.WEBMASTER;
           SettingsModule.getSitePrivateSettings();
-        } else if (isAuthorized && isEmailVerified) {
+        } else if (isEmailVerified) {
           authLevel.value = AuthLevels.USER;
           SettingsModule.getSitePrivateSettings();
-        } else if (
-          !SettingsModule.siteSettings.controlledAuth &&
-          isEmailVerified
-        ) {
-          authLevel.value = AuthLevels.USER;
         } else {
           authLevel.value = AuthLevels.NONE;
         }
@@ -289,7 +272,12 @@ export const useUser = defineStore("user", () => {
         userProfile.value = null;
         authLevel.value = AuthLevels.NONE;
         authState.value = AuthStates.LOGGED_OUT;
-        SettingsModule.sitePrivateSettings = {} as SettingsSitePrivate;
+        SettingsModule.sitePrivateSettings = {
+          addresses: [],
+          consoleURL: "",
+          meetLink: "",
+          useMeeting: false
+        };
       }
     });
   };

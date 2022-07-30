@@ -25,13 +25,13 @@
           {{ settings.controlledAuth ? "Disable" : "Enable" }} Invite-Only
           Authentication
         </v-tooltip>
-        <v-dialog v-model="userCreator" max-width="400px" persistent>
+        <v-dialog v-model="userCreator" max-width="600px" persistent>
           <template #activator="{ on: dialog, attrs }">
             <v-tooltip bottom>
               <template #activator="{ on: tooltip }">
                 <v-btn
                   v-bind="attrs"
-                  aria-label="Create User"
+                  aria-label="Manage Invites"
                   icon
                   :disabled="updating"
                   v-on="{ ...tooltip, ...dialog }"
@@ -39,54 +39,117 @@
                   <v-icon>mdi-account-plus</v-icon>
                 </v-btn>
               </template>
-              Create User
+              Manage Invites
             </v-tooltip>
           </template>
           <v-card color="card" :loading="updating ? 'secondary' : false">
-            <v-card-title class="cardtext--text">Create User</v-card-title>
-            <v-card-text class="cardtext--text">
-              <v-form
-                id="newUserForm"
-                ref="newUserForm"
-                :disabled="updating"
-                @submit.prevent="createUser"
-              >
-                <v-text-field
-                  v-model="newUserUsername"
-                  filled
-                  label="Username"
-                  :rules="[fieldRequired]"
-                  color="secondary"
-                  validate-on-blur
-                />
-                <v-text-field
-                  v-model="newUserEmail"
-                  filled
-                  label="Email Address"
-                  type="email"
-                  :rules="[fieldRequired, validEmail]"
-                  color="secondary"
-                  validate-on-blur
-                />
-              </v-form>
-            </v-card-text>
-            <v-card-actions>
+            <v-toolbar flat class="cardtext--text">
               <v-btn
-                text
-                class="cardtext--text ml-auto"
+                icon
+                aria-label="Close"
                 :disabled="updating"
                 @click="userCreator = false"
-                >Cancel</v-btn
               >
-              <v-btn
-                color="secondary"
-                class="sectext--text ml-2"
-                type="submit"
-                form="newUserForm"
-                :disabled="updating"
-                >Create User
+                <v-icon>mdi-close</v-icon>
               </v-btn>
-            </v-card-actions>
+              <v-toolbar-title>Manage Invites</v-toolbar-title>
+              <v-spacer />
+              <v-tooltip bottom>
+                <template #activator="{ on }">
+                  <v-btn
+                    aria-label="Refresh Users List"
+                    icon
+                    :disabled="updating"
+                    v-on="on"
+                    @click="getUsers"
+                  >
+                    <v-icon>mdi-refresh</v-icon>
+                  </v-btn>
+                </template>
+                Refresh Users List
+              </v-tooltip>
+            </v-toolbar>
+            <v-card-text class="cardtext--text">
+              Users who have been invited by an administrator will appear in the
+              table below. You can cancel a user's invite until they create
+              their account. To change an invited user's email address, cancel
+              the invite and invite the user again.
+              <v-text-field
+                v-model="newSearch"
+                append-icon="mdi-magnify"
+                filled
+                label="Search by Email Address"
+                class="mt-6"
+                clearable
+              />
+              <v-data-table
+                :headers="[headers[0], headers[4]]"
+                :items="invitedUsers"
+                :search="newSearch"
+                no-data-text="No users have been invited."
+                must-sort
+                sort-by="email"
+              >
+                <!-- eslint-disable-next-line vue/valid-v-slot -->
+                <template #item.actions="{ item }">
+                  <v-tooltip bottom>
+                    <template #activator="{ on, attrs }">
+                      <v-btn
+                        v-bind="attrs"
+                        icon
+                        aria-label="Cancel Invite"
+                        :disabled="updating"
+                        v-on="on"
+                        @click="cancelInvite(item)"
+                      >
+                        <v-icon>mdi-minus-circle-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    Cancel Invite
+                  </v-tooltip>
+                </template>
+              </v-data-table>
+            </v-card-text>
+            <v-divider />
+            <v-expansion-panels v-model="inviteDropdown" flat>
+              <v-expansion-panel class="card">
+                <v-expansion-panel-header>
+                  <h3>Invite User</h3>
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <v-form
+                    ref="newUserForm"
+                    :disabled="updating"
+                    @submit.prevent="createUser"
+                  >
+                    <v-text-field
+                      v-model="newUserEmail"
+                      filled
+                      label="Email Address"
+                      type="email"
+                      :rules="[fieldRequired, validEmail]"
+                      color="secondary"
+                      validate-on-blur
+                    />
+                    <v-checkbox
+                      v-if="settings.useEmail && settings.mailURL"
+                      v-model="notifyUser"
+                      color="secondary"
+                      class="mt-0"
+                      label="Send Invite Email"
+                    />
+                    <v-btn
+                      block
+                      color="secondary"
+                      class="sectext--text"
+                      type="submit"
+                      :disabled="updating"
+                      >Invite User
+                    </v-btn>
+                  </v-form>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
           </v-card>
         </v-dialog>
         <v-tooltip bottom>
@@ -146,21 +209,6 @@
             <v-simple-checkbox v-model="item.disabled" disabled />
           </template>
           <!-- eslint-disable-next-line vue/valid-v-slot -->
-          <template #header.authorized="{ header }">
-            <v-tooltip top max-width="250px">
-              <template #activator="{ on }">
-                {{ header.text }}
-                <v-icon small v-on="on">mdi-help-circle-outline</v-icon>
-              </template>
-              Only authorized users can view restricted content when Invite-Only
-              Authentication is enabled.
-            </v-tooltip>
-          </template>
-          <!-- eslint-disable-next-line vue/valid-v-slot -->
-          <template #item.authorized="{ item }">
-            <v-simple-checkbox v-model="item.authorized" disabled />
-          </template>
-          <!-- eslint-disable-next-line vue/valid-v-slot -->
           <template #item.actions="{ item }">
             <v-menu
               v-if="item.isSelectable"
@@ -180,14 +228,6 @@
                 </v-list-item>
                 <v-list-item @click="signOutUser(item)">
                   <v-list-item-title>Sign Out User</v-list-item-title>
-                </v-list-item>
-                <v-list-item @click="toggleAuthorized(item)">
-                  <v-list-item-title
-                    >{{
-                      item.authorized ? "Deauthorize" : "Authorize"
-                    }}
-                    User</v-list-item-title
-                  >
                 </v-list-item>
                 <v-list-item @click="toggleDisabled(item)">
                   <v-list-item-title
@@ -273,11 +313,15 @@ import { fieldRequired, validEmail } from "@/plugins/formRules";
 import { user } from "@/plugins/authHandler";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { usePages } from "@/store/pages";
-import type { FunctionsError, HttpsCallableResult } from "firebase/functions";
+import type { FunctionsError } from "firebase/functions";
 import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import { loading, settings } from "@/plugins/routerStoreHelpers";
 import { companyName } from "@/CONSOLE_CONFIG";
-import { useSettings } from "@/store/settings";
+
+interface InvitedUser {
+  email: string;
+  id: string;
+}
 
 const headers = [
   {
@@ -296,11 +340,6 @@ const headers = [
   {
     text: "Disabled",
     value: "disabled",
-    filterable: false
-  },
-  {
-    text: "Authorized",
-    value: "authorized",
     filterable: false
   },
   {
@@ -326,8 +365,8 @@ const permissions = [
   }
 ];
 
-const newUserUsername = ref("");
 const newUserEmail = ref("");
+const notifyUser = ref(false);
 const users: Ref<UserManagementUser[]> = ref([]);
 const selectedUser: Ref<UserManagementUser | null> = ref(null);
 const newPermissions = ref(AuthLevels.UNSET);
@@ -336,18 +375,27 @@ const updating = ref(false);
 const newUserForm = ref({} as VFormOptions);
 const userEditor = ref(false);
 const userCreator = ref(false);
+const inviteDropdown: Ref<number | undefined> = ref(undefined);
 const updateUserForm = ref({} as VFormOptions);
 const search = ref("");
+const newSearch = ref("");
+const invitedUsers: Ref<InvitedUser[]> = ref([]);
 
 watch(userCreator, (newValue) => {
   if (!newValue) {
-    newUserForm.value.reset();
+    inviteDropdown.value = undefined;
   }
 });
 
 watch(userEditor, (newValue) => {
   if (!newValue) {
     updateUserForm.value.reset();
+  }
+});
+
+watch(inviteDropdown, (newValue) => {
+  if (newValue === undefined) {
+    newUserForm.value.reset();
   }
 });
 
@@ -365,7 +413,7 @@ const toggleAuthMode = async () => {
     settings.value.controlledAuth = !settings.value.controlledAuth;
     await setDoc(
       doc(firestore, "configuration/settings"),
-      { controlledAuth: settings.value.controlledAuth },
+      { controlledAuth: settings.value.controlledAuth || false },
       {
         merge: true
       }
@@ -403,6 +451,13 @@ const getUsers = async () => {
       }
       users.value.push(focusUser);
     });
+    const newDocs = await getDocs(collection(firestore, "new-users"));
+    invitedUsers.value = [];
+    newDocs.forEach((doc) => {
+      const focusUser = doc.data() as InvitedUser;
+      focusUser.id = doc.id;
+      invitedUsers.value.push(focusUser);
+    });
     updating.value = false;
   } catch (error) {
     updating.value = false;
@@ -422,46 +477,70 @@ const createUser = async () => {
 
   try {
     updating.value = true;
-    const { functions } = await import("@/plugins/firebase");
-    const { httpsCallable } = await import("firebase/functions");
-    const createUserFunction = httpsCallable(functions, "createUser");
-    const createNewUser = (await createUserFunction({
-      name: newUserUsername.value,
+    const { firestore } = await import("@/plugins/firebase");
+    const { addDoc, collection, getDocs, query, where } = await import(
+      "firebase/firestore/lite"
+    );
+    const existingInvites = await getDocs(
+      query(
+        collection(firestore, "new-users"),
+        where("email", "==", newUserEmail.value)
+      )
+    );
+    const existingUsers = await getDocs(
+      query(
+        collection(firestore, "users"),
+        where("email", "==", newUserEmail.value)
+      )
+    );
+    if (existingInvites.size > 0 || existingUsers.size > 0) {
+      displayPageAlert("The email address is already in use.");
+      updating.value = false;
+      return;
+    }
+    await addDoc(collection(firestore, `new-users`), {
       email: newUserEmail.value
-    })) as HttpsCallableResult<{
-      success: boolean;
-      password: string;
-      msg: string;
-    }>;
-    const userPassword = createNewUser.data.password;
-    const postData: EmailData = {
-      to: newUserEmail.value,
-      subject: `Welcome to ${companyName}!`,
-      sender: `${companyName} Accounts`,
-      body: `<p>Welcome to ${companyName}, ${newUserUsername.value}!  To log into your new account, please use the email address that you are currently reading this from.  Your password is: <strong>${userPassword}</strong>.  Please log into your account and click the link to verify your email address.  You will not be able to make any changes to your account until this address is verified.  Once your email is verified, please log back in and <strong> change your password IMMEDIATELY.</strong>  If you have any questions, please contact a site administrator for help.  Thank you!</p>`
-    };
+    });
 
-    const SettingsModule = useSettings();
-    if (
-      SettingsModule.siteSettings.mailURL &&
-      SettingsModule.siteSettings.useEmail
-    ) {
+    if (settings.value.useEmail && settings.value.mailURL && notifyUser.value) {
+      const postData: EmailData = {
+        to: newUserEmail.value,
+        subject: `Welcome to ${companyName}!`,
+        sender: `${companyName} Accounts`,
+        body: `<p>Welcome to ${companyName}, ${newUserEmail.value}!  A site administrator has invited you to create an account with ${companyName} using your current email address.  To create your account, head to the ${companyName} website and go to the "Register" page.  Use the email address you are currently reading this from to create your account and be sure to verify your email address upon account creation.  If you have any questions, please contact ${companyName} directly, do not reply to this email.  Again, welcome to ${companyName}!</p>`
+      };
       const { sendEmail } = await import("@/plugins/mailService");
       await sendEmail(postData);
-      displayPageAlert("Successfully created a new user.");
-    } else {
-      displayPageAlert(
-        "Successfully created a new user.  The user must reset their password before logging in, as the email service is not set up."
-      );
     }
+    displayPageAlert("Successfully invited a new user.");
     updating.value = false;
-    userCreator.value = false;
+    newUserForm.value.reset();
   } catch (error) {
-    const rawError = error as FunctionsError;
     displayPageAlert(
-      `An error occurred while creating the user: ${rawError.message}`
+      `An error occurred while creating the user: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
     updating.value = false;
+  }
+
+  getUsers();
+};
+
+const cancelInvite = async (user: InvitedUser) => {
+  try {
+    updating.value = true;
+    const { firestore } = await import("@/plugins/firebase");
+    const { deleteDoc, doc } = await import("firebase/firestore/lite");
+    await deleteDoc(doc(firestore, `new-users/${user.id}`));
+    displayPageAlert("Successfully cancelled the invite.");
+    updating.value = false;
+  } catch (error) {
+    displayPageAlert(
+      `An error occurred while cancelling the invite: ${getFirestoreError(
+        error as FirestoreError
+      )}`
+    );
   }
 
   getUsers();
@@ -479,49 +558,22 @@ const updateUsername = async (focusUser: UserManagementUser) => {
 };
 
 const setPermissions = async (focusUser: UserManagementUser) => {
-  const { firestore } = await import("@/plugins/firebase");
-  const { doc, deleteDoc, getDoc, setDoc } = await import(
-    "firebase/firestore/lite"
-  );
-  const isAdmin = (
-    await getDoc(doc(firestore, `admin/${focusUser.id}`))
-  ).exists();
-  const isWebmaster = (
-    await getDoc(doc(firestore, `webmasters/${focusUser.id}`))
-  ).exists();
+  const isAdmin = focusUser.permissions === AuthLevels.ADMIN;
+  const isWebmaster = focusUser.permissions === AuthLevels.WEBMASTER;
 
   if (isAdmin) {
-    if (newPermissions.value === "User") {
-      await deleteDoc(doc(firestore, `admin/${focusUser.id}`));
-    } else if (newPermissions.value === "Webmaster") {
-      await deleteDoc(doc(firestore, `admin/${focusUser.id}`));
-      await setDoc(doc(firestore, `webmasters/${focusUser.id}`), {
-        name: focusUser.displayName
-      });
-    } else {
+    if (newPermissions.value === AuthLevels.ADMIN) {
       throw new Error("User is already an admin.");
     }
   } else if (isWebmaster) {
-    if (newPermissions.value === "User") {
-      await deleteDoc(doc(firestore, `webmasters/${focusUser.id}`));
-    } else if (newPermissions.value === "Admin") {
-      await deleteDoc(doc(firestore, `webmasters/${focusUser.id}`));
-      await setDoc(doc(firestore, `admin/${focusUser.id}`), {
-        name: focusUser.displayName
-      });
-    } else {
+    if (newPermissions.value === AuthLevels.WEBMASTER) {
       throw new Error("User is already a webmaster.");
     }
   } else {
-    if (newPermissions.value === "Webmaster") {
-      await setDoc(doc(firestore, `webmasters/${focusUser.id}`), {
-        name: focusUser.displayName
-      });
-    } else if (newPermissions.value === "Admin") {
-      await setDoc(doc(firestore, `admin/${focusUser.id}`), {
-        name: focusUser.displayName
-      });
-    } else {
+    if (
+      newPermissions.value === AuthLevels.USER ||
+      newPermissions.value === AuthLevels.UNSET
+    ) {
       throw new Error("User is already a basic user.");
     }
   }
@@ -637,40 +689,6 @@ const toggleDisabled = async (focusUser: UserManagementUser) => {
     displayPageAlert(
       `An error occurred while ${
         focusUser.disabled ? "enabling" : "disabling"
-      } the user: ${rawError.message}`
-    );
-    updating.value = false;
-  }
-
-  getUsers();
-};
-
-const toggleAuthorized = async (focusUser: UserManagementUser) => {
-  if (focusUser.id === user.value.uid) {
-    displayPageAlert("You cannot authorize/deauthorize your account.");
-    return;
-  }
-  try {
-    updating.value = true;
-    const { functions } = await import("@/plugins/firebase");
-    const { httpsCallable } = await import("firebase/functions");
-    const toggle = httpsCallable(functions, "updateUser");
-    await toggle({
-      uid: focusUser.id,
-      mode: "authorize",
-      content: !focusUser.authorized
-    });
-    displayPageAlert(
-      `Successfully ${
-        focusUser.authorized ? "deauthorized" : "authorized"
-      } the user.`
-    );
-    updating.value = false;
-  } catch (error) {
-    const rawError = error as FunctionsError;
-    displayPageAlert(
-      `An error occurred while ${
-        focusUser.authorized ? "deauthorizing" : "authorizing"
       } the user: ${rawError.message}`
     );
     updating.value = false;

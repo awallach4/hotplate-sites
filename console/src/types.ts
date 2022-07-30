@@ -77,7 +77,6 @@ export interface AuthUser {
 }
 
 export interface UserManagementUser {
-  authorized: boolean;
   disabled: boolean;
   displayName: string;
   email: string;

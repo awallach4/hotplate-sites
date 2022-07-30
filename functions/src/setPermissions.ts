@@ -50,7 +50,6 @@ const setPermissions = functions.https.onCall(async (data, context) => {
     switch (perms) {
       case "Admin": {
         await auth.setCustomUserClaims(uid, {
-          authorized: true,
           webmaster: true,
           admin: true
         });
@@ -59,7 +58,6 @@ const setPermissions = functions.https.onCall(async (data, context) => {
       }
       case "Webmaster": {
         await auth.setCustomUserClaims(uid, {
-          authorized: true,
           webmaster: true,
           admin: false
         });
@@ -68,7 +66,6 @@ const setPermissions = functions.https.onCall(async (data, context) => {
       }
       case "User": {
         await auth.setCustomUserClaims(uid, {
-          authorized: true,
           webmaster: false,
           admin: false
         });
@@ -77,7 +74,6 @@ const setPermissions = functions.https.onCall(async (data, context) => {
       }
       default: {
         await auth.setCustomUserClaims(uid, {
-          authorized: true,
           webmaster: false,
           admin: false
         });

@@ -26,7 +26,7 @@ const removeUser = functions.https.onCall(async (data, context) => {
   if (!caller.customClaims) {
     throw new functions.https.HttpsError(
       "permission-denied",
-      "You are not authorized to change user permissions."
+      "You are not authorized to delete users."
     );
   }
   const isAdmin = caller.customClaims.admin;

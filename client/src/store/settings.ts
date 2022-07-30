@@ -10,10 +10,26 @@ import { defineStore } from "pinia";
 
 export const useSettings = defineStore("settings", () => {
   const applicationLoadingState = ref(false);
-  const siteSettings: Ref<SettingsSite> = ref({} as SettingsSite);
-  const sitePrivateSettings: Ref<SettingsSitePrivate> = ref(
-    {} as SettingsSitePrivate
-  );
+  const siteSettings: Ref<SettingsSite> = ref({
+    calEdit: PermissionGroups.UNSET,
+    calID: "",
+    calView: PermissionGroups.UNSET,
+    calURL: "",
+    controlledAuth: false,
+    defaultPage: "/login",
+    email: PermissionGroups.UNSET,
+    footerTxt: "",
+    mailURL: "",
+    useCalendar: false,
+    useEmail: false
+  });
+  const sitePrivateSettings: Ref<SettingsSitePrivate> = ref({
+    addresses: [],
+    consoleURL: "",
+    useMeeting: false,
+    meetLink: ""
+  });
+  const hasFetched = ref(false);
 
   const getSettings = async () => {
     try {
@@ -22,36 +38,10 @@ export const useSettings = defineStore("settings", () => {
       const settings = await getDoc(doc(firestore, "configuration/settings"));
       if (settings.exists()) {
         const data = settings.data() as SettingsSite;
-        siteSettings.value = data;
-      } else {
-        siteSettings.value = {
-          calEdit: PermissionGroups.UNSET,
-          calID: "",
-          calView: PermissionGroups.UNSET,
-          calURL: "",
-          controlledAuth: true,
-          defaultPage: "",
-          email: PermissionGroups.UNSET,
-          footerTxt: "",
-          mailURL: "",
-          useCalendar: false,
-          useEmail: false
-        };
+        siteSettings.value = Object.assign({}, siteSettings.value, data);
       }
+      hasFetched.value = true;
     } catch (error) {
-      siteSettings.value = {
-        calEdit: PermissionGroups.UNSET,
-        calID: "",
-        calView: PermissionGroups.UNSET,
-        calURL: "",
-        controlledAuth: true,
-        defaultPage: "",
-        email: PermissionGroups.UNSET,
-        footerTxt: "",
-        mailURL: "",
-        useCalendar: false,
-        useEmail: false
-      };
       throw getFirestoreError(error as FirestoreError);
     }
   };
@@ -65,22 +55,13 @@ export const useSettings = defineStore("settings", () => {
       );
       if (settings.exists()) {
         const data = settings.data() as SettingsSitePrivate;
-        sitePrivateSettings.value = data;
-      } else {
-        sitePrivateSettings.value = {
-          addresses: [],
-          consoleURL: "",
-          useMeeting: false,
-          meetLink: ""
-        };
+        sitePrivateSettings.value = Object.assign(
+          {},
+          sitePrivateSettings.value,
+          data
+        );
       }
     } catch (error) {
-      sitePrivateSettings.value = {
-        addresses: [],
-        consoleURL: "",
-        useMeeting: false,
-        meetLink: ""
-      };
       throw getFirestoreError(error as FirestoreError);
     }
   };
@@ -89,6 +70,7 @@ export const useSettings = defineStore("settings", () => {
     applicationLoadingState,
     siteSettings,
     sitePrivateSettings,
+    hasFetched,
     getSettings,
     getSitePrivateSettings
   };

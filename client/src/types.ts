@@ -229,7 +229,6 @@ export interface AuthUser {
 }
 
 export interface UserData {
-  authorized: boolean;
   disabled: boolean;
   displayName: string;
   email: string;

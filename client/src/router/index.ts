@@ -57,14 +57,14 @@ router.beforeEach(async (to, from, next) => {
   const UserModule = useUser();
   PagesModule.pageTitle = "Loading...";
   SettingsModule.applicationLoadingState = true;
-  if (Object.keys(SettingsModule.siteSettings).length === 0) {
+  if (!SettingsModule.hasFetched) {
     await SettingsModule.getSettings();
   }
   if (PagesModule.pages.length === 0) {
     await PagesModule.getPages();
   }
 
-  const user = await UserModule.getInitialUser();
+  await UserModule.getInitialUser();
   const authLevel = UserModule.authLevel;
   let isAuthorized;
   if (authLevel === AuthLevels.ADMIN) {
@@ -82,11 +82,7 @@ router.beforeEach(async (to, from, next) => {
   } else {
     isLoggedIn = false;
   }
-  if (user && isAuthorized) {
-    if (Object.keys(SettingsModule.sitePrivateSettings).length === 0) {
-      SettingsModule.getSitePrivateSettings();
-    }
-  }
+
   let isWebmaster;
   if (authLevel === AuthLevels.WEBMASTER) {
     isWebmaster = true;
@@ -144,8 +140,6 @@ router.beforeEach(async (to, from, next) => {
     } else if (to.path === "/register") {
       if (isLoggedIn) {
         next("/profile");
-      } else if (SettingsModule.siteSettings.controlledAuth) {
-        next("/login");
       } else {
         next();
       }

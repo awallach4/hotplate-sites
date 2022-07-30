@@ -150,11 +150,7 @@
                   when sending emails through your website via the email
                   service.
                 </p>
-                <v-expansion-panels
-                  v-if="privateSettings.addresses"
-                  class="mb-6"
-                  accordion
-                >
+                <v-expansion-panels class="mb-6" accordion>
                   <v-expansion-panel
                     v-for="(item, index) in privateSettings.addresses"
                     :key="index"
@@ -222,12 +218,29 @@ const save = async (
   try {
     const { firestore } = await import("@/plugins/firebase");
     const { doc, setDoc } = await import("firebase/firestore/lite");
-    await setDoc(doc(firestore, "configuration/settings"), settings.value, {
-      merge: true
-    });
+    await setDoc(
+      doc(firestore, "configuration/settings"),
+      {
+        calEdit: settings.value.calEdit || "",
+        calID: settings.value.calID || "",
+        calURL: settings.value.calURL || "",
+        calView: settings.value.calView || "",
+        email: settings.value.email || "",
+        mailURL: settings.value.mailURL || "",
+        useCalendar: settings.value.useCalendar || false,
+        useEmail: settings.value.useEmail || false
+      },
+      {
+        merge: true
+      }
+    );
     await setDoc(
       doc(firestore, "configuration/priv-settings"),
-      privateSettings.value,
+      {
+        addresses: privateSettings.value.addresses || [],
+        meetLink: privateSettings.value.meetLink || "",
+        useMeeting: privateSettings.value.useMeeting || false
+      },
       { merge: true }
     );
     callback();
@@ -241,12 +254,10 @@ defineExpose({
 });
 
 const addEmailAddress = () => {
-  if (privateSettings.value.addresses) {
-    privateSettings.value.addresses.push({
-      text: "",
-      value: ""
-    });
-  }
+  privateSettings.value.addresses.push({
+    text: "",
+    value: ""
+  });
 };
 
 const removeEmailAddress = (index: number) => {

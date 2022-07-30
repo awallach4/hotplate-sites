@@ -8,23 +8,11 @@
       </template>
       Welcome to {{ companyName }}, {{ displayName || "New User" }}! Please
       click the button to sign out and verify your email address. You will not
-      be able to view any private pages or edit your profile until your email is
-      verified.
+      be able to view any private pages until your email is verified.
       <v-spacer />
       <v-btn outlined color="infotext" @click="verifyUserEmail"
         >Verify Email</v-btn
       >
-    </v-alert>
-    <v-alert
-      v-if="!isAuthorized && user.emailVerified"
-      type="error"
-      class="errtext--text mb-6"
-    >
-      <template #prepend>
-        <v-icon class="mr-3" color="errtext">mdi-alert-octagon-outline</v-icon>
-      </template>
-      We're sorry, but it looks like you are not an authorized user. Please
-      contact a site administrator for assistance.
     </v-alert>
     <v-row>
       <v-col cols="12" sm="6">
@@ -44,7 +32,6 @@
                 block
                 color="secondary"
                 class="sectext--text"
-                :disabled="!isAuthorized"
                 @click="editProfile"
               >
                 Edit Profile
@@ -126,7 +113,12 @@
           </v-card-actions>
           <v-divider />
           <v-expansion-panels flat>
-            <v-expansion-panel class="card">
+            <v-expansion-panel
+              class="card"
+              @change="
+                deleteAccountForm.reset ? deleteAccountForm.reset() : () => null
+              "
+            >
               <v-expansion-panel-header class="cardtext--text">
                 <h3>Delete Account</h3>
               </v-expansion-panel-header>
@@ -139,25 +131,31 @@
                   </template>
                   WARNING! THIS CANNOT BE UNDONE!
                 </v-alert>
-                <v-text-field
-                  v-model="deleteAccountPassword"
-                  outlined
-                  dense
-                  type="password"
-                  color="error"
-                  label="Password"
+                <v-form
+                  ref="deleteAccountForm"
                   :disabled="submitting"
-                />
-                <v-btn
-                  type="button"
-                  block
-                  color="error"
-                  class="errtext--text"
-                  :disabled="deleteAccountPassword.length < 8 || submitting"
-                  @click="deleteAccount"
+                  @submit.prevent="deleteAccount"
                 >
-                  Delete Account
-                </v-btn>
+                  <v-text-field
+                    v-model="deleteAccountPassword"
+                    outlined
+                    dense
+                    type="password"
+                    color="error"
+                    label="Password"
+                    :rules="[fieldRequired]"
+                    validate-on-blur
+                  />
+                  <v-btn
+                    type="submit"
+                    block
+                    color="error"
+                    class="errtext--text"
+                    :disabled="submitting"
+                  >
+                    Delete Account
+                  </v-btn>
+                </v-form>
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-expansion-panels>
@@ -173,7 +171,7 @@
             </p>
             <v-form
               ref="changePasswordForm"
-              :disabled="!isAuthorized || submitting"
+              :disabled="submitting"
               @submit.prevent="changePassword"
             >
               <v-text-field
@@ -246,7 +244,7 @@ import { AuthLevels, type UserData, type VFormOptions } from "@/types";
 import { useUser } from "@/store/user";
 import { usePages } from "@/store/pages";
 import { computed, ref, type Ref } from "vue";
-import { authLevel, user, isAuthorized } from "@/plugins/authHandler";
+import { authLevel, user } from "@/plugins/authHandler";
 import {
   fieldRequired,
   validEmail,
@@ -279,6 +277,7 @@ const editingProfile = ref(false);
 const submitting = ref(false);
 const changePasswordForm = ref({} as VFormOptions);
 const editProfileForm = ref({} as VFormOptions);
+const deleteAccountForm = ref({} as VFormOptions);
 
 const emailChange = computed(() => {
   return user.value.email !== email.value;
@@ -324,12 +323,15 @@ const changePassword = async () => {
 };
 
 const deleteAccount = async () => {
+  const isValid = deleteAccountForm.value.validate();
+  if (!isValid) {
+    return;
+  }
   if (authLevel.value === AuthLevels.ADMIN) {
     displayPageAlert(
       "In order to protect this site, administrators cannot delete their own accounts."
     );
-    deleteAccountPassword.value = "";
-    return;
+    deleteAccountForm.value.reset();
   }
   if (user.value.email) {
     if (
@@ -351,7 +353,7 @@ const deleteAccount = async () => {
       }
     } else {
       displayPageAlert("Your account has not been deleted.");
-      deleteAccountPassword.value = "";
+      deleteAccountForm.value.reset();
       submitting.value = false;
     }
   }

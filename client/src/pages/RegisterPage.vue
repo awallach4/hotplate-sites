@@ -8,6 +8,17 @@
     >
       <v-card-title class="cardtext--text">Create Account</v-card-title>
       <v-card-text class="cardtext--text">
+        <v-alert
+          v-if="settings.controlledAuth"
+          type="warning"
+          class="warntext--text mb-6"
+        >
+          <template #prepend>
+            <v-icon class="mr-3" color="warntext">mdi-alert-outline</v-icon>
+          </template>
+          Only users who have been invited by an administrator will be able to
+          create an account here.</v-alert
+        >
         <v-form
           ref="newAccountForm"
           :disabled="submitting"
@@ -113,7 +124,7 @@ import {
   getFirestoreError,
   getStorageError
 } from "@/plugins/errorHandler";
-import { pushRouter } from "@/plugins/routerStoreHelpers";
+import { pushRouter, settings } from "@/plugins/routerStoreHelpers";
 import type { AuthError } from "firebase/auth";
 import type { FirestoreError } from "firebase/firestore/lite";
 import type { StorageError } from "firebase/storage";

@@ -7,7 +7,7 @@
       app
     >
       <v-list nav>
-        <v-list-group v-if="user" color="secondary">
+        <v-list-group v-if="user" color="secondary" eager>
           <template #activator>
             <v-list-item-avatar>
               <img
@@ -23,7 +23,7 @@
               </v-list-item-title>
             </v-list-item-content>
           </template>
-          <v-list-item @click="logout">
+          <v-list-item class="mb-2" @click="logout">
             <v-list-item-title>Log Out</v-list-item-title>
           </v-list-item>
         </v-list-group>
@@ -316,8 +316,8 @@ const saveSiteSettings = async () => {
     await setDoc(
       doc(firestore, "configuration/settings"),
       {
-        defaultPage: settings.value.defaultPage,
-        footerTxt: settings.value.footerTxt
+        defaultPage: settings.value.defaultPage || "/login",
+        footerTxt: settings.value.footerTxt || ""
       },
       {
         merge: true
@@ -326,7 +326,7 @@ const saveSiteSettings = async () => {
     await setDoc(
       doc(firestore, "configuration/priv-settings"),
       {
-        consoleURL: privateSettings.value.consoleURL
+        consoleURL: privateSettings.value.consoleURL || ""
       },
       { merge: true }
     );

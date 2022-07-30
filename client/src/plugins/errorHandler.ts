@@ -127,7 +127,12 @@ export const getAuthError = (error: AuthError): string => {
     case "auth/web-storage-unsupported":
       return "This browser is not supported or 3rd party cookies and data may be disabled.";
     default:
-      return error.code;
+      // [TODO] Remove when Cloud Functions SDK is fixed.
+      if (error.code.includes("auth/blocking-function-error-response")) {
+        return "The given email address has not been invited to create an account.";
+      } else {
+        return error.code;
+      }
   }
 };
 

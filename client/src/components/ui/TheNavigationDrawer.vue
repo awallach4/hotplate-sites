@@ -2,7 +2,7 @@
   <div id="nav">
     <v-navigation-drawer v-model="drawer" app color="card lighten-1">
       <v-list nav>
-        <v-list-group v-if="isLoggedIn" color="secondary">
+        <v-list-group v-if="isLoggedIn" color="secondary" eager>
           <template #activator>
             <v-list-item-avatar>
               <img
@@ -18,7 +18,7 @@
               </v-list-item-title>
             </v-list-item-content>
           </template>
-          <v-list-item to="/profile"> My Account </v-list-item>
+          <v-list-item to="/profile">My Account</v-list-item>
           <v-list-item
             v-if="isWebmaster && privateSettings.consoleURL"
             :href="privateSettings.consoleURL"
@@ -28,7 +28,7 @@
             <v-spacer />
             <v-icon>mdi-launch</v-icon>
           </v-list-item>
-          <v-list-item @click="logout"> Log Out </v-list-item>
+          <v-list-item class="mb-2" @click="logout">Log Out</v-list-item>
         </v-list-group>
         <v-divider v-if="isLoggedIn" />
         <v-list-item-group color="secondary">
@@ -46,11 +46,8 @@
               <v-list-item-title>{{ path.name }}</v-list-item-title>
             </v-list-item>
           </div>
-          <v-list-item v-if="!isLoggedIn" to="/login"> Log In </v-list-item>
-          <v-list-item
-            v-if="!settings.controlledAuth && !isLoggedIn"
-            to="/register"
-          >
+          <v-list-item v-if="!isLoggedIn" to="/login">Log In</v-list-item>
+          <v-list-item v-if="!isLoggedIn" to="/register">
             Register
           </v-list-item>
         </v-list-item-group>

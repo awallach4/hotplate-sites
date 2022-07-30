@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="12">
         <v-expansion-panels>
-          <v-expansion-panel>
+          <v-expansion-panel class="card">
             <v-expansion-panel-header class="cardtext--text text-h6"
               >Theme Guidelines - Please Read</v-expansion-panel-header
             >
@@ -71,7 +71,7 @@
         </v-expansion-panels>
       </v-col>
       <v-col cols="12" md="4">
-        <v-card>
+        <v-card color="card">
           <v-card-title class="cardtext--text">Theme Colors</v-card-title>
           <v-card-text class="cardtext--text">
             <v-select
@@ -306,7 +306,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="4" sm="6">
-        <v-card>
+        <v-card color="card">
           <v-card-title class="cardtext--text"
             >{{ editorTitle }} Color</v-card-title
           >
@@ -336,7 +336,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="4" sm="6">
-        <v-card>
+        <v-card color="card">
           <v-card-title class="cardtext--text"
             >{{ editorTitle }} Text Color</v-card-title
           >
@@ -478,8 +478,8 @@ const defaultDark = () => {
 };
 
 const themes = ref({
-  dark: {} as VuetifyThemeVariant,
-  light: {} as VuetifyThemeVariant
+  dark: defaultDark(),
+  light: defaultLight()
 });
 const selected = ref(VThemeColors.BACKGROUND);
 const mode = ref("light" as keyof VuetifyThemes);
@@ -602,9 +602,6 @@ const getThemes = async () => {
     if (data) {
       themes.value.light = data.light;
       themes.value.dark = data.dark;
-    } else {
-      themes.value.light = {} as VuetifyThemeVariant;
-      themes.value.dark = {} as VuetifyThemeVariant;
     }
   } catch (error) {
     displayPageAlert(
