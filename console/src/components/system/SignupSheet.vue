@@ -252,7 +252,7 @@ import { fieldRequired, minLength } from "@/plugins/formRules";
 import { user } from "@/plugins/authHandler";
 import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import { settings, privateSettings } from "@/plugins/routerStoreHelpers";
-import { companyName } from "@/CONSOLE_CONFIG";
+import { companyName } from "../../../../hotplateConfig";
 
 interface SignupItem {
   role: string;

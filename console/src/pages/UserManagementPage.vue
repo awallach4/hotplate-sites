@@ -316,7 +316,7 @@ import { usePages } from "@/store/pages";
 import type { FunctionsError } from "firebase/functions";
 import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import { loading, settings } from "@/plugins/routerStoreHelpers";
-import { companyName } from "@/CONSOLE_CONFIG";
+import { companyName } from "../../../hotplateConfig";
 
 interface InvitedUser {
   email: string;

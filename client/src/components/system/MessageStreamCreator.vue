@@ -150,7 +150,7 @@ import { privateSettings, settings } from "@/plugins/routerStoreHelpers";
 import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { deleteFile, uploadFile } from "@/plugins/firebaseStorage";
-import { companyName } from "@/CLIENT_CONFIG";
+import { companyName } from "../../../../hotplateConfig";
 
 interface Props {
   storPath: string;

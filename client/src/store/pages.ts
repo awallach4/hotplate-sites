@@ -4,9 +4,10 @@ import { ref, type Ref } from "vue";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { defineStore } from "pinia";
 import { useSettings } from "./settings";
+import { companyName } from "../../../hotplateConfig";
 
 export const usePages = defineStore("pages", () => {
-  const pageTitle = ref("Hotplate Client");
+  const pageTitle = ref(companyName);
   const pages: Ref<PageConfig[]> = ref([]);
 
   const getPages = async () => {
@@ -36,7 +37,7 @@ export const usePages = defineStore("pages", () => {
     try {
       if (!notFound && name && path) {
         pageTitle.value = name;
-        document.title = `${name} - Hotplate Client`;
+        document.title = `${name} - ${companyName}`;
         logEvent(analytics, "page_view", {
           page_location: location.href,
           page_path: path,
@@ -44,7 +45,7 @@ export const usePages = defineStore("pages", () => {
         });
       } else {
         pageTitle.value = "Error";
-        document.title = "Error - Hotplate Client";
+        document.title = `Error - ${companyName}`;
         logEvent(analytics, "exception", {
           description: "Page not found.",
           fatal: false

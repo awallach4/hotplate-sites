@@ -67,7 +67,7 @@ import { ref } from "vue";
 import { displayPageAlert } from "@/plugins/errorHandler";
 import { TiptapEditor } from "@/components/asyncComponents";
 import { settings } from "@/plugins/routerStoreHelpers";
-import { companyName } from "@/CLIENT_CONFIG";
+import { companyName } from "../../../../hotplateConfig";
 
 interface Props {
   email: string;

@@ -1,0 +1,14 @@
+// [TODO] Replace the placeholders in this file with the applicable content to your site.
+
+export const companyName = "YOUR_COMPANY_NAME";
+export const seoDescription = "YOUR_SEO_DESCRIPTION";
+export const appColor = "YOUR_PWA_THEME_COLOR";
+
+// Firebase config object from the Firebase Console for your CLIENT app.  Some properties may be missing.
+export const clientFirebaseConfig = YOUR_FIREBASE_CLIENT_CONFIG_OBJECT;
+
+// Firebase config object from the Firebase Console for your CONSOLE app.  Some properties may be missing.
+export const consoleFirebaseConfig = YOUR_FIREBASE_CONSOLE_CONFIG_OBJECT;
+
+// Your site key from the reCaptcha Admin Console.
+export const recaptchaSiteKey = "YOUR_RECAPTCHA_SITE_KEY";

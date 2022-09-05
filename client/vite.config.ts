@@ -5,6 +5,8 @@ import { VuetifyResolver } from "unplugin-vue-components/resolvers";
 import { VitePWA } from "vite-plugin-pwa";
 import { fileURLToPath, URL } from "url";
 import { visualizer } from "rollup-plugin-visualizer";
+import { createHtmlPlugin } from "vite-plugin-html";
+import { companyName, seoDescription, appColor } from "../hotplateConfig";
 
 export default defineConfig({
   build: {
@@ -30,6 +32,18 @@ export default defineConfig({
   },
   plugins: [
     vue(),
+    createHtmlPlugin({
+      minify: true,
+      entry: "src/main.ts",
+      template: "index.html",
+      inject: {
+        data: {
+          title: companyName,
+          description: seoDescription,
+          color: appColor
+        }
+      }
+    }),
     VitePWA({
       includeAssets: [
         "android-chrome-192x192.png",
@@ -44,8 +58,8 @@ export default defineConfig({
         "safari-pinned-tab.svg"
       ],
       manifest: {
-        name: "Hotplate Client",
-        theme_color: "#121212",
+        name: companyName,
+        theme_color: appColor,
         icons: [
           {
             src: "android-chrome-192x192.png",

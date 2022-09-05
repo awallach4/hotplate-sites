@@ -260,7 +260,7 @@ import {
 import { deleteFile, uploadFile } from "@/plugins/firebaseStorage";
 import { pushRouter } from "@/plugins/routerStoreHelpers";
 import type { AuthError } from "firebase/auth";
-import { companyName } from "@/CLIENT_CONFIG";
+import { companyName } from "../../../hotplateConfig";
 import type { FirestoreError } from "firebase/firestore/lite";
 
 const PagesModule = usePages();

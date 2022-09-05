@@ -68,5 +68,4 @@ node_modules/
 .vscode/
 
 # config files
-CLIENT_CONFIG.ts
-CONSOLE_CONFIG.ts
+hotplateConfig.ts
