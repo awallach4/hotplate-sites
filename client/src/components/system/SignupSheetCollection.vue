@@ -42,7 +42,7 @@ import { ref, type Ref } from "vue";
 import { SignupSheet } from "@/components/asyncComponents";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
-import { useRoute } from "@/plugins/contextInject";
+import { useRoute } from "vue-router/composables";
 
 interface Props {
   metaData: ComponentMetaData;

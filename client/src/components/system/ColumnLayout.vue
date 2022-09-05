@@ -39,7 +39,7 @@ import {
 } from "@/components/asyncComponents";
 import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import type { FirestoreError } from "firebase/firestore/lite";
-import { useRoute } from "@/plugins/contextInject";
+import { useRoute } from "vue-router/composables";
 
 interface Props {
   layout: LayoutOptions;

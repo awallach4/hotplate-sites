@@ -138,7 +138,7 @@ import {
 } from "@/types";
 import { useSettings } from "@/store/settings";
 import { usePages } from "@/store/pages";
-import { useRoute } from "@/plugins/contextInject";
+import { useRoute } from "vue-router/composables";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { fieldRequired } from "@/plugins/formRules";
 import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";

@@ -32,7 +32,7 @@
 
 <script lang="ts" setup>
 import { isAuthorized, user } from "@/plugins/authHandler";
-import { useRoute } from "@/plugins/contextInject";
+import { useRoute } from "vue-router/composables";
 import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import type {
   MessageStreamMessage,

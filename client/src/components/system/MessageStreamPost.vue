@@ -217,7 +217,7 @@ import type {
 } from "@/types";
 import { ref, watch, type Ref } from "vue";
 import { isAuthorized, user } from "@/plugins/authHandler";
-import { useRoute } from "@/plugins/contextInject";
+import { useRoute } from "vue-router/composables";
 import {
   MessageStreamComment,
   TiptapEditor

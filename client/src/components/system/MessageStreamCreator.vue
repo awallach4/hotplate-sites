@@ -144,7 +144,7 @@ import { user } from "@/plugins/authHandler";
 import { canMail } from "@/plugins/mailService";
 import type { EmailData, MessageStreamMessage, UploadedFile } from "@/types";
 import { ref, type Ref } from "vue";
-import { useRoute } from "@/plugins/contextInject";
+import { useRoute } from "vue-router/composables";
 import { TiptapEditor, VProfilePhoto } from "@/components/asyncComponents";
 import { privateSettings, settings } from "@/plugins/routerStoreHelpers";
 import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";

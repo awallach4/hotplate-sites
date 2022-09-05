@@ -15,7 +15,7 @@
 <script lang="ts" setup>
 import type { CompData, PageData } from "@/types";
 import { usePages } from "@/store/pages";
-import { useRoute } from "@/plugins/contextInject";
+import { useRoute } from "vue-router/composables";
 import { computed, ref } from "vue";
 import {
   AlertMessage,
