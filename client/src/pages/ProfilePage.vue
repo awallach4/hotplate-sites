@@ -332,6 +332,7 @@ const deleteAccount = async () => {
       "In order to protect this site, administrators cannot delete their own accounts."
     );
     deleteAccountForm.value.reset();
+    return;
   }
   if (user.value.email) {
     if (
