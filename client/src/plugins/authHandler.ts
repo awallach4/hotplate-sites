@@ -1,6 +1,6 @@
 import { useUser } from "@/store/user";
 import { AuthLevels, AuthStates, type AuthUser } from "@/types";
-import { computed } from "@vue/composition-api";
+import { computed } from "vue";
 
 export const user = computed(() => {
   const UserModule = useUser();

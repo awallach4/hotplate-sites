@@ -18,7 +18,14 @@ export enum PermissionGroups {
   UNSET = ""
 }
 
-export interface PagesSpecialPageConfig {
+export enum AlertMessageTypes {
+  SUCCESS = "success",
+  INFORMATION = "info",
+  WARNING = "warning",
+  ERROR = "error"
+}
+
+export interface PageConfig {
   dbPath: string;
   id: string;
   index: number;
@@ -28,19 +35,23 @@ export interface PagesSpecialPageConfig {
 
 export interface SettingsSite {
   calEdit: PermissionGroups;
+  calID: string;
   calURL: string;
   calView: PermissionGroups;
+  controlledAuth: boolean;
   defaultPage: string;
   email: PermissionGroups;
   footerTxt: string;
   mailURL: string;
+  useCalendar: boolean;
+  useEmail: boolean;
 }
 
 export interface SettingsSitePrivate {
   addresses: VSelectValues[];
   consoleURL: string;
   meetLink: string;
-  linkHidden: boolean;
+  useMeeting: boolean;
 }
 
 export enum AuthLevels {
@@ -71,7 +82,7 @@ export interface UserManagementUser {
   email: string;
   id: string;
   isSelectable: boolean;
-  permissions: string;
+  permissions: AuthLevels;
   photoURL: string;
 }
 
@@ -87,6 +98,7 @@ export interface EventData {
   description?: string;
   guests?: string;
   invite?: boolean;
+  id: string;
 }
 
 export interface GoogleCalendarEvent {

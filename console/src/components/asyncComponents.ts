@@ -1,4 +1,4 @@
-import { defineAsyncComponent } from "@vue/composition-api";
+import { defineAsyncComponent } from "vue";
 
 export const VPageAlert = defineAsyncComponent(
   () => import("@/components/ui/VPageAlert.vue")
@@ -62,10 +62,6 @@ export const PageHeader = defineAsyncComponent(
 
 export const PlainText = defineAsyncComponent(
   () => import("@/components/system/PlainText.vue")
-);
-
-export const RequestForm = defineAsyncComponent(
-  () => import("@/components/system/RequestForm.vue")
 );
 
 export const RichText = defineAsyncComponent(

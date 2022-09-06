@@ -1,7 +1,5 @@
-const calendarId = CalendarApp.getCalendarById("YOUR_CALENDAR_ID");
-
-const createEvent = (data) => {
-  calendarId.createEvent(data.title, new Date(data.start), new Date(data.end), {
+const createEvent = (calendar, data) => {
+  calendar.createEvent(data.title, new Date(data.start), new Date(data.end), {
     location: data.location,
     description: data.description,
     guests: data.guests,
@@ -9,9 +7,9 @@ const createEvent = (data) => {
   });
 };
 
-const createAllDayEvent = (data) => {
+const createAllDayEvent = (calendar, data) => {
   if (data.end) {
-    calendarId.createAllDayEvent(
+    calendar.createAllDayEvent(
       data.title,
       new Date(data.start),
       new Date(data.end),
@@ -23,7 +21,7 @@ const createAllDayEvent = (data) => {
       }
     );
   } else {
-    calendarId.createAllDayEvent(data.title, new Date(data.start), {
+    calendar.createAllDayEvent(data.title, new Date(data.start), {
       location: data.location,
       description: data.description,
       guests: data.guests,
@@ -32,29 +30,32 @@ const createAllDayEvent = (data) => {
   }
 };
 
-const deleteEvent = (event) => {
-  const id = calendarId.getEventById(event);
-  id.deleteEvent();
+const deleteEvent = (calendar, data) => {
+  const event = calendar.getEventById(data.event);
+  event.deleteEvent();
 };
 
-const editEvent = (data) => {
-  const id = calendarId.getEventById(data.event);
-  id.setTitle(data.title);
+const editEvent = (calendar, data) => {
+  const event = calendar.getEventById(data.event);
+  event.setTitle(data.title);
   if (data.allDay === true && data.end) {
-    id.setAllDayDates(new Date(data.start), new Date(data.end));
+    event.setAllDayDates(new Date(data.start), new Date(data.end));
   } else if (data.allDay === true) {
-    id.setAllDayDate(new Date(data.start));
+    event.setAllDayDate(new Date(data.start));
   } else {
-    id.setTime(new Date(data.start), new Date(data.end));
+    event.setTime(new Date(data.start), new Date(data.end));
   }
-  id.setLocation(data.location);
-  id.setDescription(data.description);
+  event.setLocation(data.location);
+  event.setDescription(data.description);
 };
 
 const getPassword = (method) => {
-  const email = "YOUR_SERVICE_ACCOUNT_EMAIL";
-  const key = "YOUR_PRIVATE_KEY";
-  const projectId = "YOUR_PROJECT_ID";
+  const scriptProperties = PropertiesService.getScriptProperties();
+  const email = scriptProperties.getProperty("firestore-email");
+  const key = scriptProperties
+    .getProperty("firestore-private-key")
+    .replace(/\\n/g, "\n");
+  const projectId = scriptProperties.getProperty("firestore-project-id");
   const firestore = FirestoreApp.getFirestore(email, key, projectId);
   let doc;
   if (method === "post") {
@@ -70,6 +71,7 @@ const doPost = (e) => {
   try {
     const dbPw = getPassword("post");
     const data = JSON.parse(e.postData.contents);
+    const calendarId = CalendarApp.getCalendarById(data.id);
 
     if (data.password !== dbPw) {
       return ContentService.createTextOutput(
@@ -80,19 +82,19 @@ const doPost = (e) => {
     }
     switch (data.method) {
       case "createEvent": {
-        createEvent(data);
+        createEvent(calendarId, data);
         break;
       }
       case "createAllDayEvent": {
-        createAllDayEvent(data);
+        createAllDayEvent(calendarId, data);
         break;
       }
       case "deleteEvent": {
-        deleteEvent(data.event);
+        deleteEvent(calendarId, data);
         break;
       }
       case "editEvent": {
-        editEvent(data);
+        editEvent(calendarId, data);
         break;
       }
       default: {
@@ -125,7 +127,7 @@ const doGet = (e) => {
         })
       ).setMimeType(ContentService.MimeType.JSON);
     }
-    const id = "YOUR_CALENDAR_ID";
+    const id = e.parameter.id;
     const events = Calendar.Events.list(id);
     const holidays = Calendar.Events.list(
       "en.usa#holiday@group.v.calendar.google.com"

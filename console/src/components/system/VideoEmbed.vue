@@ -85,13 +85,7 @@
 <script lang="ts" setup>
 import type { ComponentMetaData } from "@/types";
 import sanitized from "@/plugins/dompurify";
-import {
-  computed,
-  onUpdated,
-  ref,
-  watch,
-  type Ref
-} from "@vue/composition-api";
+import { computed, onUpdated, ref, watch, type Ref } from "vue";
 import { deleteFile, uploadFile } from "@/plugins/firebaseStorage";
 import { displayPageAlert } from "@/plugins/errorHandler";
 

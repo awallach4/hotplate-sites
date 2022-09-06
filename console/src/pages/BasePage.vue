@@ -1,5 +1,5 @@
 <template>
-  <div class="sp-page">
+  <div class="base-page">
     <v-expansion-panels v-if="currentPage">
       <v-expansion-panel color="card">
         <v-expansion-panel-header class="cardtext--text">
@@ -10,16 +10,32 @@
             v-model="currentPage.permissions"
             label="Page Visibility"
             :items="permissions"
-            hint="Only the users that meet these criteria will be able to view this page.  Other users will not be able to access the page or its data."
+            :hint="
+              siteSettings.defaultPage === currentPage.dbPath
+                ? 'You cannot change the visibility of the default page.'
+                : 'Only the users that meet these criteria will be able to view this page.  Other users will not be able to access the page or its data.'
+            "
             persistent-hint
             filled
             color="secondary"
             item-color="secondary"
             :rules="[fieldRequired]"
+            :disabled="siteSettings.defaultPage === currentPage.dbPath"
           />
-          <v-btn color="error" class="errtext--text" @click="deletePage">
+          <v-btn
+            color="error"
+            class="errtext--text"
+            :disabled="siteSettings.defaultPage === currentPage.dbPath"
+            @click="deletePage"
+          >
             Delete Page
           </v-btn>
+          <p
+            v-if="siteSettings.defaultPage === currentPage.dbPath"
+            class="my-1 text-caption text--disabled"
+          >
+            You cannot delete the default page.
+          </p>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -79,7 +95,7 @@
             <v-select
               v-model="newComponentType"
               label="Component Type"
-              :items="components"
+              :items="componentOptions"
               filled
               color="secondary"
               item-color="secondary"
@@ -112,21 +128,21 @@
 
 <script lang="ts" setup>
 import draggable from "vuedraggable";
-import { computed, ref, watch, type Ref } from "@vue/composition-api";
-import type {
-  CompData,
-  PageData,
-  PagesSpecialPageConfig,
-  VFormOptions,
-  VSelectValues
+import { computed, ref, watch, type Ref } from "vue";
+import {
+  PermissionGroups,
+  type CompData,
+  type PageData,
+  type PageConfig,
+  type VFormOptions
 } from "@/types";
 import { useSettings } from "@/store/settings";
 import { usePages } from "@/store/pages";
-import { useRoute } from "@/plugins/contextInject";
+import { useRoute } from "vue-router/composables";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { fieldRequired } from "@/plugins/formRules";
-import { displayPageAlert } from "@/plugins/errorHandler";
-import { pushRouter, specialPages } from "@/plugins/routerStoreHelpers";
+import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
+import { pushRouter, pages } from "@/plugins/routerStoreHelpers";
 import { permissions } from "@/plugins/authHandler";
 import {
   AlertMessage,
@@ -139,71 +155,11 @@ import {
   MessageStream,
   PageHeader,
   PlainText,
-  RequestForm,
   RichText,
   SignupSheetCollection,
   VideoEmbed,
   NonexistentComponent
 } from "@/components/asyncComponents";
-
-const components: VSelectValues[] = [
-  {
-    text: "Header",
-    value: "PageHeader"
-  },
-  {
-    text: "Plain Text",
-    value: "PlainText"
-  },
-  {
-    text: "Rich Text",
-    value: "RichText"
-  },
-  {
-    text: "Alert Message",
-    value: "AlertMessage"
-  },
-  {
-    text: "Column Layout",
-    value: "ColumnLayout"
-  },
-  {
-    text: "Image Carousel",
-    value: "ImageCarousel"
-  },
-  {
-    text: "Embedded Video",
-    value: "VideoEmbed"
-  },
-  {
-    text: "List",
-    value: "ItemList"
-  },
-  {
-    text: "List of Documents",
-    value: "DocumentList"
-  },
-  {
-    text: "Signup Sheet Collection",
-    value: "SignupSheetCollection"
-  },
-  {
-    text: "Google Calendar",
-    value: "CalendarWidget"
-  },
-  {
-    text: "Contact Form",
-    value: "ContactForm"
-  },
-  {
-    text: "Item Request Form",
-    value: "RequestForm"
-  },
-  {
-    text: "Message Stream",
-    value: "MessageStream"
-  }
-];
 
 const pageData: Ref<PageData> = ref({
   components: []
@@ -220,10 +176,10 @@ const componentElement: Ref<
 
 const currentPage = computed({
   get: () => {
-    return specialPages.value[parseInt(route.params.index)];
+    return pages.value[parseInt(route.params.index)];
   },
-  set: (page: PagesSpecialPageConfig) => {
-    specialPages.value[parseInt(route.params.index)] = page;
+  set: (page: PageConfig) => {
+    pages.value[parseInt(route.params.index)] = page;
   }
 });
 
@@ -236,6 +192,71 @@ const dbPath = computed(() => {
   return (
     (currentPage.value.dbPath[0] === "/" ? "" : "/") + currentPage.value.dbPath
   );
+});
+
+const componentOptions = computed(() => {
+  const components = [
+    {
+      text: "Header",
+      value: "PageHeader"
+    },
+    {
+      text: "Plain Text",
+      value: "PlainText"
+    },
+    {
+      text: "Rich Text",
+      value: "RichText"
+    },
+    {
+      text: "Alert Message",
+      value: "AlertMessage"
+    },
+    {
+      text: "Column Layout",
+      value: "ColumnLayout"
+    },
+    {
+      text: "Image Carousel",
+      value: "ImageCarousel"
+    },
+    {
+      text: "Embedded Video",
+      value: "VideoEmbed"
+    },
+    {
+      text: "List",
+      value: "ItemList"
+    },
+    {
+      text: "List of Documents",
+      value: "DocumentList"
+    },
+    {
+      text: "Signup Sheet Collection",
+      value: "SignupSheetCollection"
+    },
+    {
+      text: "Message Stream",
+      value: "MessageStream"
+    }
+  ];
+
+  if (siteSettings.value.useCalendar) {
+    components.push({
+      text: "Google Calendar",
+      value: "CalendarWidget"
+    });
+  }
+
+  if (siteSettings.value.useEmail) {
+    components.push({
+      text: "Contact Form",
+      value: "ContactForm"
+    });
+  }
+
+  return components;
 });
 
 watch(newComponentDialog, (newValue) => {
@@ -271,10 +292,20 @@ watch(
 const save = async (
   callback: () => void,
   err = (e: FirestoreError) => {
-    displayPageAlert(`An error occurred while saving: ${e.message}`);
+    displayPageAlert(`An error occurred while saving: ${getFirestoreError(e)}`);
   }
 ) => {
   try {
+    const SettingsModule = useSettings();
+    await SettingsModule.getSettings();
+    if (
+      currentPage.value.dbPath === siteSettings.value.defaultPage &&
+      currentPage.value.permissions !== PermissionGroups.PUBLIC
+    ) {
+      displayPageAlert("You cannot change the visibility of the default page.");
+      currentPage.value.permissions = PermissionGroups.PUBLIC;
+      return;
+    }
     const { firestore } = await import("@/plugins/firebase");
     const { deleteDoc, doc, setDoc } = await import("firebase/firestore/lite");
     await setDoc(doc(firestore, `pages${dbPath.value}`), currentPage.value, {
@@ -376,7 +407,7 @@ const deletePage = async () => {
     componentElement.value.forEach((component) => {
       component.deleteSelf(false);
     });
-    const index = specialPages.value.indexOf(currentPage.value);
+    const index = pages.value.indexOf(currentPage.value);
     const { firestore, storage } = await import("@/plugins/firebase");
     const { collection, doc, deleteDoc, getDocs, increment, updateDoc } =
       await import("firebase/firestore/lite");
@@ -398,8 +429,8 @@ const deletePage = async () => {
     files.items.forEach((file) => {
       deleteObject(file);
     });
-    const pages = await getDocs(collection(firestore, "pages"));
-    pages.forEach((page) => {
+    const pageDocs = await getDocs(collection(firestore, "pages"));
+    pageDocs.forEach((page) => {
       const data = page.data();
       if (data.index > index) {
         updateDoc(page.ref, {
@@ -407,12 +438,13 @@ const deletePage = async () => {
         });
       }
     });
-    specialPages.value.splice(index, 1);
+    pages.value.splice(index, 1);
     pushRouter("/");
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while deleting the special page: ${rawError.message}`
+      `An error occurred while deleting the page: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 };
@@ -439,8 +471,6 @@ const checkComponent = (component: string) => {
       return PageHeader;
     case "PlainText":
       return PlainText;
-    case "RequestForm":
-      return RequestForm;
     case "RichText":
       return RichText;
     case "SignupSheetCollection":
@@ -481,11 +511,7 @@ PagesModule.viewPage(currentPage.value.dbPath, currentPage.value.name, false);
 </script>
 
 <style lang="scss">
-.sp-page {
-  .handle {
-    cursor: move;
-  }
-
+.base-page {
   .d-flex:not(:first-child) {
     margin-top: 24px;
   }

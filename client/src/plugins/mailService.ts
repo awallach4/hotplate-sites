@@ -1,7 +1,9 @@
 import { useSettings } from "@/store/settings";
 import { PermissionGroups, type EmailData } from "@/types";
-import { computed } from "@vue/composition-api";
+import { computed } from "vue";
+import type { FirestoreError } from "firebase/firestore/lite";
 import { isAuthorized, isWebmaster } from "./authHandler";
+import { getFirestoreError } from "./errorHandler";
 
 export const canMail = computed(() => {
   const SettingsModule = useSettings();
@@ -24,6 +26,9 @@ export const canMail = computed(() => {
  */
 export const sendEmail = async (postData: EmailData): Promise<void> => {
   const SettingsModule = useSettings();
+  if (!SettingsModule.siteSettings.useEmail) {
+    throw new Error("The email service is not enabled.");
+  }
   const script = SettingsModule.siteSettings.mailURL;
   if (!script) {
     throw new Error("No email service script was found.");
@@ -42,7 +47,9 @@ export const sendEmail = async (postData: EmailData): Promise<void> => {
     }
   } catch (error) {
     throw new Error(
-      `An error occurred while getting the script password: ${error}`
+      `An error occurred while getting the script password: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 

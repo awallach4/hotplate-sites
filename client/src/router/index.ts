@@ -6,7 +6,7 @@ import {
   AuthLevels,
   AuthStates,
   PermissionGroups,
-  type PagesSpecialPageConfig
+  type PageConfig
 } from "@/types";
 
 const router = new VueRouter({
@@ -19,6 +19,11 @@ const router = new VueRouter({
       component: () => import("@/pages/LoginPage.vue")
     },
     {
+      path: "/register",
+      name: "RegisterPage",
+      component: () => import("@/pages/RegisterPage.vue")
+    },
+    {
       path: "/profile",
       name: "ProfilePage",
       component: () => import("@/pages/ProfilePage.vue")
@@ -29,9 +34,9 @@ const router = new VueRouter({
       component: () => import("@/pages/ErrorPage.vue")
     },
     {
-      path: "/:SpecialPage",
-      name: "SpecialPage",
-      component: () => import("@/pages/SpecialPage.vue")
+      path: "/:BasePage",
+      name: "BasePage",
+      component: () => import("@/pages/BasePage.vue")
     }
   ],
   scrollBehavior(to, from, savedPosition) {
@@ -52,14 +57,14 @@ router.beforeEach(async (to, from, next) => {
   const UserModule = useUser();
   PagesModule.pageTitle = "Loading...";
   SettingsModule.applicationLoadingState = true;
-  if (Object.keys(SettingsModule.siteSettings).length === 0) {
+  if (!SettingsModule.hasFetched) {
     await SettingsModule.getSettings();
   }
-  if (PagesModule.specialPages.length === 0) {
-    await PagesModule.getSpecialPages();
+  if (PagesModule.pages.length === 0) {
+    await PagesModule.getPages();
   }
 
-  const user = await UserModule.getInitialUser();
+  await UserModule.getInitialUser();
   const authLevel = UserModule.authLevel;
   let isAuthorized;
   if (authLevel === AuthLevels.ADMIN) {
@@ -77,11 +82,7 @@ router.beforeEach(async (to, from, next) => {
   } else {
     isLoggedIn = false;
   }
-  if (user && isAuthorized) {
-    if (Object.keys(SettingsModule.sitePrivateSettings).length === 0) {
-      SettingsModule.getSitePrivateSettings();
-    }
-  }
+
   let isWebmaster;
   if (authLevel === AuthLevels.WEBMASTER) {
     isWebmaster = true;
@@ -91,10 +92,10 @@ router.beforeEach(async (to, from, next) => {
     isWebmaster = false;
   }
 
-  if (to.name === "SpecialPage") {
-    const pages: PagesSpecialPageConfig[] = PagesModule.specialPages;
+  if (to.name === "BasePage") {
+    const pages: PageConfig[] = PagesModule.pages;
     const thispage = pages.findIndex((item) => {
-      return item.dbPath === `/${to.params.SpecialPage}`;
+      return item.dbPath === `/${to.params.BasePage}`;
     });
     if (pages[thispage]) {
       const pagePerms = pages[thispage].permissions;
@@ -131,6 +132,12 @@ router.beforeEach(async (to, from, next) => {
     }
   } else {
     if (to.path === "/login") {
+      if (isLoggedIn) {
+        next("/profile");
+      } else {
+        next();
+      }
+    } else if (to.path === "/register") {
       if (isLoggedIn) {
         next("/profile");
       } else {

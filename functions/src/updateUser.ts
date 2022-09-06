@@ -28,14 +28,14 @@ const updateUser = functions.https.onCall(async (data, context) => {
   if (!caller.customClaims) {
     throw new functions.https.HttpsError(
       "permission-denied",
-      "You are not authorized to disable user accounts."
+      "You are not authorized to modify user accounts."
     );
   }
   const isAdmin = caller.customClaims.admin;
   if (!isAdmin) {
     throw new functions.https.HttpsError(
       "permission-denied",
-      "You are not authorized to disable user accounts."
+      "You are not authorized to modify user accounts."
     );
   }
 

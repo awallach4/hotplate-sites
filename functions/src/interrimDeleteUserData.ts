@@ -25,7 +25,7 @@ import { firestore, storage } from "./admin";
 export const clearData = functions.auth.user().onDelete(async (user) => {
   functions.logger.log("Started delete user data execution.");
 
-  const firestorePaths = "users/{UID},admin/{UID},webmasters/{UID}";
+  const firestorePaths = "users/{UID}";
   const storagePaths = "{DEFAULT}/profile-photos/{UID}";
 
   const { uid } = user;

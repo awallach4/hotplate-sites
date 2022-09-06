@@ -9,7 +9,7 @@
 
 <script lang="ts" setup>
 import { VThemeColors } from "@/types";
-import { computed } from "@vue/composition-api";
+import { computed } from "vue";
 
 interface Props {
   isElevated: boolean;

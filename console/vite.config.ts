@@ -1,11 +1,12 @@
 import { defineConfig } from "vite";
-import { createVuePlugin as vue } from "vite-plugin-vue2";
-import ScriptSetup from "unplugin-vue2-script-setup/vite";
+import vue from "@vitejs/plugin-vue2";
 import Components from "unplugin-vue-components/vite";
 import { VuetifyResolver } from "unplugin-vue-components/resolvers";
 import { VitePWA } from "vite-plugin-pwa";
 import { fileURLToPath, URL } from "url";
 import { visualizer } from "rollup-plugin-visualizer";
+import { createHtmlPlugin } from "vite-plugin-html";
+import { companyName, appColor } from "../hotplateConfig";
 
 export default defineConfig({
   build: {
@@ -30,8 +31,17 @@ export default defineConfig({
     }
   },
   plugins: [
-    vue({
-      jsx: true
+    vue(),
+    createHtmlPlugin({
+      minify: true,
+      entry: "src/main.ts",
+      template: "index.html",
+      inject: {
+        data: {
+          title: companyName,
+          color: appColor
+        }
+      }
     }),
     VitePWA({
       includeAssets: [
@@ -47,8 +57,8 @@ export default defineConfig({
         "safari-pinned-tab.svg"
       ],
       manifest: {
-        name: "Hotplate Console",
-        theme_color: "#121212",
+        name: companyName,
+        theme_color: appColor,
         icons: [
           {
             src: "android-chrome-192x192.png",
@@ -75,7 +85,6 @@ export default defineConfig({
         ]
       }
     }),
-    ScriptSetup(),
     Components({
       dts: "./src/components.d.ts",
       resolvers: [VuetifyResolver()]

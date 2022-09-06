@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "@vue/composition-api";
+import { computed } from "vue";
 interface Props {
   message: string | Error;
   modelValue: boolean;

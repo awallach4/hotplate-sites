@@ -66,3 +66,6 @@ node_modules/
 
 # editor files
 .vscode/
+
+# config files
+hotplateConfig.ts

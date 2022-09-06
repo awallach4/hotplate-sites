@@ -24,7 +24,7 @@
 
 <script lang="ts" setup>
 import { useVuetify } from "@/plugins/contextInject";
-import { computed } from "@vue/composition-api";
+import { computed } from "vue";
 
 interface Props {
   head?: string;

@@ -21,7 +21,7 @@
 
 <script lang="ts" setup>
 import { LayoutOptions, type CompData, type ComponentMetaData } from "@/types";
-import { computed, ref, type Ref } from "@vue/composition-api";
+import { computed, ref, type Ref } from "vue";
 import {
   AlertMessage,
   CalendarWidget,
@@ -33,14 +33,13 @@ import {
   MessageStream,
   PageHeader,
   PlainText,
-  RequestForm,
   RichText,
   VideoEmbed,
   NonexistentComponent
 } from "@/components/asyncComponents";
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import type { FirestoreError } from "firebase/firestore/lite";
-import { useRoute } from "@/plugins/contextInject";
+import { useRoute } from "vue-router/composables";
 
 interface Props {
   layout: LayoutOptions;
@@ -91,8 +90,6 @@ const checkComponent = (component: string) => {
       return PageHeader;
     case "PlainText":
       return PlainText;
-    case "RequestForm":
-      return RequestForm;
     case "RichText":
       return RichText;
     case "VideoEmbed":
@@ -113,7 +110,7 @@ const getComponentData = async () => {
         query(
           collection(
             firestore,
-            `pages/${route.params.SpecialPage}/components/${props.metaData.id}/col${i}`
+            `pages/${route.params.BasePage}/components/${props.metaData.id}/col${i}`
           ),
           orderBy("index", "asc"),
           where("data.hidden", "==", false)
@@ -131,9 +128,10 @@ const getComponentData = async () => {
       });
     }
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while getting the page data: ${rawError.message}`
+      `An error occurred while getting the page data: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 };

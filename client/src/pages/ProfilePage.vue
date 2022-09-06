@@ -8,24 +8,11 @@
       </template>
       Welcome to {{ companyName }}, {{ displayName || "New User" }}! Please
       click the button to sign out and verify your email address. You will not
-      be able to view any private pages or edit your profile until your email is
-      verified.
+      be able to view any private pages until your email is verified.
       <v-spacer />
       <v-btn outlined color="infotext" @click="verifyUserEmail"
         >Verify Email</v-btn
       >
-    </v-alert>
-    <v-alert
-      v-if="!isAuthorized && user.emailVerified"
-      type="error"
-      class="errtext--text mb-6"
-    >
-      <template #prepend>
-        <v-icon class="mr-3" color="errtext">mdi-alert-octagon-outline</v-icon>
-      </template>
-      We're sorry, but it looks like you are not an authorized user. Please
-      delete your account and have the site administrator create a new one for
-      you.
     </v-alert>
     <v-row>
       <v-col cols="12" sm="6">
@@ -38,14 +25,13 @@
               :size="50"
             />
             <template v-if="!editingProfile">
-              <p>Name: {{ displayName }}</p>
+              <p>Username: {{ displayName }}</p>
               <p>Email Address: {{ email }}</p>
               <v-btn
                 type="button"
                 block
                 color="secondary"
                 class="sectext--text"
-                :disabled="!isAuthorized"
                 @click="editProfile"
               >
                 Edit Profile
@@ -60,7 +46,7 @@
               >
                 <v-text-field
                   v-model="displayName"
-                  label="Name"
+                  label="Username"
                   outlined
                   dense
                   color="secondary"
@@ -126,8 +112,13 @@
             </v-btn>
           </v-card-actions>
           <v-divider />
-          <v-expansion-panels>
-            <v-expansion-panel class="card">
+          <v-expansion-panels flat>
+            <v-expansion-panel
+              class="card"
+              @change="
+                deleteAccountForm.reset ? deleteAccountForm.reset() : () => null
+              "
+            >
               <v-expansion-panel-header class="cardtext--text">
                 <h3>Delete Account</h3>
               </v-expansion-panel-header>
@@ -140,25 +131,31 @@
                   </template>
                   WARNING! THIS CANNOT BE UNDONE!
                 </v-alert>
-                <v-text-field
-                  v-model="deleteAccountPassword"
-                  outlined
-                  dense
-                  type="password"
-                  color="error"
-                  label="Password"
+                <v-form
+                  ref="deleteAccountForm"
                   :disabled="submitting"
-                />
-                <v-btn
-                  type="button"
-                  block
-                  color="error"
-                  class="errtext--text"
-                  :disabled="deleteAccountPassword.length < 8 || submitting"
-                  @click="deleteAccount"
+                  @submit.prevent="deleteAccount"
                 >
-                  Delete Account
-                </v-btn>
+                  <v-text-field
+                    v-model="deleteAccountPassword"
+                    outlined
+                    dense
+                    type="password"
+                    color="error"
+                    label="Password"
+                    :rules="[fieldRequired]"
+                    validate-on-blur
+                  />
+                  <v-btn
+                    type="submit"
+                    block
+                    color="error"
+                    class="errtext--text"
+                    :disabled="submitting"
+                  >
+                    Delete Account
+                  </v-btn>
+                </v-form>
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-expansion-panels>
@@ -174,7 +171,7 @@
             </p>
             <v-form
               ref="changePasswordForm"
-              :disabled="!isAuthorized || submitting"
+              :disabled="submitting"
               @submit.prevent="changePassword"
             >
               <v-text-field
@@ -246,8 +243,8 @@
 import { AuthLevels, type UserData, type VFormOptions } from "@/types";
 import { useUser } from "@/store/user";
 import { usePages } from "@/store/pages";
-import { computed, ref, type Ref } from "@vue/composition-api";
-import { authLevel, user, isAuthorized } from "@/plugins/authHandler";
+import { computed, ref, type Ref } from "vue";
+import { authLevel, user } from "@/plugins/authHandler";
 import {
   fieldRequired,
   validEmail,
@@ -255,12 +252,16 @@ import {
   matchStrings,
   includes
 } from "@/plugins/formRules";
-import { displayPageAlert } from "@/plugins/errorHandler";
-import type { FirebaseError } from "firebase/app";
+import {
+  displayPageAlert,
+  getAuthError,
+  getFirestoreError
+} from "@/plugins/errorHandler";
 import { deleteFile, uploadFile } from "@/plugins/firebaseStorage";
 import { pushRouter } from "@/plugins/routerStoreHelpers";
 import type { AuthError } from "firebase/auth";
-import { companyName } from "@/CLIENT_CONFIG";
+import { companyName } from "../../../hotplateConfig";
+import type { FirestoreError } from "firebase/firestore/lite";
 
 const PagesModule = usePages();
 const displayName = ref("");
@@ -276,6 +277,7 @@ const editingProfile = ref(false);
 const submitting = ref(false);
 const changePasswordForm = ref({} as VFormOptions);
 const editProfileForm = ref({} as VFormOptions);
+const deleteAccountForm = ref({} as VFormOptions);
 
 const emailChange = computed(() => {
   return user.value.email !== email.value;
@@ -314,19 +316,22 @@ const changePassword = async () => {
       submitting.value = false;
       displayPageAlert("Password change successful.");
     } catch (error) {
-      const rawError = error as AuthError;
-      displayPageAlert(rawError.message);
+      displayPageAlert(getAuthError(error as AuthError));
       submitting.value = false;
     }
   }
 };
 
 const deleteAccount = async () => {
+  const isValid = deleteAccountForm.value.validate();
+  if (!isValid) {
+    return;
+  }
   if (authLevel.value === AuthLevels.ADMIN) {
     displayPageAlert(
       "In order to protect this site, administrators cannot delete their own accounts."
     );
-    deleteAccountPassword.value = "";
+    deleteAccountForm.value.reset();
     return;
   }
   if (user.value.email) {
@@ -344,13 +349,12 @@ const deleteAccount = async () => {
         submitting.value = false;
         pushRouter("/");
       } catch (error) {
-        const rawError = error as AuthError;
-        displayPageAlert(rawError.message);
+        displayPageAlert(getAuthError(error as AuthError));
         submitting.value = false;
       }
     } else {
       displayPageAlert("Your account has not been deleted.");
-      deleteAccountPassword.value = "";
+      deleteAccountForm.value.reset();
       submitting.value = false;
     }
   }
@@ -373,16 +377,29 @@ const deleteProfilePhoto = async () => {
     if (confirm("Are you sure you want to delete this image?")) {
       try {
         await deleteFile(photoURL.value);
+      } catch (error) {
+        displayPageAlert(
+          `An error occurred while deleting the image: ${error}`
+        );
+      }
+      try {
         photoURL.value = "";
         const newData = {} as UserData;
         newData.photoURL = "";
         const UserModule = useUser();
         await UserModule.editProfile(newData);
       } catch (error) {
-        const err = error as FirebaseError;
-        displayPageAlert(
-          `An error occurred while deleting the image: ${err.message}`
-        );
+        const authError = getAuthError(error as AuthError);
+        const firestoreError = getFirestoreError(error as FirestoreError);
+        if (authError.includes("/")) {
+          displayPageAlert(
+            `An error occurred while deleting the image: ${firestoreError}`
+          );
+        } else {
+          displayPageAlert(
+            `An error occurred while deleting the image: ${authError}`
+          );
+        }
       }
     }
   } else {
@@ -417,20 +434,32 @@ const updateProfile = async () => {
           email.value
         );
       } catch (error) {
-        const rawError = error as AuthError;
-        displayPageAlert(rawError.message);
+        const authError = getAuthError(error as AuthError);
+        const firestoreError = getFirestoreError(error as FirestoreError);
+        if (authError.includes("/")) {
+          displayPageAlert(
+            `An error occurred while changing your email address: ${firestoreError}`
+          );
+        } else {
+          displayPageAlert(
+            `An error occurred while changing your email address: ${authError}`
+          );
+        }
         submitting.value = false;
         return;
       }
     }
-    try {
-      if (fileInput.value) {
+    if (fileInput.value) {
+      try {
         photoURL.value = await uploadFile(
           `profile-photos/${user.value.uid}`,
           fileInput.value
         );
+      } catch (error) {
+        displayPageAlert(error as string);
       }
-
+    }
+    try {
       const newData = {} as UserData;
 
       if (displayName.value !== undefined) {
@@ -446,10 +475,17 @@ const updateProfile = async () => {
       submitting.value = false;
       editingProfile.value = false;
     } catch (error) {
-      const rawError = error as FirebaseError;
-      displayPageAlert(
-        `An error occurred while updating your profile: ${rawError.message}`
-      );
+      const authError = getAuthError(error as AuthError);
+      const firestoreError = getFirestoreError(error as FirestoreError);
+      if (authError.includes("/")) {
+        displayPageAlert(
+          `An error occurred while updating your profile: ${firestoreError}`
+        );
+      } else {
+        displayPageAlert(
+          `An error occurred while updating your profile: ${authError}`
+        );
+      }
       submitting.value = false;
     }
   }
@@ -464,9 +500,10 @@ const verifyUserEmail = async () => {
     );
     pushRouter("/");
   } catch (error) {
-    const rawError = error as FirebaseError;
     displayPageAlert(
-      `An error occurred while sending the verification email: ${rawError.message}`
+      `An error occurred while sending the verification email: ${getAuthError(
+        error as AuthError
+      )}`
     );
   }
 };
@@ -478,9 +515,5 @@ PagesModule.viewPage("/profile", "My Account", false);
 <style lang="scss" scoped>
 .spacer {
   height: 24px;
-}
-
-.v-expansion-panel::before {
-  box-shadow: none;
 }
 </style>

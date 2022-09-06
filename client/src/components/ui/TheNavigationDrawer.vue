@@ -2,7 +2,7 @@
   <div id="nav">
     <v-navigation-drawer v-model="drawer" app color="card lighten-1">
       <v-list nav>
-        <v-list-group v-if="isLoggedIn" color="secondary">
+        <v-list-group v-if="isLoggedIn" color="secondary" eager>
           <template #activator>
             <v-list-item-avatar>
               <img
@@ -18,7 +18,7 @@
               </v-list-item-title>
             </v-list-item-content>
           </template>
-          <v-list-item to="/profile"> My Account </v-list-item>
+          <v-list-item to="/profile">My Account</v-list-item>
           <v-list-item
             v-if="isWebmaster && privateSettings.consoleURL"
             :href="privateSettings.consoleURL"
@@ -28,11 +28,11 @@
             <v-spacer />
             <v-icon>mdi-launch</v-icon>
           </v-list-item>
-          <v-list-item @click="logout"> Log Out </v-list-item>
+          <v-list-item class="mb-2" @click="logout">Log Out</v-list-item>
         </v-list-group>
         <v-divider v-if="isLoggedIn" />
         <v-list-item-group color="secondary">
-          <div v-for="path in specialPages" :key="path.id" class="mb-2">
+          <div v-for="path in pages" :key="path.id" class="mb-2">
             <v-list-item
               v-if="
                 path.permissions === 'public' ||
@@ -46,7 +46,10 @@
               <v-list-item-title>{{ path.name }}</v-list-item-title>
             </v-list-item>
           </div>
-          <v-list-item v-if="!isLoggedIn" to="/login"> Log In </v-list-item>
+          <v-list-item v-if="!isLoggedIn" to="/login">Log In</v-list-item>
+          <v-list-item v-if="!isLoggedIn" to="/register">
+            Register
+          </v-list-item>
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
@@ -67,9 +70,7 @@
       />
       <v-tooltip
         v-if="
-          !privateSettings.linkHidden &&
-          privateSettings.meetLink &&
-          isAuthorized
+          privateSettings.useMeeting && privateSettings.meetLink && isAuthorized
         "
         bottom
       >
@@ -88,7 +89,11 @@
         </template>
         Join Meeting
       </v-tooltip>
-      <v-dialog v-if="canMail && settings.mailURL" v-model="mail" persistent>
+      <v-dialog
+        v-if="canMail && settings.useEmail && settings.mailURL"
+        v-model="mail"
+        persistent
+      >
         <v-card color="card" class="cardtext--text">
           <v-card-title>Send Email</v-card-title>
           <v-card-text>
@@ -145,7 +150,7 @@
           </v-card-text>
         </v-card>
       </v-dialog>
-      <v-tooltip v-if="canMail && settings.mailURL" bottom>
+      <v-tooltip v-if="canMail && settings.mailURL && settings.useEmail" bottom>
         <template #activator="{ on }">
           <v-btn
             icon
@@ -181,7 +186,7 @@
 import type { EmailData, VFormOptions } from "@/types";
 import { useUser } from "@/store/user";
 import { canMail } from "@/plugins/mailService";
-import { computed, ref, type Ref } from "@vue/composition-api";
+import { computed, ref, type Ref } from "vue";
 import {
   user,
   isLoggedIn,
@@ -196,9 +201,9 @@ import {
   privateSettings,
   pushRouter,
   settings,
-  specialPages
+  pages
 } from "@/plugins/routerStoreHelpers";
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { displayPageAlert, getAuthError } from "@/plugins/errorHandler";
 import { useVuetify } from "@/plugins/contextInject";
 import type { AuthError } from "firebase/auth";
 import router from "@/router";
@@ -238,8 +243,9 @@ const logout = async () => {
       pushRouter("/");
     }
   } catch (error) {
-    const rawError = error as AuthError;
-    displayPageAlert(rawError.message);
+    displayPageAlert(
+      `An error occurred while signing out: ${getAuthError(error as AuthError)}`
+    );
   }
 };
 

@@ -124,9 +124,9 @@
 
 <script lang="ts" setup>
 import type { UploadedFile, MessageStreamMessage } from "@/types";
-import { ref, type Ref } from "@vue/composition-api";
+import { ref, type Ref } from "vue";
 import type { FirestoreError } from "firebase/firestore/lite";
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import { deleteFile, uploadFile } from "@/plugins/firebaseStorage";
 
 interface Props {
@@ -189,8 +189,11 @@ const addPost = async () => {
     );
     emit("fetch");
   } catch (error) {
-    const rawError = error as FirestoreError;
-    displayPageAlert(`An error occurred while posting: ${rawError.message}`);
+    displayPageAlert(
+      `An error occurred while posting: ${getFirestoreError(
+        error as FirestoreError
+      )}`
+    );
     submitting.value = false;
     return;
   }

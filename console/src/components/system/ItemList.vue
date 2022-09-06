@@ -62,7 +62,7 @@
 <script lang="ts" setup>
 import draggable from "vuedraggable";
 import type { ItemListItem } from "@/types";
-import { onUpdated, ref } from "@vue/composition-api";
+import { onUpdated, ref } from "vue";
 
 interface ItemListData {
   header: string;

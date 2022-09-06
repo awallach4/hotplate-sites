@@ -79,7 +79,7 @@
 <script lang="ts" setup>
 import type { FullCalendarEvent } from "@/types";
 import { formatRange } from "@fullcalendar/vue";
-import { computed } from "@vue/composition-api";
+import { computed } from "vue";
 import sanitized from "@/plugins/dompurify";
 
 interface Props {

@@ -1,5 +1,7 @@
 import { useSettings } from "@/store/settings";
 import type { FullCalendarEvent, GoogleCalendarEvent } from "@/types";
+import type { FirestoreError } from "firebase/firestore/lite";
+import { getFirestoreError } from "./errorHandler";
 
 /**
  * Gets an array of calendar events from Google Calendar using the Apps Script Calendar Service.
@@ -9,9 +11,15 @@ import type { FullCalendarEvent, GoogleCalendarEvent } from "@/types";
  */
 export async function getGoogleCalendarEvents(): Promise<FullCalendarEvent[]> {
   const SettingsModule = useSettings();
+  if (!SettingsModule.siteSettings.useCalendar) {
+    throw new Error("The calendar service is not enabled.");
+  }
   const script = SettingsModule.siteSettings.calURL;
   if (!script) {
     throw new Error("No calendar service script was found.");
+  }
+  if (!SettingsModule.siteSettings.calID) {
+    throw new Error("No calendar ID was specified.");
   }
   let password: string;
   try {
@@ -27,15 +35,19 @@ export async function getGoogleCalendarEvents(): Promise<FullCalendarEvent[]> {
       password = "";
     }
   } catch (error) {
-    const err = error as { message: string };
     throw new Error(
-      `An error occurred while getting the script password: ${err.message}`
+      `An error occurred while getting the script password: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 
-  const http = await fetch(`${script}?password=${password}`, {
-    method: "GET"
-  });
+  const http = await fetch(
+    `${script}?id=${SettingsModule.siteSettings.calID}&password=${password}`,
+    {
+      method: "GET"
+    }
+  );
 
   if (!http.ok) {
     throw new Error(

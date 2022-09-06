@@ -1,9 +1,9 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-  
+
   	function isLoggedIn() {
-    	return request.auth.uid != null && request.auth.token.email_verified == true && request.auth.token.authorized == true;
+    	return request.auth.uid != null && request.auth.token.email_verified == true;
     }
   	
     function isWebmaster() {
@@ -240,19 +240,17 @@ service cloud.firestore {
     }
     
     match /configuration/apps-script-cal-edit {
-    	allow read: if 
+    	allow read: if
+        get(/databases/$(database)/documents/configuration/settings).data.useCalendar == true &&
       	get(/databases/$(database)/documents/configuration/settings).data.calEdit == 'public' ||
-        (get(/databases/$(database)/documents/configuration/settings).data.calEdit == 'users' && isLoggedIn()) ||
-      	(get(/databases/$(database)/documents/configuration/settings).data.calEdit == 'webmasters' && isWebmaster())
-      ;
+        (get(/databases/$(database)/documents/configuration/settings).data.calEdit == 'users' && isLoggedIn());
       allow update: if 
       	request.resource.data.keys().hasAll(['password']) &&
         request.resource.data.keys().hasOnly(['password']) &&
         request.resource.data.password is string &&
+        get(/databases/$(database)/documents/configuration/settings).data.useCalendar == true &&
         get(/databases/$(database)/documents/configuration/settings).data.calEdit == 'public' ||
-        (get(/databases/$(database)/documents/configuration/settings).data.calEdit == 'users' && isLoggedIn()) ||
-      	(get(/databases/$(database)/documents/configuration/settings).data.calEdit == 'webmasters' && isWebmaster())
-      ;
+        (get(/databases/$(database)/documents/configuration/settings).data.calEdit == 'users' && isLoggedIn());
       allow read, delete: if isWebmaster();
       allow create, update: if
         isWebmaster() &&
@@ -263,18 +261,16 @@ service cloud.firestore {
     
     match /configuration/apps-script-cal-view {
     	allow read: if
+        get(/databases/$(database)/documents/configuration/settings).data.useCalendar == true &&
       	get(/databases/$(database)/documents/configuration/settings).data.calView == 'public' ||
-        (get(/databases/$(database)/documents/configuration/settings).data.calView == 'users' && isLoggedIn()) ||
-      	(get(/databases/$(database)/documents/configuration/settings).data.calView == 'webmasters' && isWebmaster())
-      ;
+        (get(/databases/$(database)/documents/configuration/settings).data.calView == 'users' && isLoggedIn());
       allow update: if
       	request.resource.data.keys().hasAll(['password']) &&
         request.resource.data.keys().hasOnly(['password']) &&
         request.resource.data.password is string &&
+        get(/databases/$(database)/documents/configuration/settings).data.useCalendar == true &&
         get(/databases/$(database)/documents/configuration/settings).data.calView == 'public' ||
-        (get(/databases/$(database)/documents/configuration/settings).data.calView == 'users' && isLoggedIn()) ||
-      	(get(/databases/$(database)/documents/configuration/settings).data.calView == 'webmasters' && isWebmaster())
-      ;
+        (get(/databases/$(database)/documents/configuration/settings).data.calView == 'users' && isLoggedIn());
       allow read, delete: if isWebmaster();
       allow create, update: if
         isWebmaster() &&
@@ -285,18 +281,16 @@ service cloud.firestore {
     
     match /configuration/apps-script-mail {
     	allow read: if
+        get(/databases/$(database)/documents/configuration/settings).data.useEmail == true &&
       	get(/databases/$(database)/documents/configuration/settings).data.email == 'public' ||
-        (get(/databases/$(database)/documents/configuration/settings).data.email == 'users' && isLoggedIn()) ||
-      	(get(/databases/$(database)/documents/configuration/settings).data.email == 'webmasters' && isWebmaster())
-      ;
+        (get(/databases/$(database)/documents/configuration/settings).data.email == 'users' && isLoggedIn());
       allow update: if
       	request.resource.data.keys().hasAll(['password']) &&
         request.resource.data.keys().hasOnly(['password']) &&
         request.resource.data.password is string &&
+        get(/databases/$(database)/documents/configuration/settings).data.useEmail == true &&
         get(/databases/$(database)/documents/configuration/settings).data.email == 'public' ||
-        (get(/databases/$(database)/documents/configuration/settings).data.email == 'users' && isLoggedIn()) ||
-      	(get(/databases/$(database)/documents/configuration/settings).data.email == 'webmasters' && isWebmaster())
-      ;
+        (get(/databases/$(database)/documents/configuration/settings).data.email == 'users' && isLoggedIn());
       allow read, delete: if isWebmaster();
       allow create, update: if
         isWebmaster() &&
@@ -310,21 +304,37 @@ service cloud.firestore {
       allow delete: if isAdmin();
       allow create: if 
         isAdmin() &&
-        request.resource.data.keys().hasAll(['calEdit', 'calURL', 'calView', 'defaultPage', 'email', 'footerTxt', 'mailURL']) &&
-        request.resource.data.keys().hasOnly(['calEdit', 'calURL', 'calView', 'defaultPage', 'email', 'footerTxt', 'mailURL']) &&
-        request.resource.data.calEdit is string &&
-        request.resource.data.calURL is string &&
-        request.resource.data.calView is string &&
-        request.resource.data.defaultPage is string &&
-        request.resource.data.email is string &&
-        request.resource.data.footerTxt is string &&
-        request.resource.data.mailURL is string;
+        request.resource.data.keys().hasOnly(['calEdit', 'calID', 'calURL', 'calView', 'controlledAuth', 'defaultPage', 'email', 'footerTxt', 'mailURL', 'useCalendar', 'useEmail']) &&
+        request.resource.data.get('calEdit', '') is string &&
+        request.resource.data.get('calID', '') is string &&
+        request.resource.data.get('calURL', '') is string &&
+        request.resource.data.get('calView', '') is string &&
+        request.resource.data.get('controlledAuth', false) is bool &&
+        request.resource.data.get('defaultPage', '') is string &&
+        request.resource.data.get('email', '') is string &&
+        request.resource.data.get('footerTxt', '') is string &&
+        request.resource.data.get('mailURL', '') is string &&
+        request.resource.data.get('useCalendar', false) is bool &&
+        request.resource.data.get('useEmail', false) is bool;
       allow update: if
         isAdmin() &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['calEdit', 'calURL', 'calView', 'defaultPage', 'email', 'footerTxt', 'mailURL']);
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['calEdit', 'calID', 'calURL', 'calView', 'controlledAuth', 'defaultPage', 'email', 'footerTxt', 'mailURL', 'useCalendar', 'useEmail']) &&
+        request.resource.data.get('calEdit', '') is string &&
+        request.resource.data.get('calID', '') is string &&
+        request.resource.data.get('calURL', '') is string &&
+        request.resource.data.get('calView', '') is string &&
+        request.resource.data.get('controlledAuth', false) is bool &&
+        request.resource.data.get('defaultPage', '') is string &&
+        request.resource.data.get('email', '') is string &&
+        request.resource.data.get('footerTxt', '') is string &&
+        request.resource.data.get('mailURL', '') is string &&
+        request.resource.data.get('useCalendar', false) is bool &&
+        request.resource.data.get('useEmail', false) is bool;
       allow update: if
         isWebmaster() &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['defaultPage', 'footerTxt']);
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['defaultPage', 'footerTxt']) && 
+        request.resource.data.get('defaultPage', '') is string &&
+        request.resource.data.get('footerTxt', '') is string;
     }
     
     match /configuration/priv-settings {
@@ -332,31 +342,41 @@ service cloud.firestore {
       allow delete: if isAdmin();
       allow create: if
         isAdmin() &&
-        request.resource.data.keys().hasAll(['addresses', 'consoleURL', 'meetLink', 'linkHidden']) &&
-        request.resource.data.keys().hasOnly(['addresses', 'consoleURL', 'meetLink', 'linkHidden']) &&
-        request.resource.data.addresses is list &&
-        request.resource.data.consoleURL is string &&
-        request.resource.data.meetLink is string &&
-        request.resource.data.linkHidden is bool;
+        request.resource.data.keys().hasOnly(['addresses', 'consoleURL', 'meetLink', 'useMeeting']) &&
+        request.resource.data.get('addresses', []) is list &&
+        request.resource.data.get('consoleURL', '') is string &&
+        request.resource.data.get('meetLink', '') is string &&
+        request.resource.data.get('useMeeting', false) is bool;
       allow update: if
         isAdmin() &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['addresses', 'consoleURL', 'meetLink', 'linkHidden']);
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['addresses', 'consoleURL', 'meetLink', 'useMeeting']) &&
+        request.resource.data.get('addresses', []) is list &&
+        request.resource.data.get('consoleURL', '') is string &&
+        request.resource.data.get('meetLink', '') is string &&
+        request.resource.data.get('useMeeting', false) is bool;
+      allow update: if
+        isWebmaster() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['consoleURL']) &&
+        request.resource.data.get('consoleURL', '') is string;
     }
-    
-    match /webmasters/{user} {
-    	allow read, write: if isAdmin();
-    }
-    match /admin/{user} {
-    	allow read, write: if isAdmin();
-    }
+
     match /users/{userID} {
       allow read, write: if isAdmin();
-    	allow read: if request.auth.uid == userID;
-      allow update: if
-        isLoggedIn() &&
-        request.auth.uid == userID &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'email', 'photoURL']);
-      allow delete: if isLoggedIn() && request.auth.uid == userID;
+    	allow read, delete: if request.auth.uid == userID;
+      allow create: if request.auth.uid == userID && (get(/databases/$(database)/documents/configuration/settings).data.controlledAuth == false || !exists(/databases/$(database)/documents/configuration/settings)) &&
+        request.resource.data.keys().hasOnly(['displayName', 'email', 'photoURL']) &&
+        request.resource.data.get('displayName', '') is string &&
+        request.resource.data.get('email', '') is string &&
+        request.resource.data.get('photoURL', '') is string;
+      allow update: if request.auth.uid == userID &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['displayName', 'email', 'photoURL']) &&
+        request.resource.data.get('displayName', '') is string &&
+        request.resource.data.get('email', '') is string &&
+        request.resource.data.get('photoURL', '') is string;
+    }
+
+    match /new-users/{userID} {
+      allow read, write: if isAdmin();
     }
   }
 }

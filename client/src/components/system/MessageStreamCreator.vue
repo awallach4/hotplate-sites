@@ -107,7 +107,7 @@
         </v-card>
       </v-dialog>
       <v-switch
-        v-if="canMail && settings.mailURL"
+        v-if="canMail && settings.mailURL && settings.useEmail"
         v-model="email"
         label="Send Email"
         color="secondary"
@@ -115,7 +115,7 @@
         :disabled="submitting"
       />
       <complex-v-select
-        v-if="email && canMail && settings.mailURL"
+        v-if="email && canMail && settings.mailURL && settings.useEmail"
         v-model="recipients"
         :items="privateSettings.addresses"
         :disabled="submitting"
@@ -143,14 +143,14 @@
 import { user } from "@/plugins/authHandler";
 import { canMail } from "@/plugins/mailService";
 import type { EmailData, MessageStreamMessage, UploadedFile } from "@/types";
-import { ref, type Ref } from "@vue/composition-api";
-import { useRoute } from "@/plugins/contextInject";
+import { ref, type Ref } from "vue";
+import { useRoute } from "vue-router/composables";
 import { TiptapEditor, VProfilePhoto } from "@/components/asyncComponents";
 import { privateSettings, settings } from "@/plugins/routerStoreHelpers";
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { deleteFile, uploadFile } from "@/plugins/firebaseStorage";
-import { companyName } from "@/CLIENT_CONFIG";
+import { companyName } from "../../../../hotplateConfig";
 
 interface Props {
   storPath: string;
@@ -207,14 +207,17 @@ const addPost = async () => {
     await setDoc(
       doc(
         firestore,
-        `pages/${route.params.SpecialPage}/components/${props.componentId}/messages/${message.id}`
+        `pages/${route.params.BasePage}/components/${props.componentId}/messages/${message.id}`
       ),
       { ...message }
     );
     emit("fetch");
   } catch (error) {
-    const rawError = error as FirestoreError;
-    displayPageAlert(`An error occurred while posting: ${rawError.message}`);
+    displayPageAlert(
+      `An error occurred while posting: ${getFirestoreError(
+        error as FirestoreError
+      )}`
+    );
     emit("fetch");
     submitting.value = false;
     return;

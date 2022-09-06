@@ -7,13 +7,10 @@
       "@/*": ["./src/*"],
       "preact/*": ["./types__react"]
     },
-    "types": ["vuetify", "unplugin-vue2-script-setup/types"]
+    "types": ["vuetify"]
   },
   "vueCompilerOptions": {
-    "experimentalCompatMode": 2,
-    "experimentalTemplateCompilerOptions": {
-      "compatConfig": { "MODE": 2 }
-    }
+    "target": 2.7
   },
   "references": [
     {

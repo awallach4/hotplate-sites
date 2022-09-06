@@ -215,15 +215,15 @@ import type {
   MessageStreamMessageComment,
   UploadedFile
 } from "@/types";
-import { ref, watch, type Ref } from "@vue/composition-api";
+import { ref, watch, type Ref } from "vue";
 import { isAuthorized, user } from "@/plugins/authHandler";
-import { useRoute } from "@/plugins/contextInject";
+import { useRoute } from "vue-router/composables";
 import {
   MessageStreamComment,
   TiptapEditor
 } from "@/components/asyncComponents";
 import type { FirestoreError } from "firebase/firestore/lite";
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import { deleteFile, uploadFile } from "@/plugins/firebaseStorage";
 
 interface Props {
@@ -293,7 +293,7 @@ const updatePost = async () => {
     await updateDoc(
       doc(
         firestore,
-        `pages/${route.params.SpecialPage}/components/${props.componentId}/messages/${props.message.id}`
+        `pages/${route.params.BasePage}/components/${props.componentId}/messages/${props.message.id}`
       ),
       {
         content: updatedContent.value,
@@ -304,9 +304,10 @@ const updatePost = async () => {
     emit("fetch");
     editing.value = false;
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while editing the message: ${rawError.message}`
+      `An error occurred while editing the message: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
     emit("fetch");
   }
@@ -338,14 +339,15 @@ const remove = async () => {
     await deleteDoc(
       doc(
         firestore,
-        `pages/${route.params.SpecialPage}/components/${props.componentId}/messages/${props.message.id}`
+        `pages/${route.params.BasePage}/components/${props.componentId}/messages/${props.message.id}`
       )
     );
     emit("fetch");
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while deleting the message: ${rawError.message}`
+      `An error occurred while deleting the message: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
     emit("fetch");
   }
@@ -376,15 +378,16 @@ const addComment = async () => {
     await updateDoc(
       doc(
         firestore,
-        `pages/${route.params.SpecialPage}/components/${props.componentId}/messages/${props.message.id}`
+        `pages/${route.params.BasePage}/components/${props.componentId}/messages/${props.message.id}`
       ),
       { comments: arrayUnion(newComment) }
     );
     emit("fetch");
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while posting the comment: ${rawError.message}`
+      `An error occurred while posting the comment: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
     emit("fetch");
   }

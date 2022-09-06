@@ -1,18 +1,36 @@
+import { getFirestoreError } from "@/plugins/errorHandler";
 import {
   PermissionGroups,
   type SettingsSite,
   type SettingsSitePrivate
 } from "@/types";
-import { ref, type Ref } from "@vue/composition-api";
+import { ref, type Ref } from "vue";
+import type { FirestoreError } from "firebase/firestore/lite";
 import { defineStore } from "pinia";
 
 export const useSettings = defineStore("settings", () => {
   const applicationLoadingState = ref(false);
-  const siteSettings: Ref<SettingsSite> = ref({} as SettingsSite);
-  const sitePrivateSettings: Ref<SettingsSitePrivate> = ref(
-    {} as SettingsSitePrivate
-  );
+  const siteSettings: Ref<SettingsSite> = ref({
+    calEdit: PermissionGroups.UNSET,
+    calID: "",
+    calView: PermissionGroups.UNSET,
+    calURL: "",
+    controlledAuth: false,
+    defaultPage: "/login",
+    email: PermissionGroups.UNSET,
+    footerTxt: "",
+    mailURL: "",
+    useCalendar: false,
+    useEmail: false
+  });
+  const sitePrivateSettings: Ref<SettingsSitePrivate> = ref({
+    addresses: [],
+    consoleURL: "",
+    useMeeting: false,
+    meetLink: ""
+  });
   const canSave = ref(false);
+  const hasFetched = ref(false);
 
   const getSettings = async () => {
     try {
@@ -21,29 +39,11 @@ export const useSettings = defineStore("settings", () => {
       const settings = await getDoc(doc(firestore, "configuration/settings"));
       if (settings.exists()) {
         const data = settings.data() as SettingsSite;
-        siteSettings.value = data;
-      } else {
-        siteSettings.value = {
-          calEdit: PermissionGroups.UNSET,
-          calView: PermissionGroups.UNSET,
-          calURL: "",
-          defaultPage: "",
-          email: PermissionGroups.UNSET,
-          footerTxt: "",
-          mailURL: ""
-        };
+        siteSettings.value = Object.assign({}, siteSettings.value, data);
       }
+      hasFetched.value = true;
     } catch (error) {
-      siteSettings.value = {
-        calEdit: PermissionGroups.UNSET,
-        calView: PermissionGroups.UNSET,
-        calURL: "",
-        defaultPage: "",
-        email: PermissionGroups.UNSET,
-        footerTxt: "",
-        mailURL: ""
-      };
-      throw error;
+      throw getFirestoreError(error as FirestoreError);
     }
   };
 
@@ -56,23 +56,14 @@ export const useSettings = defineStore("settings", () => {
       );
       if (settings.exists()) {
         const data = settings.data() as SettingsSitePrivate;
-        sitePrivateSettings.value = data;
-      } else {
-        sitePrivateSettings.value = {
-          addresses: [],
-          consoleURL: "",
-          linkHidden: false,
-          meetLink: ""
-        };
+        sitePrivateSettings.value = Object.assign(
+          {},
+          sitePrivateSettings.value,
+          data
+        );
       }
     } catch (error) {
-      sitePrivateSettings.value = {
-        addresses: [],
-        consoleURL: "",
-        linkHidden: false,
-        meetLink: ""
-      };
-      throw error;
+      throw getFirestoreError(error as FirestoreError);
     }
   };
 
@@ -81,6 +72,7 @@ export const useSettings = defineStore("settings", () => {
     siteSettings,
     sitePrivateSettings,
     canSave,
+    hasFetched,
     getSettings,
     getSitePrivateSettings
   };

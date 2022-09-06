@@ -127,8 +127,8 @@
 <script lang="ts" setup>
 import draggable from "vuedraggable";
 import type { CompData, ComponentMetaData, VSelectValues } from "@/types";
-import { onUpdated, ref, watch, type Ref } from "@vue/composition-api";
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { onUpdated, ref, watch, type Ref } from "vue";
+import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import type { FirestoreError } from "firebase/firestore/lite";
 import {
   AlertMessage,
@@ -139,7 +139,6 @@ import {
   ItemList,
   NonexistentComponent,
   PlainText,
-  RequestForm,
   RichText,
   VideoEmbed
 } from "@/components/asyncComponents";
@@ -281,7 +280,7 @@ const updateData = () => {
 
 const save = async (
   err = (e: FirestoreError) => {
-    displayPageAlert(`An error occurred while saving: ${e.message}`);
+    displayPageAlert(`An error occurred while saving: ${getFirestoreError(e)}`);
   }
 ) => {
   try {
@@ -360,8 +359,6 @@ const checkComponent = (component: string) => {
       return ItemList;
     case "PlainText":
       return PlainText;
-    case "RequestForm":
-      return RequestForm;
     case "RichText":
       return RichText;
     case "VideoEmbed":
@@ -399,9 +396,10 @@ const getComponentData = async () => {
       });
     }
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while getting the page data: ${rawError.message}`
+      `An error occurred while getting the page data: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 };

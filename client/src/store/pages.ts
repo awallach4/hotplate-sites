@@ -1,29 +1,32 @@
-import type { PagesSpecialPageConfig } from "@/types";
-import { ref, type Ref } from "@vue/composition-api";
+import { getFirestoreError } from "@/plugins/errorHandler";
+import type { PageConfig } from "@/types";
+import { ref, type Ref } from "vue";
+import type { FirestoreError } from "firebase/firestore/lite";
 import { defineStore } from "pinia";
 import { useSettings } from "./settings";
+import { companyName } from "../../../hotplateConfig";
 
 export const usePages = defineStore("pages", () => {
-  const pageTitle = ref("Hotplate Client");
-  const specialPages: Ref<PagesSpecialPageConfig[]> = ref([]);
+  const pageTitle = ref(companyName);
+  const pages: Ref<PageConfig[]> = ref([]);
 
-  const getSpecialPages = async () => {
+  const getPages = async () => {
     try {
-      specialPages.value = [];
+      pages.value = [];
       const { firestore } = await import("@/plugins/firebase");
       const { collection, getDocs, orderBy, query } = await import(
         "firebase/firestore/lite"
       );
-      const pages = await getDocs(
+      const pageDocs = await getDocs(
         query(collection(firestore, "pages"), orderBy("index", "asc"))
       );
-      pages.forEach((page) => {
-        const data = page.data() as PagesSpecialPageConfig;
-        specialPages.value.push(data);
+      pageDocs.forEach((page) => {
+        const data = page.data() as PageConfig;
+        pages.value.push(data);
       });
     } catch (error) {
-      specialPages.value = [];
-      throw error;
+      pages.value = [];
+      throw getFirestoreError(error as FirestoreError);
     }
   };
 
@@ -34,7 +37,7 @@ export const usePages = defineStore("pages", () => {
     try {
       if (!notFound && name && path) {
         pageTitle.value = name;
-        document.title = `${name} - Hotplate Client`;
+        document.title = `${name} - ${companyName}`;
         logEvent(analytics, "page_view", {
           page_location: location.href,
           page_path: path,
@@ -42,7 +45,7 @@ export const usePages = defineStore("pages", () => {
         });
       } else {
         pageTitle.value = "Error";
-        document.title = "Error - Hotplate Client";
+        document.title = `Error - ${companyName}`;
         logEvent(analytics, "exception", {
           description: "Page not found.",
           fatal: false
@@ -57,8 +60,8 @@ export const usePages = defineStore("pages", () => {
 
   return {
     pageTitle,
-    specialPages,
-    getSpecialPages,
+    pages,
+    getPages,
     viewPage
   };
 });

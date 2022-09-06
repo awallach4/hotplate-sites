@@ -1,7 +1,7 @@
 import router from "@/router";
 import { usePages } from "@/store/pages";
 import { useSettings } from "@/store/settings";
-import { computed } from "@vue/composition-api";
+import { computed } from "vue";
 
 /**
  * Does the same thing as $router.push() but catches all navigation failure errors.
@@ -30,9 +30,9 @@ export const privateSettings = computed(() => {
   return SettingsModule.sitePrivateSettings;
 });
 
-export const specialPages = computed(() => {
+export const pages = computed(() => {
   const PagesModule = usePages();
-  return PagesModule.specialPages;
+  return PagesModule.pages;
 });
 
 export const loading = computed(() => {

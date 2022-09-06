@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { displayPageAlert, getAuthError } from "@/plugins/errorHandler";
 import { pushRouter } from "@/plugins/routerStoreHelpers";
 import { usePages } from "@/store/pages";
 import { useUser } from "@/store/user";
@@ -25,8 +25,7 @@ const logout = async () => {
     const UserModule = useUser();
     await UserModule.logout();
   } catch (error) {
-    const rawError = error as AuthError;
-    displayPageAlert(rawError.message);
+    displayPageAlert(getAuthError(error as AuthError));
   }
   pushRouter("/login");
 };

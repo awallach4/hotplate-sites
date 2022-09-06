@@ -5,7 +5,7 @@ import {
   type AuthUser,
   type VSelectValues
 } from "@/types";
-import { computed } from "@vue/composition-api";
+import { computed } from "vue";
 
 export const user = computed(() => {
   const UserModule = useUser();

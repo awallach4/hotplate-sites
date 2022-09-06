@@ -4,6 +4,8 @@ import type {
   FullCalendarEvent,
   GoogleCalendarEvent
 } from "@/types";
+import type { FirestoreError } from "firebase/firestore/lite";
+import { getFirestoreError } from "./errorHandler";
 
 /**
  * Edits the calendar using the Apps Script Calendar Service.
@@ -14,6 +16,9 @@ import type {
  */
 export async function editGoogleCalendar(postData: EventData): Promise<void> {
   const SettingsModule = useSettings();
+  if (!SettingsModule.siteSettings.useCalendar) {
+    throw new Error("The calendar service is not enabled.");
+  }
   const script = SettingsModule.siteSettings.calURL;
   if (!script) {
     throw new Error("No calendar service script was found.");
@@ -32,9 +37,10 @@ export async function editGoogleCalendar(postData: EventData): Promise<void> {
       postData.password = "";
     }
   } catch (error) {
-    const err = error as { message: string };
     throw new Error(
-      `An error occurred while getting the password for the script: ${err.message}`
+      `An error occurred while getting the password for the script: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 
@@ -72,6 +78,9 @@ export async function editGoogleCalendar(postData: EventData): Promise<void> {
  */
 export async function getGoogleCalendarEvents(): Promise<FullCalendarEvent[]> {
   const SettingsModule = useSettings();
+  if (!SettingsModule.siteSettings.useCalendar) {
+    throw new Error("The calendar service is not enabled.");
+  }
   const script = SettingsModule.siteSettings.calURL;
   if (!script) {
     throw new Error("No calendar service script was found.");
@@ -90,15 +99,19 @@ export async function getGoogleCalendarEvents(): Promise<FullCalendarEvent[]> {
       password = "";
     }
   } catch (error) {
-    const err = error as { message: string };
     throw new Error(
-      `An error occurred while getting the password for the script: ${err.message}`
+      `An error occurred while getting the password for the script: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 
-  const http = await fetch(`${script}?password=${password}`, {
-    method: "GET"
-  });
+  const http = await fetch(
+    `${script}?id=${SettingsModule.siteSettings.calID}&password=${password}`,
+    {
+      method: "GET"
+    }
+  );
 
   if (!http.ok) {
     throw new Error(

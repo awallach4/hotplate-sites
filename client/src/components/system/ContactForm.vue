@@ -3,7 +3,7 @@
     <card-wrap :is-elevated="useCard" :header="header">
       <p v-html="sanitized(text)" />
       <v-form
-        v-if="canMail && email && settings.mailURL"
+        v-if="canMail && email && settings.mailURL && settings.useEmail"
         ref="form"
         :disabled="submitting"
         @submit.prevent="send"
@@ -42,17 +42,17 @@
           Send
         </v-btn>
       </v-form>
-      <strong v-else-if="!canMail && settings.mailURL"
+      <strong v-else-if="!canMail"
         >We're sorry, but it looks like you're not allowed to send emails.
         Please contact a site administrator for more information.</strong
       >
-      <strong v-else-if="canMail && !email && settings.mailURL"
+      <strong v-else-if="canMail && !email"
         >We're sorry, but this form is missing an email recipient. Please
         contact a webmaster for assitance.</strong
       >
-      <strong v-else-if="!settings.mailURL">
-        We're sorry, but the email service script URL was not found. Please
-        contact a site administrator for assistance.
+      <strong v-else>
+        We're sorry, but the email service has not been enabled by an
+        administrator.
       </strong>
     </card-wrap>
   </div>
@@ -63,11 +63,11 @@ import type { EmailData, VFormOptions } from "@/types";
 import sanitized from "@/plugins/dompurify";
 import { canMail } from "@/plugins/mailService";
 import { fieldRequired, validEmail } from "@/plugins/formRules";
-import { ref } from "@vue/composition-api";
+import { ref } from "vue";
 import { displayPageAlert } from "@/plugins/errorHandler";
 import { TiptapEditor } from "@/components/asyncComponents";
 import { settings } from "@/plugins/routerStoreHelpers";
-import { companyName } from "@/CLIENT_CONFIG";
+import { companyName } from "../../../../hotplateConfig";
 
 interface Props {
   email: string;

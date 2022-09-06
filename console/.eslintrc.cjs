@@ -9,8 +9,8 @@ module.exports = {
   },
 
   extends: [
-    "plugin:vue/recommended",
     "eslint:recommended",
+    "plugin:vue/recommended",
     "@vue/eslint-config-typescript/recommended",
     "@vue/eslint-config-prettier"
   ],
@@ -30,14 +30,6 @@ module.exports = {
     eqeqeq: "error",
     "require-await": "error",
     "no-useless-rename": "error",
-    "vue/no-v-html": "off",
-    "@typescript-eslint/camelcase": "off",
-    "@typescript-eslint/naming-convention": [
-      "error",
-      {
-        format: ["camelCase", "snake_case", "PascalCase", "UPPER_CASE"],
-        selector: "default"
-      }
-    ]
+    "vue/no-v-html": "off"
   }
 };

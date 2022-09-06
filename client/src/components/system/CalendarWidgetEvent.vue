@@ -42,7 +42,7 @@
 import { formatRange } from "@fullcalendar/vue";
 import type { FullCalendarEvent } from "@/types";
 import sanitized from "@/plugins/dompurify";
-import { computed } from "@vue/composition-api";
+import { computed } from "vue";
 
 interface Props {
   event: FullCalendarEvent;

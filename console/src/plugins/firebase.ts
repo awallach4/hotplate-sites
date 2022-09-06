@@ -8,9 +8,18 @@ import {
 import { /*connectStorageEmulator,*/ getStorage } from "firebase/storage";
 import { /*connectFunctionsEmulator,*/ getFunctions } from "firebase/functions";
 import { getPerformance } from "firebase/performance";
-import { firebaseConfig, recaptchaSiteKey } from "@/CONSOLE_CONFIG";
+import {
+  consoleFirebaseConfig,
+  // debugToken,
+  recaptchaSiteKey
+} from "../../../hotplateConfig";
 
-export const app = initializeApp(firebaseConfig);
+export const app = initializeApp(consoleFirebaseConfig);
+
+// Uncomment the FIREBASE_APPCHECK_DEBUG_TOKEN statement for development mode only.
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+// self.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
 
 export const appCheck = initializeAppCheck(app, {
   provider: new ReCaptchaV3Provider(recaptchaSiteKey),

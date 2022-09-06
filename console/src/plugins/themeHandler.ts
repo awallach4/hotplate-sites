@@ -1,5 +1,6 @@
 import type { FirestoreError } from "firebase/firestore/lite";
 import { useVuetify } from "./contextInject";
+import { getFirestoreError } from "./errorHandler";
 
 /**
  * Gets Vuetify themes and mode from localStorage if they exist.
@@ -47,7 +48,6 @@ export const getThemes = async () => {
       vuetify.theme.themes.dark = data.dark;
     }
   } catch (error) {
-    const rawError = error as FirestoreError;
-    throw rawError.message;
+    throw getFirestoreError(error as FirestoreError);
   }
 };

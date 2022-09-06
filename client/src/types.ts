@@ -50,7 +50,7 @@ export enum PermissionGroups {
   UNSET = ""
 }
 
-export interface PagesSpecialPageConfig {
+export interface PageConfig {
   dbPath: string;
   id: string;
   index: number;
@@ -70,19 +70,23 @@ export interface UploadedFile {
 
 export interface SettingsSite {
   calEdit: PermissionGroups;
+  calID: string;
   calURL: string;
   calView: PermissionGroups;
+  controlledAuth: boolean;
   defaultPage: string;
   email: PermissionGroups;
   footerTxt: string;
   mailURL: string;
+  useCalendar: boolean;
+  useEmail: boolean;
 }
 
 export interface SettingsSitePrivate {
   addresses: VSelectValues[];
   consoleURL: string;
   meetLink: string;
-  linkHidden: boolean;
+  useMeeting: boolean;
 }
 
 export interface MessageStreamMessageComment {

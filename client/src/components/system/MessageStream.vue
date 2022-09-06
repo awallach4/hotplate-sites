@@ -27,11 +27,11 @@
 
 <script lang="ts" setup>
 import type { ComponentMetaData, MessageStreamMessage } from "@/types";
-import { ref, type Ref } from "@vue/composition-api";
+import { ref, type Ref } from "vue";
 import type { FirestoreError } from "firebase/firestore/lite";
 import { isAuthorized } from "@/plugins/authHandler";
-import { useRoute } from "@/plugins/contextInject";
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { useRoute } from "vue-router/composables";
+import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import {
   MessageStreamCreator,
   MessageStreamPost
@@ -59,7 +59,7 @@ const getMessages = async () => {
       query(
         collection(
           firestore,
-          `pages/${route.params.SpecialPage}/components/${props.metaData.id}/messages`
+          `pages/${route.params.BasePage}/components/${props.metaData.id}/messages`
         ),
         orderBy("createdAt", "desc")
       )
@@ -71,9 +71,10 @@ const getMessages = async () => {
       messages.value.push(data);
     });
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while getting the messages: ${rawError.message}`
+      `An error occurred while getting the messages: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 };

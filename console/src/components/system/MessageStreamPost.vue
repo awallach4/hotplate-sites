@@ -89,13 +89,13 @@
 
 <script lang="ts" setup>
 import sanitized from "@/plugins/dompurify";
-import { displayPageAlert } from "@/plugins/errorHandler";
+import { displayPageAlert, getFirestoreError } from "@/plugins/errorHandler";
 import { deleteFile } from "@/plugins/firebaseStorage";
 import type {
   MessageStreamMessage,
   MessageStreamMessageComment
 } from "@/types";
-import { ref } from "@vue/composition-api";
+import { ref } from "vue";
 import type { FirestoreError } from "firebase/firestore/lite";
 import MessageStreamComment from "./MessageStreamComment.vue";
 
@@ -147,9 +147,10 @@ const remove = async () => {
     );
     emit("fetch");
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while deleting the message: ${rawError.message}`
+      `An error occurred while deleting the message: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
     emit("fetch");
   }
@@ -181,9 +182,10 @@ const addComment = async () => {
     );
     emit("fetch");
   } catch (error) {
-    const rawError = error as FirestoreError;
     displayPageAlert(
-      `An error occurred while posting the comment: ${rawError.message}`
+      `An error occurred while posting the comment: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
     emit("fetch");
   }

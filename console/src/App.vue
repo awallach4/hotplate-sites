@@ -14,12 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  type Ref
-} from "@vue/composition-api";
+import { onBeforeUnmount, onMounted, ref, type Ref } from "vue";
 import { useUser } from "./store/user";
 import {
   pageAlertState,
@@ -114,6 +109,14 @@ try {
 
   .v-navigation-drawer {
     height: 100% !important;
+  }
+
+  .handle {
+    cursor: grab;
+  }
+
+  .sortable-chosen .handle {
+    cursor: grabbing !important;
   }
 
   li p {

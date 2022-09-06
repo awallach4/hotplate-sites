@@ -1,5 +1,7 @@
 import { useSettings } from "@/store/settings";
 import type { EmailData } from "@/types";
+import type { FirestoreError } from "firebase/firestore/lite";
+import { getFirestoreError } from "./errorHandler";
 
 /**
  * Sends an email using the Apps Script Email Service.
@@ -10,6 +12,9 @@ import type { EmailData } from "@/types";
  */
 export const sendEmail = async (postData: EmailData): Promise<void> => {
   const SettingsModule = useSettings();
+  if (!SettingsModule.siteSettings.useEmail) {
+    throw new Error("The email service is not set up.");
+  }
   const script = SettingsModule.siteSettings.mailURL;
   if (!script) {
     throw new Error("No email service script was found.");
@@ -27,9 +32,10 @@ export const sendEmail = async (postData: EmailData): Promise<void> => {
       postData.password = "";
     }
   } catch (error) {
-    const err = error as { message: string };
     throw new Error(
-      `An error occurred while getting the script password: ${err.message}`
+      `An error occurred while getting the script password: ${getFirestoreError(
+        error as FirestoreError
+      )}`
     );
   }
 
