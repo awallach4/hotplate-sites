@@ -10,6 +10,7 @@ import { getAnalytics } from "firebase/analytics";
 import { getPerformance } from "firebase/performance";
 import {
   clientFirebaseConfig,
+  debugToken,
   recaptchaSiteKey
 } from "../../../hotplateConfig";
 
@@ -18,7 +19,7 @@ export const app = initializeApp(clientFirebaseConfig);
 // Uncomment the FIREBASE_APPCHECK_DEBUG_TOKEN statement for development mode only.
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-self.FIREBASE_APPCHECK_DEBUG_TOKEN = "7c294209-1565-4aee-a58c-548f5effacbb";
+self.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
 
 export const appCheck = initializeAppCheck(app, {
   provider: new ReCaptchaV3Provider(recaptchaSiteKey),
