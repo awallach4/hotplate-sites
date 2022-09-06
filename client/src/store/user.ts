@@ -231,9 +231,6 @@ export const useUser = defineStore("user", () => {
     );
     onAuthStateChanged(auth, async (firebaseUser) => {
       const SettingsModule = useSettings();
-      if (Object.keys(SettingsModule.siteSettings).length === 0) {
-        await SettingsModule.getSettings();
-      }
       if (firebaseUser) {
         const { uid, displayName, email, photoURL, emailVerified } =
           firebaseUser;
