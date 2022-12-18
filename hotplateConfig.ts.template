@@ -12,3 +12,6 @@ export const consoleFirebaseConfig = YOUR_FIREBASE_CONSOLE_CONFIG_OBJECT;
 
 // Your site key from the reCaptcha Admin Console.
 export const recaptchaSiteKey = "YOUR_RECAPTCHA_SITE_KEY";
+
+// Your Firebase App Check debug token.  DO NOT USE IN PRODUCTION!
+export const debugToken = "YOUR_TOKEN";
